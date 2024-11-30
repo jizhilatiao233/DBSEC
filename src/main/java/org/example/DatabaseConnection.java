@@ -12,7 +12,7 @@ public class DatabaseConnection {
         InputStream input = DatabaseConnection.class.getClassLoader().getResourceAsStream("application.properties");
         props.load(input);
         String DB_URL = props.getProperty("db.url");
-        String DB_USER = props.getProperty("db.user");
+        String DB_USER = props.getProperty("db.username");
         String DB_PASSWORD = props.getProperty("db.password");
         String DB_DRIVER = props.getProperty("db.driver");
         try {
