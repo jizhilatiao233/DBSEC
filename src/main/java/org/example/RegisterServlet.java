@@ -8,7 +8,7 @@ import java.sql.PreparedStatement;
 
 public class RegisterServlet extends HttpServlet {
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException {
         String customerName = request.getParameter("customerName");
         String contactInfo = request.getParameter("contactInfo");
         String username = request.getParameter("username");
