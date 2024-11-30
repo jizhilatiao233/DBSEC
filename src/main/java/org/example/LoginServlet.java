@@ -2,14 +2,13 @@ package org.example;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
 public class LoginServlet extends HttpServlet {
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException{
         String username = request.getParameter("username");
         String password = request.getParameter("password");
         String role = request.getParameter("role"); // employee or admin

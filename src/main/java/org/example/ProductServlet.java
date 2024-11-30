@@ -2,7 +2,6 @@ package org.example;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -11,7 +10,7 @@ import java.util.List;
 
 public class ProductServlet extends HttpServlet {
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException {
         String action = request.getParameter("action");
 
         try (Connection conn = DatabaseConnection.getConnection()) {
@@ -65,7 +64,7 @@ public class ProductServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException {
         String action = request.getParameter("action");
 
         try (Connection conn = DatabaseConnection.getConnection()) {
