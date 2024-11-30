@@ -7,6 +7,13 @@ CREATE DATABASE ShopManagement;
 -- 使用数据库
 USE ShopManagement;
 
+DROP USER IF EXISTS 'shopmanage';
+
+-- 授权
+CREATE USER 'shopmanage'@'%' IDENTIFIED BY '123456';
+grant all privileges on ShopManagement.* to 'shopmanage';
+flush privileges;
+
 DROP TABLE IF EXISTS Sales;
 DROP TABLE IF EXISTS Purchase;
 DROP TABLE IF EXISTS WarehouseInventory;
@@ -15,12 +22,6 @@ DROP TABLE IF EXISTS Staff;
 DROP TABLE IF EXISTS Admin;
 DROP TABLE IF EXISTS Customer;
 DROP TABLE IF EXISTS Product;
-DROP USER IF EXISTS 'shopmanage';
-
--- 授权
-CREATE USER 'shopmanage'@'%' IDENTIFIED BY '123456';
-grant all privileges on ShopManagement.* to 'shopmanage';
-flush privileges;
 
 -- 创建商品表
 CREATE TABLE Product (
@@ -39,7 +40,7 @@ CREATE TABLE Customer (
     CustomerName VARCHAR(255) NOT NULL,           -- 客户姓名
     ContactInfo VARCHAR(255),                     -- 联系方式
     Username VARCHAR(100),                        -- 用户名（可为空）
-    Password VARCHAR(255) CHECK (Username IS NULL OR Password IS NOT NULL), -- 密码（若用户名不为空，则密码不为空）
+    Password VARCHAR(255),                        -- 密码（可为空）
     IsVIP BOOLEAN DEFAULT FALSE,                  -- 是否为VIP
     CreditRating INT CHECK (CreditRating BETWEEN 1 AND 5) -- 信用评级 (1-5分)
 );
