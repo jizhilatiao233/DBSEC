@@ -6,7 +6,7 @@ import java.io.*;
 import java.sql.*;
 
 public class PurchaseServlet extends HttpServlet {
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String productID = request.getParameter("ProductID");
         response.setContentType("text/html");
         PrintWriter out = response.getWriter();
@@ -32,7 +32,7 @@ public class PurchaseServlet extends HttpServlet {
         }
     }
 
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) {
         String quantity = request.getParameter("quantity");
         String productID = request.getParameter("ProductID");
         String customerName = request.getParameter("customerName");
