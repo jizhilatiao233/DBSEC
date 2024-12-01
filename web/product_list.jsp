@@ -6,21 +6,29 @@
   <title>Product List</title>
   <style>
     table {
-      width: 100%;
+      width: 90%;
       border-collapse: collapse;
+      margin: 20px auto;
     }
     th, td {
       border: 1px solid #ddd;
       padding: 8px;
-      text-align: left;
+      text-align: center;
     }
     th {
       background-color: #f2f2f2;
     }
+    a {
+      color: #2196F3;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
   </style>
 </head>
 <body>
-<h1>Product List</h1>
+<h1 style="text-align:center;">Product List</h1>
 <table>
   <thead>
   <tr>
@@ -35,7 +43,7 @@
   <tbody>
   <%
     List<Product> products = (List<Product>) request.getAttribute("products");
-    if (products != null) {
+    if (products != null && !products.isEmpty()) {
       for (Product product : products) {
   %>
   <tr>
@@ -51,7 +59,7 @@
   } else {
   %>
   <tr>
-    <td colspan="6">No products available</td>
+    <td colspan="6">No products available.</td>
   </tr>
   <%
     }

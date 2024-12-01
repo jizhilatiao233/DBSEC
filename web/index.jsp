@@ -33,7 +33,7 @@
 </header>
 <nav>
     <a href="login.jsp">Employee/Admin Login</a>
-    <a href="product_list.jsp">Shop Products</a>
+    <a href="product?action=list">View Products</a>
     <a href="register.jsp">Register as Customer</a>
 </nav>
 <main>

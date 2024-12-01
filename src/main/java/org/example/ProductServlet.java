@@ -14,8 +14,12 @@ public class ProductServlet extends HttpServlet {
         String action = request.getParameter("action");
 
         try (Connection conn = DatabaseConnection.getConnection()) {
+
+            // Debugging
+            System.out.println("Database Connected Success");
+            System.out.println("ProductServlet: action = " + action);
+
             if ("details".equals(action)) {
-                // View product details
                 int productId = Integer.parseInt(request.getParameter("productId"));
                 String query = "SELECT * FROM Product WHERE ProductID = ?";
                 try (PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -38,7 +42,6 @@ public class ProductServlet extends HttpServlet {
                     }
                 }
             } else {
-                // Default action: list all products
                 String query = "SELECT * FROM Product";
                 try (PreparedStatement stmt = conn.prepareStatement(query)) {
                     ResultSet rs = stmt.executeQuery();
@@ -62,71 +65,9 @@ public class ProductServlet extends HttpServlet {
             throw new ServletException("Database error occurred", e);
         }
     }
-
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException {
-        String action = request.getParameter("action");
-
-        try (Connection conn = DatabaseConnection.getConnection()) {
-            if ("purchase".equals(action)) {
-                // Handle product purchase
-                int productId = Integer.parseInt(request.getParameter("productId"));
-                int quantity = Integer.parseInt(request.getParameter("quantity"));
-                String customerName = request.getParameter("customerName");
-                String contactInfo = request.getParameter("contactInfo");
-
-                // Decrease stock and log purchase
-                String updateStockQuery = "UPDATE Product SET ShelfStock = ShelfStock - ? WHERE ProductID = ?";
-                String insertSalesQuery = "INSERT INTO Sales (ProductID, CustomerID, QuantitySold, SellingPrice, Profit) VALUES (?, ?, ?, ?, ?)";
-
-                try (PreparedStatement updateStmt = conn.prepareStatement(updateStockQuery);
-                     PreparedStatement insertStmt = conn.prepareStatement(insertSalesQuery)) {
-                    updateStmt.setInt(1, quantity);
-                    updateStmt.setInt(2, productId);
-                    updateStmt.executeUpdate();
-
-                    // Assuming customerID is auto-generated or provided
-                    insertStmt.setInt(1, productId);
-                    insertStmt.setNull(2, java.sql.Types.INTEGER); // Update with actual customer ID if logged in
-                    insertStmt.setInt(3, quantity);
-                    insertStmt.setBigDecimal(4, getSellingPrice(conn, productId));
-                    insertStmt.setBigDecimal(5, calculateProfit(conn, productId, quantity));
-                    insertStmt.executeUpdate();
-
-                    request.setAttribute("message", "Purchase successful!");
-                    request.getRequestDispatcher("index.jsp").forward(request, response);
-                }
-            }
-        } catch (Exception e) {
-            throw new ServletException("Error processing request", e);
-        }
-    }
-
-    private java.math.BigDecimal getSellingPrice(Connection conn, int productId) throws Exception {
-        String query = "SELECT SellingPrice FROM Product WHERE ProductID = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setInt(1, productId);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                return rs.getBigDecimal("SellingPrice");
-            } else {
-                throw new Exception("Product not found for SellingPrice");
-            }
-        }
-    }
-
-    private java.math.BigDecimal calculateProfit(Connection conn, int productId, int quantity) throws Exception {
-        String query = "SELECT SellingPrice, PurchasePrice FROM Product WHERE ProductID = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setInt(1, productId);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                java.math.BigDecimal sellingPrice = rs.getBigDecimal("SellingPrice");
-                java.math.BigDecimal purchasePrice = rs.getBigDecimal("PurchasePrice");
-                return sellingPrice.subtract(purchasePrice).multiply(new java.math.BigDecimal(quantity));
-            } else {
-                throw new Exception("Product not found for profit calculation");
-            }
-        }
-    }
 }
+
+//数据库表单已更新 请使用新的shopman.sql建库；
+//数据库连接配置位于/resources/application.properties中，请按需求修改；
+//数据库提供了几组AI生成的测试数据，详见testdata.sql；
+//已实现功能：员工/管理员登陆页面、顾客注册页面、商品页面、商品详细信息页面 页面很简陋（我不会前端QAQ） 页面功能待验证。

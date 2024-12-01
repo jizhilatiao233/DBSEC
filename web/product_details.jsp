@@ -3,9 +3,43 @@
 <html>
 <head>
   <title>Product Details</title>
+  <style>
+    table {
+      border-collapse: collapse;
+      width: 50%;
+      margin: 20px auto;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+    form {
+      margin: 20px auto;
+      width: 50%;
+    }
+    form label, input {
+      display: block;
+      margin: 10px 0;
+    }
+    button {
+      margin-top: 10px;
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+  </style>
 </head>
 <body>
-<h1>Product Details</h1>
+<h1 style="text-align:center;">Product Details</h1>
 <%
   Product product = (Product) request.getAttribute("product");
   if (product != null) {
@@ -40,12 +74,11 @@
     <td><%= product.getWarehouseStock() %></td>
   </tr>
 </table>
-<form action="product" method="post">
-  <input type="hidden" name="action" value="purchase">
+<form action="purchase" method="post">
   <input type="hidden" name="productId" value="<%= product.getProductId() %>">
   <label for="quantity">Quantity:</label>
-  <input type="number" id="quantity" name="quantity" required>
-  <label for="customerName">Name:</label>
+  <input type="number" id="quantity" name="quantity" required min="1" max="<%= product.getShelfStock() %>">
+  <label for="customerName">Your Name:</label>
   <input type="text" id="customerName" name="customerName" required>
   <label for="contactInfo">Contact Info:</label>
   <input type="text" id="contactInfo" name="contactInfo" required>
@@ -54,7 +87,7 @@
 <%
 } else {
 %>
-<p>Product not found</p>
+<p style="text-align:center;">Product not found.</p>
 <%
   }
 %>
