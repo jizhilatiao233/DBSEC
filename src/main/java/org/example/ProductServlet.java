@@ -66,8 +66,3 @@ public class ProductServlet extends HttpServlet {
         }
     }
 }
-
-//数据库表单已更新 请使用新的shopman.sql建库；
-//数据库连接配置位于/resources/application.properties中，请按需求修改；
-//数据库提供了几组AI生成的测试数据，详见testdata.sql；
-//已实现功能：员工/管理员登陆页面、顾客注册页面、商品页面、商品详细信息页面 页面很简陋（我不会前端QAQ） 页面功能待验证。
