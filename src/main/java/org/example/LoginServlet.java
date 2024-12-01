@@ -47,8 +47,10 @@ public class LoginServlet extends HttpServlet {
                     System.out.println("Username: " + rs.getString("Username") + "\nPassword: " + rs.getString("Password") + "\nRole: " + role);
 
                     if ("admin".equals(role)) {
+                        // TODO: AdminDashboardServlet.java; admin_dashboard.jsp
                         response.sendRedirect("admin_dashboard.jsp");
                     } else {
+                        // TODO: EmployeeDashboardServlet.java; employee_dashboard.jsp
                         response.sendRedirect("employee_dashboard.jsp");
                     }
                 } else {
