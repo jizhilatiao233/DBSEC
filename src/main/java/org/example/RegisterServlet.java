@@ -2,7 +2,6 @@ package org.example;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 
@@ -12,7 +11,7 @@ public class RegisterServlet extends HttpServlet {
         String customerName = request.getParameter("customerName");
         String contactInfo = request.getParameter("contactInfo");
         String username = request.getParameter("username");
-        String password = request.getParameter("password");
+        String password = PasswordUtil.hashPassword(request.getParameter("password"));
         boolean isVip = "on".equals(request.getParameter("vip"));
 
         try (Connection conn = DatabaseConnection.getConnection()) {

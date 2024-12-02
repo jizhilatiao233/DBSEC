@@ -35,13 +35,20 @@
         input[type="submit"]:hover {
             background-color: #45a049;
         }
+        .error {
+            color: red;
+            margin-bottom: 15px;
+        }
     </style>
 </head>
 <body>
 <h1>Employee/Admin Login</h1>
+<% if (request.getAttribute("error") != null) { %>
+<div class="error"><%= request.getAttribute("error") %></div>
+<% } %>
 <form action="login" method="post">
     <label for="username">Username:</label>
-    <input type="text" id="username" name="username" required>
+    <input type="text" id="username" name="username" value="<%= request.getAttribute("username") != null ? request.getAttribute("username") : "" %>" required>
 
     <label for="password">Password:</label>
     <input type="password" id="password" name="password" required>

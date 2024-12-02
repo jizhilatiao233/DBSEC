@@ -13,28 +13,28 @@ INSERT INTO Product (ProductName, Category, PurchasePrice, SellingPrice, ShelfSt
 
 -- Customer
 INSERT INTO Customer (CustomerName, ContactInfo, Username, Password, IsVIP, CreditRating) VALUES
-    ('Alice Johnson', 'alice@example.com', 'alicej', 'password123', TRUE, 5),
-    ('Bob Smith', 'bob@example.com', 'bobsmith', 'securepass', FALSE, 4),
-    ('Catherine Lee', 'catherine@example.com', 'cathylee', 'catspass', TRUE, 5),
-    ('David Brown', 'david@example.com', 'daveb', 'davidsafe', FALSE, 3),
-    ('Evelyn Clark', 'evelyn@example.com', 'eveclark', 'pass567', TRUE, 4),
-    ('Frank White', 'frank@example.com', 'frankw', 'frankpass', FALSE, 3),
+    ('Alice Johnson', 'alice@example.com', 'alicej', SHA2('alicepass', 256), TRUE, 5),
+    ('Bob Smith', 'bob@example.com', 'bobsmith', SHA2('bobpass', 256), TRUE, 4),
+    ('Catherine Lee', 'catherine@example.com', 'cathylee', SHA2('cathypass', 256), TRUE, 3),
+    ('David Brown', 'david@example.com', 'daveb', SHA2('davepass', 256), FALSE, 2),
+    ('Evelyn Clark', 'evelyn@example.com', 'eveclark', SHA2('evepass', 256), FALSE, 1),
+    ('Frank White', 'frank@example.com', 'frankw', SHA2('frankpass', 256), FALSE, 1),
     ('Grace Adams', 'grace@example.com', NULL, NULL, FALSE, 2),
-    ('Henry Green', 'henry@example.com', 'henryg', 'henry123', TRUE, 4),
-    ('Isabella King', 'isabella@example.com', 'isabellak', 'bella789', FALSE, 3),
+    ('Henry Green', 'henry@example.com', 'henryg', SHA2('henrypass', 256), FALSE, 3),
+    ('Isabella King', 'isabella@example.com', 'isabellak', SHA2('isapass', 256), FALSE, 4),
     ('Jack Wilson', 'jack@example.com', NULL, NULL, FALSE, 2);
 
 -- Admin
 INSERT INTO Admin (AdminName, ContactInfo, Username, Password, RoleDescription) VALUES
-    ('John Manager', 'john.manager@example.com', 'johnm', 'adminpass', 'Full access to product and sales management'),
-    ('Jane Supervisor', 'jane.supervisor@example.com', 'janes', 'supervisor123', 'Manage staff and inventory');
+    ('John Manager', 'john.manager@example.com', 'johnm', SHA2('adminpass', 256), 'Full access to product and sales management'),
+    ('Jane Supervisor', 'jane.supervisor@example.com', 'janes', SHA2('supervisor123', 256), 'Manage staff and inventory');
 
 -- Staff
 INSERT INTO Staff (StaffName, ContactInfo, Username, Password, AdminID) VALUES
-    ('Michael Cashier', 'michael.cashier@example.com', 'mikecash', 'cashier123', 1),
-    ('Nina Teller', 'nina.teller@example.com', 'ninat', 'tellpass', 1),
-    ('Olivia Clerk', 'olivia.clerk@example.com', 'oliviac', 'clerkpass', 2),
-    ('Peter Operator', 'peter.operator@example.com', 'petero', 'operator123', 2);
+    ('Michael Cashier', 'michael.cashier@example.com', 'mikecash', SHA2('chassier123', 256), 1),
+    ('Nina Teller', 'nina.teller@example.com', 'ninat', SHA2('tellpass', 256), 1),
+    ('Olivia Clerk', 'olivia.clerk@example.com', 'oliviac', SHA2('clerkpass', 256), 2),
+    ('Peter Operator', 'peter.operator@example.com', 'petero', SHA2('operator123', 256), 2);
 
 -- Sales
 INSERT INTO Sales (ProductID, CustomerID, StaffID, QuantitySold, SellingPrice, Profit) VALUES
