@@ -31,7 +31,7 @@ INSERT INTO Admin (AdminName, ContactInfo, Username, Password, RoleDescription) 
 
 -- Staff
 INSERT INTO Staff (StaffName, ContactInfo, Username, Password, AdminID) VALUES
-    ('Michael Cashier', 'michael.cashier@example.com', 'mikecash', SHA2('chassier123', 256), 1),
+    ('Michael Cashier', 'michael.cashier@example.com', 'mikecash', SHA2('chashier123', 256), 1),
     ('Nina Teller', 'nina.teller@example.com', 'ninat', SHA2('tellpass', 256), 1),
     ('Olivia Clerk', 'olivia.clerk@example.com', 'oliviac', SHA2('clerkpass', 256), 2),
     ('Peter Operator', 'peter.operator@example.com', 'petero', SHA2('operator123', 256), 2);
