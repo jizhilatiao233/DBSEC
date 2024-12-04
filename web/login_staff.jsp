@@ -153,6 +153,12 @@
         <label for="password">Password:</label>
         <input type="password" id="password" name="password" placeholder="Enter your password" required>
 
+        <label for="role">Login as:</label>
+        <select id="role" name="role">
+            <option value="employee">Employee</option>
+            <option value="admin">Admin</option>
+        </select>
+
         <input type="submit" value="Login">
     </form>
 </div>
