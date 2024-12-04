@@ -3,41 +3,126 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shop Management System</title>
+    <title>Login | Shop Management System</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: url('./img/index.jpg') no-repeat center center fixed;
+            background-size: cover; /* 保证背景图覆盖整个页面 */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #fff;
+            position: relative;
+            overflow: hidden;
         }
-        header {
+
+        .login-container {
+            position: relative;
+            z-index: 2;
+            background: rgba(255, 255, 255, 0.85); /* 半透明背景使文字清晰可见 */
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2); /* 使容器更立体 */
             text-align: center;
-            padding: 20px;
+            width: 100%;
+            max-width: 500px;
+            backdrop-filter: blur(15px); /* 背景模糊效果 */
+            box-sizing: border-box;
         }
-        nav {
+
+
+        h1 {
+            margin-bottom: 20px;
+            font-size: 3.2em;
+            color: #f1c343;
+            text-transform: uppercase;
+            letter-spacing: 5px; /* 更宽的字母间距 */
+            font-weight: bold;
+            text-shadow: 3px 3px 8px rgba(0, 0, 0, 0.3), 0 0 25px rgba(255, 255, 255, 0.7); /* 文本阴影 */
+            opacity: 0; /* 初始时文字透明 */
+            transform: translateY(30px); /* 初始时下移 */
+            animation: fadeInUp 2s ease-out forwards; /* 应用动画 */
+        }
+
+        /* 文字动画效果：淡入 + 从下往上 */
+        @keyframes fadeInUp {
+            0% {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        p {
+            margin-bottom: 20px;
+            font-size: 26px;
+            color: #333;
             text-align: center;
-            margin: 20px;
-        }
-        nav a {
-            margin: 0 15px;
-            text-decoration: none;
-            color: blue;
             font-weight: bold;
         }
-        main {
+
+        .button-group {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .button-group a {
+            padding: 15px;
+            border-radius: 12px;
+            background-color: #4facfe; /* 按钮颜色 */
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
             text-align: center;
+            font-size: 1.1em;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease-in-out;
+        }
+
+        .button-group a:hover {
+            background-color: #265fdc;
+            transform: translateY(-5px); /* 上升效果 */
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .button-group a:active {
+            transform: translateY(2px); /* 按钮点击时的下沉效果 */
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 600px) {
+            .login-container {
+                padding: 30px;
+            }
+
+            h1 {
+                font-size: 2.2em;
+            }
+
+            .button-group a {
+                font-size: 1em;
+                padding: 12px;
+            }
         }
     </style>
 </head>
 <body>
-<header>
-    <h1>Welcome to the Supermarket!</h1>
-</header>
-<nav>
-    <a href="login_staff.jsp">Employee/Admin Login</a>
-    <a href="product?action=list">View Products</a>
-    <a href="register_customer.jsp">Register as Customer</a>
-</nav>
-<main>
-    <p>Choose an option above to continue.</p>
-</main>
+
+<div class="login-container">
+    <h1>Welcome to Shop Management</h1>
+    <p>Choose your role to proceed:</p>
+    <div class="button-group">
+        <a href="login_staff.jsp">Staff</a>
+        <a href="login_customer.jsp">Customer</a>
+    </div>
+</div>
+
 </body>
 </html>
