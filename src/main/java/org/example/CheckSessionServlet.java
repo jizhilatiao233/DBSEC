@@ -11,8 +11,6 @@ public class CheckSessionServlet extends HttpServlet {
 
         // Debugging
         if(loggedIn) {
-            String username = (String) session.getAttribute("username");
-            String role = (String) session.getAttribute("role");
             System.out.println("User is logged in as " + session.getAttribute("username") + ", role:" + session.getAttribute("role"));
         } else {
             System.out.println("User is not logged in");

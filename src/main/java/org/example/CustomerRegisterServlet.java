@@ -2,13 +2,12 @@ package org.example;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 
 public class CustomerRegisterServlet extends HttpServlet {
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException {
         String customerName = request.getParameter("customerName");
         String contactInfo = request.getParameter("contactInfo");
         String username = request.getParameter("username");
