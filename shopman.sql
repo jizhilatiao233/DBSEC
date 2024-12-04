@@ -1,5 +1,5 @@
 -- 创建数据库
-CREATE DATABASE ShopManagement;
+# CREATE DATABASE ShopManagement;
 
 -- 以root用户登录
 -- mysql -u root -p
