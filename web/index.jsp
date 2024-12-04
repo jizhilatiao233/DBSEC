@@ -32,9 +32,9 @@
     <h1>Welcome to the Supermarket!</h1>
 </header>
 <nav>
-    <a href="login.jsp">Employee/Admin Login</a>
+    <a href="login_staff.jsp">Employee/Admin Login</a>
     <a href="product?action=list">View Products</a>
-    <a href="register.jsp">Register as Customer</a>
+    <a href="register_customer.jsp">Register as Customer</a>
 </nav>
 <main>
     <p>Choose an option above to continue.</p>

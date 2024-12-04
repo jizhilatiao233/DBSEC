@@ -7,10 +7,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
-public class LoginServlet extends HttpServlet {
+public class StaffLoginServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.getRequestDispatcher("login.jsp").forward(request, response);
+        request.getRequestDispatcher("login_staff.jsp").forward(request, response);
     }
 
     @Override
@@ -66,12 +66,12 @@ public class LoginServlet extends HttpServlet {
                         // Password incorrect
                         request.setAttribute("error", "Invalid password.");
                         request.setAttribute("username", username); // Retain entered username
-                        request.getRequestDispatcher("login.jsp").forward(request, response);
+                        request.getRequestDispatcher("login_staff.jsp").forward(request, response);
                     }
                 } else {
                     // Username does not exist
                     request.setAttribute("error", "Username does not exist.");
-                    request.getRequestDispatcher("login.jsp").forward(request, response);
+                    request.getRequestDispatcher("login_staff.jsp").forward(request, response);
 
                     // Debugging
                     System.out.println("Login failed");

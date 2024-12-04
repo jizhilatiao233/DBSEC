@@ -2,12 +2,13 @@ package org.example;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 
-public class RegisterServlet extends HttpServlet {
+public class CustomerRegisterServlet extends HttpServlet {
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String customerName = request.getParameter("customerName");
         String contactInfo = request.getParameter("contactInfo");
         String username = request.getParameter("username");
@@ -25,10 +26,11 @@ public class RegisterServlet extends HttpServlet {
 
                 int rowsAffected = stmt.executeUpdate();
                 if (rowsAffected > 0) {
-                    response.sendRedirect("index.jsp"); // Registration successful, redirect to home
+                    // Registration successful, redirect to login page
+                    response.sendRedirect("login_customer.jsp");
                 } else {
                     request.setAttribute("error", "Registration failed. Please try again.");
-                    request.getRequestDispatcher("register.jsp").forward(request, response);
+                    request.getRequestDispatcher("register_customer.jsp").forward(request, response);
                 }
             }
         } catch (Exception e) {

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register - Shop Management System</title>
+    <title>CustomerRegister - Shop Management System</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -36,10 +36,35 @@
             background-color: #45a049;
         }
     </style>
+    <script>
+        window.onload = function() {
+            checkSession();
+        }
+
+        function checkSession() {
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', 'CheckSession', true);
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    var response = JSON.parse(xhr.responseText);
+                    if (response.loggedIn) {
+                        var confirmLogout = confirm("You are already logged in. Do you want to log out and continue registering?");
+                        if (confirmLogout) {
+                            window.location.href = 'Logout?redirect=register_customer.jsp';
+                        } else {
+                            // TODO: Prevent form submission (Alternative)
+                            window.location.href = 'index.jsp';
+                        }
+                    }
+                }
+            };
+            xhr.send();
+        }
+    </script>
 </head>
 <body>
 <h1>Customer Registration</h1>
-<form action="register" method="post">
+<form action="CustomerRegister" method="post" onsubmit="checkSession()">
     <label for="customerName">Full Name:</label>
     <input type="text" id="customerName" name="customerName" required>
 

@@ -29,24 +29,54 @@
         <url-pattern>/purchase</url-pattern>
     </servlet-mapping>
 
-    <!-- Login Servlet -->
+    <!-- CheckSession Servlet -->
     <servlet>
-        <servlet-name>LoginServlet</servlet-name>
-        <servlet-class>org.example.LoginServlet</servlet-class>
+        <servlet-name>CheckSessionServlet</servlet-name>
+        <servlet-class>org.example.CheckSessionServlet</servlet-class>
     </servlet>
     <servlet-mapping>
-        <servlet-name>LoginServlet</servlet-name>
-        <url-pattern>/login</url-pattern>
+        <servlet-name>CheckSessionServlet</servlet-name>
+        <url-pattern>/CheckSession</url-pattern>
     </servlet-mapping>
 
-    <!-- Register Servlet -->
+    <!-- Logout Servlet -->
     <servlet>
-        <servlet-name>RegisterServlet</servlet-name>
-        <servlet-class>org.example.RegisterServlet</servlet-class>
+        <servlet-name>LogoutServlet</servlet-name>
+        <servlet-class>org.example.LogoutServlet</servlet-class>
     </servlet>
     <servlet-mapping>
-        <servlet-name>RegisterServlet</servlet-name>
-        <url-pattern>/register</url-pattern>
+        <servlet-name>LogoutServlet</servlet-name>
+        <url-pattern>/Logout</url-pattern>
+    </servlet-mapping>
+
+    <!-- StaffLogin Servlet -->
+    <servlet>
+        <servlet-name>StaffLoginServlet</servlet-name>
+        <servlet-class>org.example.StaffLoginServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>StaffLoginServlet</servlet-name>
+        <url-pattern>/StaffLogin</url-pattern>
+    </servlet-mapping>
+
+    <!-- CustomerRegister Servlet -->
+    <servlet>
+        <servlet-name>CustomerRegisterServlet</servlet-name>
+        <servlet-class>org.example.CustomerRegisterServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>CustomerRegisterServlet</servlet-name>
+        <url-pattern>/CustomerRegister</url-pattern>
+    </servlet-mapping>
+
+    <!-- CustomerLogin Servlet -->
+    <servlet>
+        <servlet-name>CustomerLoginServlet</servlet-name>
+        <servlet-class>org.example.CustomerLoginServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>CustomerLoginServlet</servlet-name>
+        <url-pattern>/CustomerLogin</url-pattern>
     </servlet-mapping>
 
 </web-app>
