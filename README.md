@@ -1,2 +1,0 @@
-# DBSEC
-Database Experiment
