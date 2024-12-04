@@ -25,9 +25,13 @@ public class RegisterServlet extends HttpServlet {
 
                 int rowsAffected = stmt.executeUpdate();
                 if (rowsAffected > 0) {
-                    response.sendRedirect("index.jsp"); // Registration successful, redirect to home
+                    // 注册成功，返回成功弹窗
+                    request.setAttribute("successMessage", "Registration successful! You can now log in.");
+                    request.getRequestDispatcher("register.jsp").forward(request, response);
+
+
                 } else {
-                    request.setAttribute("error", "Registration failed. Please try again.");
+                    request.setAttribute("errorMessage", "Registration failed. Please try again.");
                     request.getRequestDispatcher("register.jsp").forward(request, response);
                 }
             }

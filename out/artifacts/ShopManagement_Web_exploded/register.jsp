@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register - Shop Management System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -26,6 +28,7 @@
             width: 100%;
             max-width: 400px;
             transition: all 0.3s ease;
+            position: relative; /* 添加相对定位 */
         }
 
         h1 {
@@ -100,12 +103,69 @@
             text-decoration: underline;
             color: #00c6fb;
         }
+        /* Modal 样式 */
+        .modal {
+            display: none; /* 默认隐藏 */
+            position: fixed;
+            z-index: 1; /* 位于最上层 */
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4); /* 半透明背景 */
+            overflow: auto;
+            padding-top: 60px;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 400px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .modal-button {
+            background-color: #4facfe;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 6px;
+            margin-top: 20px;
+        }
+
+        .modal-button:hover {
+            background-color: #00c6fb;
+        }
+        /* 返回按钮的样式 */
+        .back-arrow {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 20px;
+            color: #4facfe;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .back-arrow:hover {
+            color: #00c6fb;
+        }
 
     </style>
 </head>
 <body>
 
 <div class="container">
+
+    <a href="javascript:history.back()" class="back-arrow">
+        <i class="fas fa-arrow-left"></i> <!-- Font Awesome 的左箭头 -->
+    </a>
     <h1>Customer Registration</h1>
 
     <!-- 注册表单 -->
@@ -134,6 +194,36 @@
         <p>Already have an account? <a href="login_customer.jsp">Login here</a></p>
     </div>
 </div>
+<div id="successModal" class="modal">
+    <div class="modal-content">
+        <h2>Registration Successful!</h2>
+        <p>You can now log in with your account.</p>
+        <button class="modal-button" onclick="window.location.href='login_customer.jsp'">Go to Login</button>
+    </div>
+</div>
 
+<!-- JavaScript -->
+<script>
+    window.onload = function() {
+        <%
+            String successMessage = (String) request.getAttribute("successMessage");
+            if (successMessage != null) {
+        %>
+        // If there's a success message, show the modal
+        var modal = document.getElementById('successModal');
+        modal.style.display = "block";
+        <%
+            }
+        %>
+    }
+
+    // Close the modal if the user clicks outside of it (optional)
+    window.onclick = function(event) {
+        var modal = document.getElementById('successModal');
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+</script>
 </body>
 </html>
