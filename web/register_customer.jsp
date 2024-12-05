@@ -28,6 +28,7 @@
             width: 100%;
             max-width: 400px;
             transition: all 0.3s ease;
+            position: relative; /* 添加相对定位 */
         }
 
         h1 {
