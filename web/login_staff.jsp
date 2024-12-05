@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StaffLogin - Shop Management System</title>
+    <title>Login - Shop Management System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -26,6 +28,7 @@
             width: 100%;
             max-width: 400px;
             transition: all 0.3s ease;
+            position: relative; /* 添加相对定位 */
         }
 
         h1 {
@@ -91,6 +94,20 @@
         input[type="submit"]:active {
             transform: translateY(1px); /* 按钮点击下沉效果 */
         }
+        /* 返回按钮的样式 */
+        .back-arrow {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 20px;
+            color: #4facfe;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .back-arrow:hover {
+            color: #00c6fb;
+        }
 
         /* 响应式设计 */
         @media (max-width: 500px) {
@@ -140,6 +157,11 @@
 <body>
 
 <div class="container">
+
+    <a href="javascript:history.back()" class="back-arrow">
+        <i class="fas fa-arrow-left"></i> <!-- Font Awesome 的左箭头 -->
+    </a>
+
     <h1>Staff Login</h1>
 
     <% if (request.getAttribute("error") != null) { %>
