@@ -1,5 +1,5 @@
 -- 创建数据库
-#CREATE DATABASE ShopManagement;
+# CREATE DATABASE ShopManagement;
 
 -- 以root用户登录
 -- mysql -u root -p
@@ -42,7 +42,7 @@ CREATE TABLE Customer (
     Username VARCHAR(100),                        -- 用户名（可为空）
     Password VARCHAR(255),                        -- 密码（可为空）
     IsVIP BOOLEAN DEFAULT FALSE,                  -- 是否为VIP
-    CreditRating INT CHECK (CreditRating BETWEEN 1 AND 5) -- 信用评级 (1-5分)
+    CreditRating INT CHECK (CreditRating BETWEEN 1 AND 5) DEFAULT 3 -- 信用评级 (1-5分)
 );
 
 -- 创建管理员表

@@ -129,6 +129,30 @@
             }
         }
     </style>
+    <script>
+        window.onload = function() {
+            checkSession();
+        }
+
+        function checkSession() {
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', 'CheckSession', true);
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    var response = JSON.parse(xhr.responseText);
+                    if (response.loggedIn) {
+                        var confirmLogout = confirm("You are already logged in. Do you want to log in as a different user?");
+                        if (confirmLogout) {
+                            window.location.href = 'Logout?redirect=login_staff.jsp';
+                        } else {
+                            window.location.href = 'index.jsp';
+                        }
+                    }
+                }
+            };
+            xhr.send();
+        }
+    </script>
 </head>
 <body>
 
@@ -144,7 +168,7 @@
     <div class="error"><%= request.getAttribute("error") %></div>
     <% } %>
 
-    <form action="login" method="post">
+    <form action="StaffLogin" method="post">
         <label for="username">Username:</label>
         <input type="text" id="username" name="username"
                value="<%= request.getAttribute("username") != null ? request.getAttribute("username") : "" %>"
@@ -153,8 +177,8 @@
         <label for="password">Password:</label>
         <input type="password" id="password" name="password" placeholder="Enter your password" required>
 
-        <label for="role">Login as:</label>
-        <select id="role" name="role">
+        <label for="role">Role:</label>
+        <select id="role" name="role" required>
             <option value="employee">Employee</option>
             <option value="admin">Admin</option>
         </select>

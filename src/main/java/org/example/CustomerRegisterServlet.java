@@ -5,7 +5,7 @@ import javax.servlet.http.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 
-public class RegisterServlet extends HttpServlet {
+public class CustomerRegisterServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException {
         String customerName = request.getParameter("customerName");
@@ -27,12 +27,12 @@ public class RegisterServlet extends HttpServlet {
                 if (rowsAffected > 0) {
                     // 注册成功，返回成功弹窗
                     request.setAttribute("successMessage", "Registration successful! You can now log in.");
-                    request.getRequestDispatcher("register.jsp").forward(request, response);
+                    request.getRequestDispatcher("register_customer.jsp").forward(request, response);
 
 
                 } else {
                     request.setAttribute("errorMessage", "Registration failed. Please try again.");
-                    request.getRequestDispatcher("register.jsp").forward(request, response);
+                    request.getRequestDispatcher("register_customer.jsp").forward(request, response);
                 }
             }
         } catch (Exception e) {

@@ -148,6 +148,29 @@
             }
         }
     </style>
+    <script>
+    window.onload = function() {
+        checkSession();
+    };
+    function checkSession() {
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', 'CheckSession', true);
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    var response = JSON.parse(xhr.responseText);
+                    if (response.loggedIn) {
+                        var confirmLogout = confirm("You are already logged in. Do you want to log in as a different user?");
+                        if (confirmLogout) {
+                            window.location.href = 'Logout?redirect=login_customer.jsp';
+                        } else {
+                            window.location.href = 'index.jsp';
+                        }
+                    }
+                }
+        };
+        xhr.send();
+    }
+    </script>
 </head>
 <body>
 
@@ -163,7 +186,7 @@
     <div class="error"><%= request.getAttribute("error") %></div>
     <% } %>
 
-    <form action="login" method="post">
+    <form action="CustomerLogin" method="post">
         <label for="username">Username:</label>
         <input type="text" id="username" name="username"
                value="<%= request.getAttribute("username") != null ? request.getAttribute("username") : "" %>"
@@ -178,7 +201,7 @@
 
     <!-- 新增注册链接 -->
     <div class="register-link">
-        <p>Don't have an account? <a href="register.jsp">Register here</a></p>
+        <p>Don't have an account? <a href="register_customer.jsp">Register here</a></p>
     </div>
 </div>
 

@@ -119,8 +119,8 @@
     <h1>Welcome to Shop Management</h1>
     <p>Choose your role to proceed:</p>
     <div class="button-group">
-        <a href="login_staff.jsp?role=staff">Staff</a>
-        <a href="login_customer.jsp?role=customer">Customer</a>
+        <a href="login_staff.jsp">Staff</a>
+        <a href="login_customer.jsp">Customer</a>
     </div>
 </div>
 

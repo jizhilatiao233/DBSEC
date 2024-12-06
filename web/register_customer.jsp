@@ -169,7 +169,7 @@
     <h1>Customer Registration</h1>
 
     <!-- 注册表单 -->
-    <form action="register" method="post">
+    <form action="CustomerRegister" method="post" onsubmit="checkSession()">
         <label for="customerName">Full Name:</label>
         <input type="text" id="customerName" name="customerName" required placeholder="Enter your full name">
 
@@ -205,6 +205,7 @@
 <!-- JavaScript -->
 <script>
     window.onload = function() {
+        checkSession();
         <%
             String successMessage = (String) request.getAttribute("successMessage");
             if (successMessage != null) {
@@ -217,10 +218,29 @@
         %>
     }
 
+    function checkSession() {
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', 'CheckSession', true);
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+                var response = JSON.parse(xhr.responseText);
+                if (response.loggedIn) {
+                    var confirmLogout = confirm("You are already logged in. Do you want to log out and continue registering?");
+                    if (confirmLogout) {
+                        window.location.href = 'Logout?redirect=register_customer.jsp';
+                    } else {
+                        // TODO: Prevent form submission (Alternative)
+                        window.location.href = 'index.jsp';
+                    }
+                }
+            }            };
+        xhr.send();
+    }
+
     // Close the modal if the user clicks outside of it (optional)
     window.onclick = function(event) {
         var modal = document.getElementById('successModal');
-        if (event.target == modal) {
+        if (event.target === modal) {
             modal.style.display = "none";
         }
     }
