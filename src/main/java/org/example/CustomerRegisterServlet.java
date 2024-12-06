@@ -4,6 +4,7 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 
 public class CustomerRegisterServlet extends HttpServlet {
     @Override
@@ -15,6 +16,14 @@ public class CustomerRegisterServlet extends HttpServlet {
         boolean isVip = "on".equals(request.getParameter("vip"));
 
         try (Connection conn = DatabaseConnection.getConnection()) {
+            if (isUsernameTaken(conn, username)) {
+                request.setAttribute("usernameTakenError", "Username is already taken.");
+                request.setAttribute("customerName", customerName);
+                request.setAttribute("contactInfo", contactInfo);
+                request.getRequestDispatcher("register_customer.jsp").forward(request, response);
+                return;
+            }
+
             String query = "INSERT INTO Customer (CustomerName, ContactInfo, Username, Password, IsVIP) VALUES (?, ?, ?, ?, ?)";
             try (PreparedStatement stmt = conn.prepareStatement(query)) {
                 stmt.setString(1, customerName);
@@ -31,12 +40,25 @@ public class CustomerRegisterServlet extends HttpServlet {
 
 
                 } else {
-                    request.setAttribute("errorMessage", "Registration failed. Please try again.");
+                    request.setAttribute("normalError", "Registration failed. Please try again.");
                     request.getRequestDispatcher("register_customer.jsp").forward(request, response);
                 }
             }
         } catch (Exception e) {
             throw new ServletException("Database error occurred", e);
         }
+    }
+
+    private boolean isUsernameTaken(Connection conn, String username) throws Exception {
+        String query = "SELECT COUNT(*) FROM Customer WHERE Username = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, username);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        }
+        return false;
     }
 }

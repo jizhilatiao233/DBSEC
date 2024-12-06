@@ -87,6 +87,17 @@
             transform: translateY(1px); /* 按钮点击下沉效果 */
         }
 
+        .error {
+            color: red;
+            background: #ffecec;
+            padding: 12px;
+            border: 1px solid #ffcccc;
+            border-radius: 6px;
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
         .register-link {
             margin-top: 20px;
             text-align: center;
@@ -168,16 +179,27 @@
     </a>
     <h1>Customer Registration</h1>
 
+    <% if (request.getAttribute("normalError") != null) { %>
+    <div class="error"><%= request.getAttribute("normalError") %></div>
+    <% } %>
+
     <!-- 注册表单 -->
     <form action="CustomerRegister" method="post" onsubmit="checkSession()">
         <label for="customerName">Full Name:</label>
-        <input type="text" id="customerName" name="customerName" required placeholder="Enter your full name">
+        <input type="text" id="customerName" name="customerName"
+               value="<%= request.getAttribute("customerName") != null ? request.getAttribute("customerName") : "" %>"
+               required placeholder="Enter your full name">
 
         <label for="contactInfo">Contact Info:</label>
-        <input type="tel" id="contactInfo" name="contactInfo" required placeholder="Enter your contact number">
+        <input type="tel" id="contactInfo" name="contactInfo"
+               value="<%= request.getAttribute("contactInfo") != null ? request.getAttribute("contactInfo") : "" %>"
+               required placeholder="Enter your contact number">
 
         <label for="username">Username:</label>
         <input type="text" id="username" name="username" required placeholder="Choose a username">
+        <% if (request.getAttribute("usernameTakenError") != null) { %>
+        <div class="error"><%= request.getAttribute("usernameTakenError") %></div>
+        <% } %>
 
         <label for="password">Password:</label>
         <input type="password" id="password" name="password" required placeholder="Create a password">
