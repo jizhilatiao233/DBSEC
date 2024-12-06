@@ -58,6 +58,9 @@ public class StaffLoginServlet extends HttpServlet {
                         if ("admin".equals(role)) {
                             // TODO: AdminDashboardServlet.java; admin_dashboard.jsp
                             response.sendRedirect("admin_dashboard.jsp");
+                            session.setAttribute("username", username);
+                            session.setAttribute("role", role);
+
                         } else {
                             // TODO: EmployeeDashboardServlet.java; employee_dashboard.jsp
                             response.sendRedirect("employee_dashboard.jsp");
