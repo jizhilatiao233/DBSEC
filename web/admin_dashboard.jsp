@@ -245,7 +245,7 @@
     <a href="orderManagement.jsp"><i class="fas fa-box"></i> 订单管理</a>
     <a href="report.jsp"><i class="fas fa-chart-line"></i> 报表统计</a>
     <a href="employeeManagement.jsp"><i class="fas fa-users"></i> 员工管理</a> <!-- 新增员工管理 -->
-    <a href="logout.jsp"><i class="fas fa-sign-out-alt"></i> 退出</a>
+    <a href='Logout?redirect=index.jsp'><i class="fas fa-sign-out-alt"></i> 退出</a>
 </nav>
 
 <!-- Hamburger Button for Mobile -->
@@ -269,7 +269,7 @@
                 }
             %>
         </span>
-    <a href="logout.jsp" class="logout-btn"><i class="fas fa-sign-out-alt"></i> 退出</a>
+    <a href='Logout?redirect=index.jsp' class="logout-btn"><i class="fas fa-sign-out-alt"></i> 退出</a>
 </div>
 
 <!-- Main Content Section -->
