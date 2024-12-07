@@ -316,7 +316,7 @@
       <button type="submit">排序</button>
     </form>
 
-    <form method="get" action="filterProduct.jsp">
+    <form id="filterForm">
       <label for="category">类别:</label>
       <select name="category" id="category">
         <option value="all">所有</option>
@@ -331,8 +331,9 @@
         <option value="51-100">51-100元</option>
       </select>
 
-      <button type="submit">筛选</button>
+      <button type="button" onclick="applyFilter()">筛选</button>
     </form>
+
 
     <form method="post" action="batchDeleteProduct">
       <button type="submit">批量删除</button>
@@ -466,6 +467,44 @@
   function closeModal() {
     var modal = document.getElementById('productModal');
     modal.style.display = 'none';
+  }
+
+  //商品筛选
+  function applyFilter() {
+    const category = document.getElementById('category').value;
+    const priceRange = document.getElementById('priceRange').value;
+
+    fetch(`filterProduct.jsp?category=${category}&priceRange=${priceRange}`)
+            .then(response => response.json())
+            .then(data => {
+              const productList = document.getElementById('productList');
+              productList.innerHTML = ''; // 清空原有的商品列表
+
+              data.products.forEach(product => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+          <td><input type="checkbox" name="selectedProducts" value="${product.productId}"></td>
+          <td>${product.productId}</td>
+          <td><a href="product_detail.jsp?id=${product.productId}">${product.productName}</a></td>
+          <td>${product.category}</td>
+          <td>${product.purchasePrice}</td>
+          <td>${product.sellingPrice}</td>
+          <td>${product.shelfStock}</td>
+          <td>${product.warehouseStock}</td>
+          <td>
+            <div class="action-btns">
+              <a href="javascript:void(0)" onclick="openModal('edit', ${product.productId})">编辑</a>
+              <a href="deleteProduct.jsp?id=${product.productId}">删除</a>
+            </div>
+          </td>
+        `;
+                productList.appendChild(row);
+              });
+
+              // 更新分页（如需要）
+              updatePagination(data.totalPages);
+            })
+            .catch(error => console.error('Error applying filter:', error));
   }
 
   // 全选操作
