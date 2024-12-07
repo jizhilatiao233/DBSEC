@@ -69,6 +69,17 @@ CREATE TABLE Staff (
     FOREIGN KEY (AdminID) REFERENCES Admin(AdminID)
 );
 
+-- 创建员工管理表
+CREATE TABLE StaffManagement (
+    ManagementID INT PRIMARY KEY AUTO_INCREMENT,  -- 管理信息编号
+    StaffID INT,                                  -- 被调度收银员编号 (外键)
+    AdminID INT,                                  -- 执行调度的管理员编号 (外键)
+    ManagementTimestamp DATETIME DEFAULT CURRENT_TIMESTAMP,  -- 调度日期
+    ManagementDescription TEXT,                   -- 调度信息描述
+    FOREIGN KEY (StaffID) REFERENCES Staff(StaffID),
+    FOREIGN KEY (AdminID) REFERENCES Admin(AdminID)
+);
+
 -- 创建销售表
 CREATE TABLE Sales (
     SalesID INT PRIMARY KEY AUTO_INCREMENT,      -- 销售单号
