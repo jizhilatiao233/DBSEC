@@ -335,13 +335,8 @@
             <input type="text" name="searchName" placeholder="姓名">
             <input type="text" name="searchPhone" placeholder="手机号">
             <input type="email" name="searchEmail" placeholder="邮箱">
-            <input type="date" name="joinDate" placeholder="加入日期">
-
-            <select name="status">
-                <option value="">客户状态</option>
-                <option value="active">已激活</option>
-                <option value="inactive">已停用</option>
-            </select>
+            <input type="text" name="searchAddress" placeholder="地址">
+//表里没有地址的 考虑改或者删
 
             <button type="submit">搜索</button>
         </form>
@@ -350,7 +345,9 @@
         <!-- 新增消费金额筛选 -->
         <input type="number" name="minSpent" placeholder="最低消费金额" step="0.01" min="0">
         <input type="number" name="maxSpent" placeholder="最高消费金额" step="0.01" min="0">
-
+         <!-- 新增加入日期筛选 -->
+        <input type="date" name="startDate" placeholder="开始日期">
+        <input type="date" name="endDate" placeholder="结束日期">
         <!-- 新增VIP等级筛选 -->
         <select name="vipLevel">
             <option value="">选择VIP等级</option>
@@ -358,6 +355,11 @@
             <option value="VIP 2">VIP 2</option>
             <option value="VIP 3">VIP 3</option>
             <option value="VIP 4">VIP 4</option>
+        </select>
+        <select name="status">
+            <option value="">客户状态</option>
+            <option value="active">已激活</option>
+            <option value="inactive">已停用</option>
         </select>
             <button type="submit">筛选</button>
         </form>
