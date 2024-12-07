@@ -239,11 +239,11 @@
 <!-- Side Navigation -->
 <nav id="sideNav">
     <a href="admin_dashboard.jsp" class="active"><i class="fas fa-tachometer-alt"></i> 仪表盘</a>
-    <a href="productManagement.jsp"><i class="fas fa-cogs"></i> 商品管理</a>
+    <a href="product_list.jsp"><i class="fas fa-cogs"></i> 商品管理</a>
     <a href="salesManagement.jsp"><i class="fas fa-shopping-cart"></i> 销售管理</a>
-    <a href="inventoryManagement.jsp"><i class="fas fa-warehouse"></i> 库存管理</a>
+    <a href="customerManagement.jsp"><i class="fas fa-warehouse"></i> 客户管理</a>
     <a href="orderManagement.jsp"><i class="fas fa-box"></i> 订单管理</a>
-    <a href="report.jsp"><i class="fas fa-chart-line"></i> 报表统计</a>
+    <a href="incomingInformation.jsp"><i class="fas fa-chart-line"></i> 进货信息</a>
     <a href="employeeManagement.jsp"><i class="fas fa-users"></i> 员工管理</a> <!-- 新增员工管理 -->
     <a href="logout.jsp"><i class="fas fa-sign-out-alt"></i> 退出</a>
 </nav>
@@ -253,7 +253,6 @@
     <i class="fas fa-bars"></i>
 </div>
 
-<!-- Right Top User Info -->
 <!-- Right Top User Info -->
 <div class="user-info">
         <span>
@@ -281,7 +280,7 @@
             <i class="fas fa-cogs"></i>
             <h3>商品管理</h3>
             <p>添加、编辑、删除商品，管理商品信息。</p>
-            <a href="productManagement.jsp">进入商品管理</a>
+            <a href="product_list.jsp">进入商品管理</a>
         </div>
 
         <!-- 销售管理 -->
@@ -292,12 +291,12 @@
             <a href="salesManagement.jsp">进入销售管理</a>
         </div>
 
-        <!-- 库存管理 -->
+        <!-- 客户管理 -->
         <div class="card">
             <i class="fas fa-warehouse"></i>
-            <h3>库存管理</h3>
-            <p>管理库存商品的入库、出库、查询等操作。</p>
-            <a href="inventoryManagement.jsp">进入库存管理</a>
+            <h3>客户管理</h3>
+            <p>管理客户等操作。</p>
+            <a href="customerManagement.jsp">进入客户管理</a>
         </div>
 
         <!-- 订单管理 -->
@@ -311,9 +310,9 @@
         <!-- 报表统计 -->
         <div class="card">
             <i class="fas fa-chart-line"></i>
-            <h3>报表统计</h3>
-            <p>查看各类报表、分析销售和库存数据。</p>
-            <a href="report.jsp">进入报表统计</a>
+            <h3>进货信息</h3>
+            <p>查看相关进货信息。</p>
+            <a href="incomingInformation.jsp">进入进货信息</a>
         </div>
 
         <!-- 员工管理 -->
