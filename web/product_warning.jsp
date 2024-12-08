@@ -162,7 +162,7 @@
 
 <!-- Side Navigation -->
 <nav>
-    <a href="admin_dashboard.jsp"><i class="fas fa-tachometer-alt"></i> 仪表盘</a>
+    <a href="admin_dashboard.jsp"><i class="fas fa-tachometer-alt"></i> 首页</a>
     <a href="product_list.jsp"><i class="fas fa-cogs"></i> 商品管理</a>
     <a href="salesManagement.jsp"><i class="fas fa-shopping-cart"></i> 销售管理</a>
     <a href="customerManagement.jsp"><i class="fas fa-warehouse"></i> 客户管理</a>

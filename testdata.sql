@@ -12,22 +12,22 @@ INSERT INTO Product (ProductName, Category, PurchasePrice, SellingPrice, ShelfSt
     ('Cheese', 'Dairy', 3.00, 4.50, 40, 80);
 
 -- Customer
-INSERT INTO Customer (CustomerName, ContactInfo, Username, Password, IsVIP, CreditRating) VALUES
-    ('Alice Johnson', 'alice@example.com', 'alicej', SHA2('alicepass', 256), TRUE, 5),
-    ('Bob Smith', 'bob@example.com', 'bobsmith', SHA2('bobpass', 256), TRUE, 4),
-    ('Catherine Lee', 'catherine@example.com', 'cathylee', SHA2('cathypass', 256), TRUE, 3),
-    ('David Brown', 'david@example.com', 'daveb', SHA2('davepass', 256), FALSE, 2),
-    ('Evelyn Clark', 'evelyn@example.com', 'eveclark', SHA2('evepass', 256), FALSE, 1),
-    ('Frank White', 'frank@example.com', 'frankw', SHA2('frankpass', 256), FALSE, 1),
-    ('Grace Adams', 'grace@example.com', NULL, NULL, FALSE, 2),
-    ('Henry Green', 'henry@example.com', 'henryg', SHA2('henrypass', 256), FALSE, 3),
-    ('Isabella King', 'isabella@example.com', 'isabellak', SHA2('isapass', 256), FALSE, 4),
-    ('Jack Wilson', 'jack@example.com', NULL, NULL, FALSE, 2);
+INSERT INTO Customer (CustomerName, ContactInfo, Username, Password, IsVIP, PurchaseSum) VALUES
+    ('Alice Johnson', 'alice@example.com', 'alicej', SHA2('alicepass', 256), TRUE, 31341),
+    ('Bob Smith', 'bob@example.com', 'bobsmith', SHA2('bobpass', 256), TRUE, 321),
+    ('Catherine Lee', 'catherine@example.com', 'cathylee', SHA2('cathypass', 256), TRUE, 4636.9),
+    ('David Brown', 'david@example.com', 'daveb', SHA2('davepass', 256), FALSE, 132),
+    ('Evelyn Clark', 'evelyn@example.com', 'eveclark', SHA2('evepass', 256), FALSE, 1.9),
+    ('Frank White', 'frank@example.com', 'frankw', SHA2('frankpass', 256), FALSE, 1333.56),
+    ('Grace Adams', 'grace@example.com', NULL, NULL, FALSE, 2341),
+    ('Henry Green', 'henry@example.com', 'henryg', SHA2('henrypass', 256), FALSE, 341),
+    ('Isabella King', 'isabella@example.com', 'isabellak', SHA2('isapass', 256), FALSE, 4235),
+    ('Jack Wilson', 'jack@example.com', NULL, NULL, FALSE, 1241);
 
 -- Admin
-INSERT INTO Admin (AdminName, ContactInfo, Username, Password, RoleDescription) VALUES
-    ('John Manager', 'john.manager@example.com', 'johnm', SHA2('adminpass', 256), 'Full access to product and sales management'),
-    ('Jane Supervisor', 'jane.supervisor@example.com', 'janes', SHA2('supervisor123', 256), 'Manage staff and inventory');
+INSERT INTO Admin (AdminName, ContactInfo, Username, Password, Position) VALUES
+    ('John Manager', 'john.manager@example.com', 'johnm', SHA2('adminpass', 256), '管理员'),
+    ('Jane Supervisor', 'jane.supervisor@example.com', 'janes', SHA2('supervisor123', 256), '管理员');
 
 -- Staff
 INSERT INTO Staff (StaffName, ContactInfo, Username, Password, AdminID) VALUES
@@ -37,7 +37,7 @@ INSERT INTO Staff (StaffName, ContactInfo, Username, Password, AdminID) VALUES
     ('Peter Operator', 'peter.operator@example.com', 'petero', SHA2('operator123', 256), 2);
 
 -- Sales
-INSERT INTO Sales (ProductID, CustomerID, StaffID, QuantitySold, SellingPrice, Profit) VALUES
+INSERT INTO Sales (OrderID,ProductID, StaffID, QuantitySold, SellingPrice, Profit) VALUES
     (1, 1, 1, 5, 1.50, 2.50),
     (2, 2, 1, 10, 0.80, 3.00),
     (3, 3, 2, 2, 3.00, 2.00),
@@ -48,19 +48,6 @@ INSERT INTO Sales (ProductID, CustomerID, StaffID, QuantitySold, SellingPrice, P
     (8, 8, 4, 4, 2.50, 3.00),
     (9, 9, 1, 6, 1.00, 3.00),
     (10, 10, 1, 5, 1.50, 3.00);
-
--- WarehouseInventory
-INSERT INTO WarehouseInventory (ProductID, Stock, LastRestockDate) VALUES
-    (1, 500, '2024-11-20'),
-    (2, 300, '2024-11-20'),
-    (3, 100, '2024-11-20'),
-    (4, 150, '2024-11-20'),
-    (5, 1000, '2024-11-20'),
-    (6, 400, '2024-11-20'),
-    (7, 50, '2024-11-20'),
-    (8, 100, '2024-11-20'),
-    (9, 300, '2024-11-20'),
-    (10, 80, '2024-11-20');
 
 -- Supplier
 INSERT INTO Supplier (SupplierName, ContactInfo) VALUES
