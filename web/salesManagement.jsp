@@ -282,7 +282,7 @@
     <!-- 查询功能表单 -->
     <div class="action-bar">
         <!-- 排序和搜索表单 -->
-        <form method="get" action="salesInformation.jsp">
+        <form method="get" action="salesManagement.jsp">
             <!-- 排序方式 -->
             <select name="sortBy">
                 <option value="">排序方式</option>
@@ -294,7 +294,7 @@
         </form>
         <br>
         <!-- 筛选 -->
-        <form method="get" action="salesInformation.jsp">
+        <form method="get" action="salesManagement.jsp">
             <input type="number" name="orderID" placeholder="订单ID">
             <input type="text" name="productName" placeholder="商品名称">
             <input type="text" name="employeeName" placeholder="收银员姓名">
