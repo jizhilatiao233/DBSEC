@@ -9,25 +9,64 @@ INSERT INTO Product (ProductName, Category, PurchasePrice, SellingPrice, ShelfSt
     ('Chicken', 'Meat', 5.00, 8.00, 20, 50),
     ('Pasta', 'Grocery', 1.50, 2.50, 60, 100),
     ('Rice', 'Grocery', 0.70, 1.00, 120, 300),
-    ('Cheese', 'Dairy', 3.00, 4.50, 40, 80);
+    ('Cheese', 'Dairy', 3.00, 4.50, 40, 80),
+    ('Orange', 'Fruit', 0.80, 1.20, 80, 200),
+    ('Pineapple', 'Fruit', 2.00, 3.00, 40, 100),
+    ('Peach', 'Fruit', 1.50, 2.00, 60, 150),
+    ('Pear', 'Fruit', 1.20, 1.80, 70, 200),
+    ('Grapes', 'Fruit', 1.00, 1.50, 90, 250),
+    ('Strawberry', 'Fruit', 2.50, 3.50, 30, 80),
+    ('Blueberry', 'Fruit', 2.00, 2.50, 50, 120),
+    ('Watermelon', 'Fruit', 3.00, 4.00, 20, 60),
+    ('Pumpkin', 'Vegetable', 1.50, 2.00, 40, 100),
+    ('Potato', 'Vegetable', 0.40, 0.60, 100, 300),
+    ('Tomato', 'Vegetable', 0.60, 0.80, 80, 200),
+    ('Cucumber', 'Vegetable', 0.50, 0.70, 90, 250),
+    ('Lettuce', 'Vegetable', 0.80, 1.00, 70, 150),
+    ('Beef', 'Meat', 6.00, 10.00, 30, 80),
+    ('Pork', 'Meat', 5.00, 8.00, 40, 100),
+    ('Lamb', 'Meat', 7.00, 12.00, 20, 60),
+    ('Salmon', 'Seafood', 8.00, 15.00, 20, 50),
+    ('Shrimp', 'Seafood', 10.00, 18.00, 10, 30),
+    ('Tuna', 'Seafood', 6.00, 12.00, 30, 80),
+    ('Cod', 'Seafood', 7.00, 14.00, 20, 60),
+    ('Sardine', 'Seafood', 5.00, 10.00, 40, 100),
+    ('Soy Sauce', 'Grocery', 1.00, 1.50, 100, 200),
+    ('Vinegar', 'Grocery', 0.80, 1.20, 120, 250),
+    ('Sugar', 'Grocery', 0.50, 0.80, 150, 300),
+    ('Flour', 'Grocery', 0.60, 1.00, 130, 280),
+    ('Salt', 'Grocery', 0.30, 0.50, 200, 400),
+    ('Pepper', 'Grocery', 0.40, 0.60, 180, 350),
+    ('Cinnamon', 'Grocery', 1.00, 1.50, 100, 200),
+    ('Nutmeg', 'Grocery', 1.20, 1.80, 80, 150),
+    ('Oregano', 'Grocery', 0.80, 1.20, 120, 250),
+    ('Basil', 'Grocery', 0.70, 1.00, 130, 280),
+    ('Thyme', 'Grocery', 0.60, 0.80, 140, 300),
+    ('Rosemary', 'Grocery', 0.50, 0.70, 150, 320),
+    ('Cumin', 'Grocery', 0.90, 1.20, 110, 230),
+    ('Curry Powder', 'Grocery', 1.00, 1.50, 100, 200),
+    ('Paprika', 'Grocery', 0.80, 1.20, 120, 250),
+    ('Chili Powder', 'Grocery', 0.70, 1.00, 130, 280),
+    ('Garlic Powder', 'Grocery', 0.60, 0.80, 140, 300),
+    ('Onion Powder', 'Grocery', 0.50, 0.70, 150, 320);
 
 -- Customer
-INSERT INTO Customer (CustomerName, ContactInfo, Username, Password, IsVIP, CreditRating) VALUES
-    ('Alice Johnson', 'alice@example.com', 'alicej', SHA2('alicepass', 256), TRUE, 5),
-    ('Bob Smith', 'bob@example.com', 'bobsmith', SHA2('bobpass', 256), TRUE, 4),
-    ('Catherine Lee', 'catherine@example.com', 'cathylee', SHA2('cathypass', 256), TRUE, 3),
-    ('David Brown', 'david@example.com', 'daveb', SHA2('davepass', 256), FALSE, 2),
-    ('Evelyn Clark', 'evelyn@example.com', 'eveclark', SHA2('evepass', 256), FALSE, 1),
-    ('Frank White', 'frank@example.com', 'frankw', SHA2('frankpass', 256), FALSE, 1),
-    ('Grace Adams', 'grace@example.com', NULL, NULL, FALSE, 2),
-    ('Henry Green', 'henry@example.com', 'henryg', SHA2('henrypass', 256), FALSE, 3),
-    ('Isabella King', 'isabella@example.com', 'isabellak', SHA2('isapass', 256), FALSE, 4),
-    ('Jack Wilson', 'jack@example.com', NULL, NULL, FALSE, 2);
+INSERT INTO Customer (CustomerName, ContactInfo, Username, Password, IsVIP, PurchaseSum) VALUES
+    ('Alice Johnson', 'alice@example.com', 'alicej', SHA2('alicepass', 256), TRUE, 31341),
+    ('Bob Smith', 'bob@example.com', 'bobsmith', SHA2('bobpass', 256), TRUE, 321),
+    ('Catherine Lee', 'catherine@example.com', 'cathylee', SHA2('cathypass', 256), TRUE, 4636.9),
+    ('David Brown', 'david@example.com', 'daveb', SHA2('davepass', 256), FALSE, 132),
+    ('Evelyn Clark', 'evelyn@example.com', 'eveclark', SHA2('evepass', 256), FALSE, 1.9),
+    ('Frank White', 'frank@example.com', 'frankw', SHA2('frankpass', 256), FALSE, 1333.56),
+    ('Grace Adams', 'grace@example.com', NULL, NULL, FALSE, 2341),
+    ('Henry Green', 'henry@example.com', 'henryg', SHA2('henrypass', 256), FALSE, 341),
+    ('Isabella King', 'isabella@example.com', 'isabellak', SHA2('isapass', 256), FALSE, 4235),
+    ('Jack Wilson', 'jack@example.com', NULL, NULL, FALSE, 1241);
 
 -- Admin
-INSERT INTO Admin (AdminName, ContactInfo, Username, Password, RoleDescription) VALUES
-    ('John Manager', 'john.manager@example.com', 'johnm', SHA2('adminpass', 256), 'Full access to product and sales management'),
-    ('Jane Supervisor', 'jane.supervisor@example.com', 'janes', SHA2('supervisor123', 256), 'Manage staff and inventory');
+INSERT INTO Admin (AdminName, ContactInfo, Username, Password, Position) VALUES
+    ('John Manager', 'john.manager@example.com', 'johnm', SHA2('adminpass', 256), '管理员'),
+    ('Jane Supervisor', 'jane.supervisor@example.com', 'janes', SHA2('supervisor123', 256), '管理员');
 
 -- Staff
 INSERT INTO Staff (StaffName, ContactInfo, Username, Password, AdminID) VALUES
@@ -36,31 +75,35 @@ INSERT INTO Staff (StaffName, ContactInfo, Username, Password, AdminID) VALUES
     ('Olivia Clerk', 'olivia.clerk@example.com', 'oliviac', SHA2('clerkpass', 256), 2),
     ('Peter Operator', 'peter.operator@example.com', 'petero', SHA2('operator123', 256), 2);
 
--- Sales
-INSERT INTO Sales (ProductID, CustomerID, StaffID, QuantitySold, SellingPrice, Profit) VALUES
-    (1, 1, 1, 5, 1.50, 2.50),
-    (2, 2, 1, 10, 0.80, 3.00),
-    (3, 3, 2, 2, 3.00, 2.00),
-    (4, 4, 2, 3, 1.80, 2.40),
-    (5, 5, 3, 12, 0.20, 1.20),
-    (6, 6, 3, 8, 0.50, 2.00),
-    (7, 7, 4, 1, 8.00, 3.00),
-    (8, 8, 4, 4, 2.50, 3.00),
-    (9, 9, 1, 6, 1.00, 3.00),
-    (10, 10, 1, 5, 1.50, 3.00);
+-- Orders
+INSERT INTO Orders (OrderID, CustomerID, StaffID, TotalAmount, ActualPayment) VALUES
+    (1, 1, 1, 15.00, 15.00),
+    (2, 2, 1, 16.00, 16.00),
+    (3, 3, 2, 15.00, 15.00),
+    (4, 4, 2, 14.40, 14.40),
+    (5, 5, 1, 6.00, 6.00),
+    (6, 6, 1, 7.50, 7.50),
+    (7, 7, 2, 160.00, 160.00),
+    (8, 8, 2, 6.00, 6.00),
+    (9, 9, 1, 7.20, 7.20),
+    (10, 10, 1, 2.00, 2.00);
 
--- WarehouseInventory
-INSERT INTO WarehouseInventory (ProductID, Stock, LastRestockDate) VALUES
-    (1, 500, '2024-11-20'),
-    (2, 300, '2024-11-20'),
-    (3, 100, '2024-11-20'),
-    (4, 150, '2024-11-20'),
-    (5, 1000, '2024-11-20'),
-    (6, 400, '2024-11-20'),
-    (7, 50, '2024-11-20'),
-    (8, 100, '2024-11-20'),
-    (9, 300, '2024-11-20'),
-    (10, 80, '2024-11-20');
+-- Sales
+INSERT INTO Sales (OrderID,ProductID, StaffID, QuantitySold, SellingPrice, Profit) VALUES
+    (1, 1, 1, 10, 1.50, 5.00),
+    (1, 2, 1, 20, 0.80, 8.00),
+    (2, 3, 1, 5, 3.00, 5.00),
+    (2, 4, 1, 8, 1.80, 5.60),
+    (3, 5, 2, 30, 0.20, 3.00),
+    (3, 6, 2, 15, 0.50, 3.75),
+    (4, 7, 2, 2, 8.00, 6.00),
+    (4, 8, 2, 6, 1.00, 3.60),
+    (5, 9, 1, 12, 0.50, 3.00),
+    (6, 10, 1, 4, 2.50, 2.00),
+    (7, 1, 2, 10, 1.50, 5.00),
+    (8, 2, 2, 20, 0.80, 8.00),
+    (9, 3, 1, 5, 3.00, 5.00),
+    (10, 4, 1, 8, 1.80, 5.60);
 
 -- Supplier
 INSERT INTO Supplier (SupplierName, ContactInfo) VALUES
@@ -82,3 +125,4 @@ INSERT INTO Purchase (ProductID, QuantityPurchased, PurchasePrice, AdminID, Supp
     (8, 60, 1.00, 2, 3),
     (9, 120, 0.60, 2, 2),
     (10, 40, 0.50, 2, 1);
+commit;

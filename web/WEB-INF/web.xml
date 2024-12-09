@@ -19,6 +19,16 @@
         <url-pattern>/product</url-pattern>
     </servlet-mapping>
 
+    <!-- ProductManage Servlet -->
+    <servlet>
+        <servlet-name>ProductManageServlet</servlet-name>
+        <servlet-class>org.example.ProductManageServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ProductManageServlet</servlet-name>
+        <url-pattern>/ProductManage</url-pattern>
+    </servlet-mapping>
+
     <!-- Purchase Servlet -->
     <servlet>
         <servlet-name>PurchaseServlet</servlet-name>
