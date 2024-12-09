@@ -46,7 +46,6 @@
             box-shadow: 4px 0 8px rgba(0, 0, 0, 0.1);
             transition: all 0.3s ease;
         }
-
         nav a {
             display: block;
             color: white;
@@ -57,19 +56,17 @@
             transition: background-color 0.3s ease;
             position: relative;
         }
-
         nav a:hover {
             background-color: #004d99;
             transform: scale(1.05);
         }
-
         nav a.active {
             background-color: #003366;
         }
 
         .container {
             margin-left: 270px;
-            padding: 30px;
+            padding: 30px 30px 80px;
             transition: margin-left 0.3s ease;
         }
 
@@ -85,13 +82,11 @@
             border-collapse: collapse;
             margin-top: 20px;
         }
-
         table th, table td {
             padding: 10px;
             border: 1px solid #ddd;
             text-align: center;
         }
-
         table th {
             background-color: #4d94ff;
             color: white;
@@ -102,7 +97,6 @@
             gap: 10px;
             justify-content: center;
         }
-
         .action-btns a {
             padding: 8px 16px;
             background-color: #4d94ff;
@@ -111,7 +105,6 @@
             border-radius: 6px;
             transition: background-color 0.3s;
         }
-
         .action-btns a:hover {
             background-color: #003366;
         }
@@ -137,7 +130,6 @@
             font-size: 16px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
-
         .user-info .logout-btn {
             background-color: #f44336;
             color: white;
@@ -148,7 +140,6 @@
             display: inline-block;
             cursor: pointer;
         }
-
         .user-info .logout-btn:hover {
             background-color: #d32f2f;
         }
@@ -160,7 +151,6 @@
             gap: 10px;
             align-items: center;
         }
-
         .action-bar input[type="text"], input[type="number"],.action-bar select, .action-bar input[type="date"] {
             padding: 8px;
             border: 1px solid #ccc;
@@ -169,7 +159,6 @@
             width: 140px;
             box-sizing: border-box;
         }
-
         .action-bar button {
             padding: 8px 12px;
             border: 1px solid #0066cc;
@@ -180,7 +169,6 @@
             transition: background-color 0.3s;
             max-width: 120px;
         }
-
         .action-bar button:hover {
             background-color: #005bb5;
         }
@@ -197,7 +185,6 @@
             align-items: center;
             z-index: 9999;
         }
-
         .modal-content {
             background-color: #fff;
             padding: 30px;
@@ -205,7 +192,6 @@
             width: 400px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
-
         .modal-content input, .modal-content select, .modal-content button {
             width: 100%;
             padding: 10px;
@@ -213,15 +199,37 @@
             border-radius: 6px;
             border: 1px solid #ddd;
         }
-
         .modal-content button {
             background-color: #4d94ff;
             color: white;
             cursor: pointer;
         }
-
         .modal-content button:hover {
             background-color: #003366;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .pagination a {
+            padding: 10px 15px;
+            margin: 0 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            text-decoration: none;
+            color: #333;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .pagination a:hover {
+            background-color: #4d94ff;
+            color: white;
+        }
+        .pagination a.active {
+            background-color: #0066cc;
+            color: white;
+            border-color: #0066cc;
         }
 
     </style>
@@ -234,13 +242,13 @@
 
 <nav>
     <a href="admin_dashboard.jsp" class="active"><i class="fas fa-tachometer-alt"></i> 首页</a>
-    <a href="product_list.jsp"><i class="fas fa-cogs"></i> 商品管理</a>
+    <a href="product_management.jsp"><i class="fas fa-cogs"></i> 商品管理</a>
     <a href="salesManagement.jsp"><i class="fas fa-shopping-cart"></i> 销售管理</a>
     <a href="customerManagement.jsp"><i class="fas fa-warehouse"></i> 客户管理</a>
     <a href="orderManagement.jsp"><i class="fas fa-box"></i> 订单管理</a>
     <a href="incomingInformation.jsp"><i class="fas fa-chart-line"></i> 进货信息</a>
-    <a href="employeeManagement.jsp"><i class="fas fa-users"></i> 员工管理</a>
-    <a href="logout.jsp"><i class="fas fa-sign-out-alt"></i> 退出</a>
+    <a href="staffManagement.jsp"><i class="fas fa-users"></i> 员工管理</a>
+    <a href="Logout?redirect=index.jsp"><i class="fas fa-sign-out-alt"></i> 退出</a>
 </nav>
 
 <div class="user-info">
@@ -255,8 +263,8 @@
             out.print("访客");
         }
     %>
-  </span>
-    <a href="logout.jsp" class="logout-btn"><i class="fas fa-sign-out-alt"></i> 退出</a>
+    </span>
+    <a href="Logout?redirect=index.jsp" class="logout-btn"><i class="fas fa-sign-out-alt"></i> 退出</a>
 </div>
 
 <%--<div class="container">--%>
@@ -275,7 +283,7 @@
 <%--        <button onclick="openModal('add')" class="action-btn">添加进货订单</button>--%>
 
 <%--    </div>--%>
-<%--    --%>
+
 <div class="container">
     <h2>销售管理</h2>
 
@@ -283,37 +291,40 @@
     <div class="action-bar">
         <!-- 排序和搜索表单 -->
         <form method="get" action="salesManagement.jsp">
-            <!-- 排序方式 -->
-            <select name="sortBy">
-                <option value="">排序方式</option>
-                <option value="productID">按商品排序</option>
-                <option value="orderID">按订单排序</option>
-                <option value="SalesDate">按日期排序</option>
+            <label for="sortBy">排序方式：</label>
+            <select name="sortBy" id="sortBy">
+                <option value="orderID">订单号</option>
+                <option value="productName">商品名称</option>
+                <option value="staffName">收银员姓名</option>
+                <option value="sellingPrice">商品单价</option>
+                <option value="quantitySold">商品数量</option>
+                <option value="actualPayment">实际支付</option>
+                <option value="profit">利润</option>
+                <option value="salesDate">销售日期</option>
             </select>
             <button type="submit">排序</button>
         </form>
         <br>
         <!-- 筛选 -->
         <form method="get" action="salesManagement.jsp">
-            <input type="number" name="orderID" placeholder="订单ID">
-            <input type="text" name="productName" placeholder="商品名称">
-            <input type="text" name="employeeName" placeholder="收银员姓名">
-            <input type="date" name="SalesDate" placeholder="销售日期">
-
+            <input type="number" name="orderID" id="orderID" placeholder="订单号">
+            <input type="text" name="productName" id="productName" placeholder="商品名称">
+            <input type="text" name="staffName" id="staffName" placeholder="收银员姓名">
+            <input type="date" name="salesDate" id="salesDate" placeholder="销售日期">
             <button type="submit">筛选</button>
         </form>
 
-        <div class="button-group">
-            <!-- 批量删除表单 -->
-            <form method="post" action="batchDeleteSales.jsp">
-                <button type="submit">批量删除</button>
-            </form>
+<%--        <div class="button-group">--%>
+<%--            <!-- 批量删除表单 -->--%>
+<%--            <form method="post" action="batchDeleteSales.jsp">--%>
+<%--                <button type="submit">批量删除</button>--%>
+<%--            </form>--%>
 
-            <!-- 导出 CSV 表单 -->
-            <form method="get" action="exportCSV.jsp">
-                <button type="submit">导出CSV</button>
-            </form>
-        </div>
+<%--            <!-- 导出 CSV 表单 -->--%>
+<%--            <form method="get" action="exportCSV.jsp">--%>
+<%--                <button type="submit">导出CSV</button>--%>
+<%--            </form>--%>
+<%--        </div>--%>
     </div>
 
     <table>
@@ -329,29 +340,134 @@
             <th>销售日期</th>
         </tr>
         </thead>
-        <tbody>
-        <!-- 动态加载进货数据 -->
-        <tr>
-            <td>1001</td>
-            <td>商品A</td>
-            <td>收银员A</td>
-            <td>100</td>
-            <td>5</td>
-            <td>400</td>
-            <td>300</td>
-            <td>2024-12-05</td>
-        </tr>
-        <!-- 更多进货数据 -->
+        <tbody id="salesTableBody">
+        <!-- 销售信息将在这里动态生成 -->
         </tbody>
     </table>
+    <div class="pagination" id="pagination">
+        <!-- 分页按钮将在这里动态生成 -->
+    </div>
 </div>
-
 
 <div class="footer">
     <p>&copy; 2024 超市管理系统 | 版权所有</p>
 </div>
 
 <script>
+    const itemsPerPage = 10; // 每页显示的数量
+    let currentPage = 1; // 当前页码
+
+    // 获取销售信息
+    function fetchSales({
+        page = currentPage, sortBy = '', sortOrder = '',
+        orderID = '', productName = '', staffName = '', salesDate = ''
+    }) {
+        currentPage = page;
+        const offset = (page - 1) * itemsPerPage;
+        const URLParams = {
+            page: page,
+            sortBy: sortBy,
+            sortOrder: sortOrder,
+            orderID: orderID,
+            productName: productName,
+            staffName: staffName,
+            salesDate: salesDate
+        };
+        updateUrlParams(URLParams);
+
+        fetch('SalesManage?action=getSales&offset=' + offset + '&limit=' + itemsPerPage
+            + '&sortBy=' + sortBy + '&sortOrder=' + sortOrder
+            + '&orderID=' + orderID + '&productName=' + productName + '&staffName=' + staffName + '&salesDate=' + salesDate)
+            .then(response => response.json())
+            .then(data => {
+                const salesTableBody = document.getElementById('salesTableBody');
+                salesTableBody.innerHTML = ''; // 清空表格
+
+                if (data.sales && data.sales.length > 0) {
+                    data.sales.forEach(sale => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = '<td>' + sale.orderID + '</td>'
+                            + '<td>' + sale.productName + '</td>'
+                            + '<td>' + sale.staffName + '</td>'
+                            + '<td>' + sale.sellingPrice + '</td>'
+                            + '<td>' + sale.quantitySold + '</td>'
+                            + '<td>' + sale.actualPayment + '</td>'
+                            + '<td>' + sale.profit + '</td>'
+                            + '<td>' + sale.salesDate + '</td>';
+                        salesTableBody.appendChild(row);
+                    });
+                } else {
+                    const row = document.createElement('tr');
+                    row.innerHTML = '<td colspan="8">没有找到销售信息</td>';
+                    salesTableBody.appendChild(row);
+                }
+
+                updatePagination(data.totalPages);
+            })
+            .catch(error => console.error('Error fetching sales:', error));
+    }
+
+    // 更新分页按钮
+    function updatePagination(totalPages) {
+        const pagination = document.getElementById('pagination');
+        pagination.innerHTML = '';  // 清空现有的分页按钮
+        const URLParams = getUrlParams(); // 获取当前 URL 参数
+        const currentPage = parseInt(URLParams.page);
+
+        for (let i = 1; i <= totalPages; i++) {
+            const pageBtn = document.createElement('a');
+            pageBtn.href = 'javascript:void(0)';
+            pageBtn.textContent = i;
+            if (i === currentPage) {
+                pageBtn.classList.add('active');
+            }
+            pageBtn.onclick = () => fetchSales({
+                page: i,
+                sortBy: URLParams.sortBy || '',
+                sortOrder: URLParams.sortOrder || '',
+                orderID: URLParams.orderID || '',
+                productName: URLParams.productName || '',
+                staffName: URLParams.staffName || '',
+                salesDate: URLParams.salesDate || ''
+            });
+            pagination.appendChild(pageBtn);
+        }
+    }
+
+    // 获取URL参数
+    function getUrlParams() {
+        const URLParams = {};
+        const queryString = window.location.search.substring(1);
+        const regex = /([^&=]+)=([^&]*)/g;
+        let m;
+        while (m = regex.exec(queryString)) {
+            URLParams[decodeURIComponent(m[1])] = decodeURIComponent(m[2]);
+        }
+        return URLParams;
+    }
+
+    // 更新URL参数
+    function updateUrlParams(URLParams) {
+        const queryString = Object.keys(URLParams)
+            .filter(key => URLParams[key] !== '' && URLParams[key] !== null && URLParams[key] !== undefined)
+            .map(key => encodeURIComponent(key) + '=' + encodeURIComponent(URLParams[key]))
+            .join('&');
+        history.pushState(null, '', '?' + queryString);
+    }
+
+    // 页面加载时：获取URL参数；获取销售信息并显示分页按钮
+    window.onload = function () {
+        const URLParams = getUrlParams();
+        fetchSales({
+            page: URLParams.page || 1,
+            sortBy: URLParams.sortBy || '',
+            sortOrder: URLParams.sortOrder || '',
+            orderID: URLParams.orderID || '',
+            productName: URLParams.productName || '',
+            staffName: URLParams.staffName || '',
+            salesDate: URLParams.salesDate || ''
+        });
+    };
 
 </script>
 

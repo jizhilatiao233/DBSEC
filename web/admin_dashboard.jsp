@@ -244,7 +244,7 @@
     <a href="customerManagement.jsp"><i class="fas fa-warehouse"></i> 客户管理</a>
     <a href="orderManagement.jsp"><i class="fas fa-box"></i> 订单管理</a>
     <a href="incomingInformation.jsp"><i class="fas fa-chart-line"></i> 进货信息</a>
-    <a href="employeeManagement.jsp"><i class="fas fa-users"></i> 员工管理</a> <!-- 新增员工管理 -->
+    <a href="staffManagement.jsp"><i class="fas fa-users"></i> 员工管理</a> <!-- 新增员工管理 -->
     <a href='Logout?redirect=index.jsp'><i class="fas fa-sign-out-alt"></i> 退出</a>
 </nav>
 
@@ -320,7 +320,7 @@
             <i class="fas fa-users"></i>
             <h3>员工管理</h3>
             <p>查看、添加、编辑和删除员工信息。</p>
-            <a href="employeeManagement.jsp">进入员工管理</a>
+            <a href="staffManagement.jsp">进入员工管理</a>
         </div>
     </div>
 </div>

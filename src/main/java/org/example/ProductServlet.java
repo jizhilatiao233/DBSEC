@@ -142,8 +142,8 @@ public class ProductServlet extends HttpServlet {
                         response.setContentType("application/json");
                         response.setCharacterEncoding("UTF-8");
                         PrintWriter out = response.getWriter();
-                        ProductResponse packagedResponse = new ProductResponse(products, totalPages);
-                        out.print(new Gson().toJson(packagedResponse));
+                        ProductResponse productResponse = new ProductResponse(products, totalPages);
+                        out.print(new Gson().toJson(productResponse));
                         out.flush();
                     }
                 }

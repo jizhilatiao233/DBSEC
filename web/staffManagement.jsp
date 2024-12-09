@@ -286,7 +286,7 @@
     <a href="customerManagement.jsp"><i class="fas fa-warehouse"></i> 客户管理</a>
     <a href="orderManagement.jsp"><i class="fas fa-box"></i> 订单管理</a>
     <a href="incomingInformation.jsp"><i class="fas fa-chart-line"></i> 进货信息</a>
-    <a href="employeeManagement.jsp"><i class="fas fa-users"></i> 员工管理</a>
+    <a href="staffManagement.jsp"><i class="fas fa-users"></i> 员工管理</a>
     <a href="logout.jsp"><i class="fas fa-sign-out-alt"></i> 退出</a>
 </nav>
 
@@ -309,7 +309,7 @@
 <div class="container">
     <h2>员工列表</h2>
     <div class="action-bar">
-        <form method="get" action="employeeManagement.jsp">
+        <form method="get" action="staffManagement.jsp">
             <select name="sortBy">
                 <option value="">排序方式</option>
                 <option value="name">按姓名排序</option>
@@ -323,7 +323,7 @@
             <button type="submit">搜索</button>
         </form>
         <br>
-        <form method="get" action="employeeManagement.jsp">
+        <form method="get" action="staffManagement.jsp">
             <!-- 加入日期筛选 -->
             <input type="date" name="startDate" placeholder="开始日期">
             <input type="date" name="endDate" placeholder="结束日期">
