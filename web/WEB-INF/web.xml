@@ -49,6 +49,27 @@
         <url-pattern>/OrderManage</url-pattern>
     </servlet-mapping>
 
+    <!-- PurchaseManage Servlet -->
+    <servlet>
+        <servlet-name>PurchaseManageServlet</servlet-name>
+        <servlet-class>org.example.PurchaseManageServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>PurchaseManageServlet</servlet-name>
+        <url-pattern>/PurchaseManage</url-pattern>
+    </servlet-mapping>
+
+    <!-- StaffManage Servlet -->
+    <servlet>
+        <servlet-name>StaffManageServlet</servlet-name>
+        <servlet-class>org.example.StaffManageServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>StaffManageServlet</servlet-name>
+        <url-pattern>/StaffManage</url-pattern>
+    </servlet-mapping>
+
+    <!-- DEPRECATED -->
     <!-- Purchase Servlet -->
     <servlet>
         <servlet-name>PurchaseServlet</servlet-name>
