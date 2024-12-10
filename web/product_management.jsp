@@ -540,7 +540,7 @@
                 .then(response => {
                     if (response.ok) {
                         alert('商品已成功下架！');
-                        fetchProducts();
+                        fetchProducts(1);
                         checkStockWarning();
                     } else {
                         return response.text().then(text => { throw new Error(text); });
@@ -702,6 +702,7 @@
     }
 
     // 导出CSV (DEPRECATED)
+    // TODO: 修改此函数
     function exportCSV() {
         const params = getUrlParams();
 

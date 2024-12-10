@@ -46,7 +46,6 @@
       box-shadow: 4px 0 8px rgba(0, 0, 0, 0.1);
       transition: all 0.3s ease;
     }
-
     nav a {
       display: block;
       color: white;
@@ -57,19 +56,17 @@
       transition: background-color 0.3s ease;
       position: relative;
     }
-
     nav a:hover {
       background-color: #004d99;
       transform: scale(1.05);
     }
-
     nav a.active {
       background-color: #003366;
     }
 
     .container {
       margin-left: 270px;
-      padding: 30px;
+      padding: 30px 30px 80px;
       transition: margin-left 0.3s ease;
     }
 
@@ -85,13 +82,11 @@
       border-collapse: collapse;
       margin-top: 20px;
     }
-
     table th, table td {
       padding: 10px;
       border: 1px solid #ddd;
       text-align: center;
     }
-
     table th {
       background-color: #4d94ff;
       color: white;
@@ -102,7 +97,6 @@
       gap: 10px;
       justify-content: center;
     }
-
     .action-btns a {
       padding: 8px 16px;
       background-color: #4d94ff;
@@ -111,7 +105,6 @@
       border-radius: 6px;
       transition: background-color 0.3s;
     }
-
     .action-btns a:hover {
       background-color: #003366;
     }
@@ -137,7 +130,6 @@
       font-size: 16px;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     }
-
     .user-info .logout-btn {
       background-color: #f44336;
       color: white;
@@ -148,7 +140,6 @@
       display: inline-block;
       cursor: pointer;
     }
-
     .user-info .logout-btn:hover {
       background-color: #d32f2f;
     }
@@ -160,7 +151,6 @@
       gap: 10px;
       align-items: center;
     }
-
     .action-bar input[type="text"], input[type="number"],.action-bar select, .action-bar input[type="date"] {
       padding: 8px;
       border: 1px solid #ccc;
@@ -169,7 +159,6 @@
       width: 140px;
       box-sizing: border-box;
     }
-
     .action-bar button {
       padding: 8px 12px;
       border: 1px solid #0066cc;
@@ -180,7 +169,6 @@
       transition: background-color 0.3s;
       max-width: 120px;
     }
-
     .action-bar button:hover {
       background-color: #005bb5;
     }
@@ -197,7 +185,6 @@
       align-items: center;
       z-index: 9999;
     }
-
     .modal-content {
       background-color: #fff;
       padding: 30px;
@@ -205,7 +192,6 @@
       width: 400px;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     }
-
     .modal-content input, .modal-content select, .modal-content button {
       width: 100%;
       padding: 10px;
@@ -213,15 +199,37 @@
       border-radius: 6px;
       border: 1px solid #ddd;
     }
-
     .modal-content button {
       background-color: #4d94ff;
       color: white;
       cursor: pointer;
     }
-
     .modal-content button:hover {
       background-color: #003366;
+    }
+
+    .pagination {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+    }
+    .pagination a {
+      padding: 10px 15px;
+      margin: 0 5px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      text-decoration: none;
+      color: #333;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    .pagination a:hover {
+      background-color: #4d94ff;
+      color: white;
+    }
+    .pagination a.active {
+      background-color: #0066cc;
+      color: white;
+      border-color: #0066cc;
     }
 
   </style>
@@ -233,14 +241,14 @@
 </header>
 
 <nav>
-  <a href="admin_dashboard.jsp" class="active"><i class="fas fa-tachometer-alt"></i> 首页</a>
-  <a href="product_list.jsp"><i class="fas fa-cogs"></i> 商品管理</a>
+  <a href="admin_dashboard.jsp"><i class="fas fa-tachometer-alt"></i> 首页</a>
+  <a href="product_management.jsp"><i class="fas fa-cogs"></i> 商品管理</a>
   <a href="salesManagement.jsp"><i class="fas fa-shopping-cart"></i> 销售管理</a>
   <a href="customerManagement.jsp"><i class="fas fa-warehouse"></i> 客户管理</a>
-  <a href="orderManagement.jsp"><i class="fas fa-box"></i> 订单管理</a>
+  <a href="orderManagement.jsp" class="active"><i class="fas fa-box"></i> 订单管理</a>
   <a href="incomingInformation.jsp"><i class="fas fa-chart-line"></i> 进货信息</a>
   <a href="staffManagement.jsp"><i class="fas fa-users"></i> 员工管理</a>
-  <a href="logout.jsp"><i class="fas fa-sign-out-alt"></i> 退出</a>
+  <a href="Logout?redirect=index.jsp"><i class="fas fa-sign-out-alt"></i> 退出</a>
 </nav>
 
 <div class="user-info">
@@ -256,7 +264,7 @@
       }
     %>
   </span>
-  <a href="logout.jsp" class="logout-btn"><i class="fas fa-sign-out-alt"></i> 退出</a>
+  <a href="Logout?redirect=index.jsp" class="logout-btn"><i class="fas fa-sign-out-alt"></i> 退出</a>
 </div>
 
 <div class="container">
@@ -266,14 +274,13 @@
   <div class="action-bar">
     <!-- 排序和搜索表单 -->
     <form method="get" action="orderManagement.jsp">
-      <!-- 排序方式 -->
-      <select name="sortBy">
+      <label for="sortBy">排序方式:</label>
+      <select name="sortBy" id="sortBy">
         <option value="">排序方式</option>
         <option value="orderDate">按订单日期排序</option>
         <option value="supplier">按实付金额排序</option>
       </select>
       <button type="submit">排序</button>
-
     </form>
     <br>
     <!-- 筛选 -->

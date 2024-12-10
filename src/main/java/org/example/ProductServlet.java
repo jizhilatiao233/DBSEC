@@ -263,13 +263,11 @@ public class ProductServlet extends HttpServlet {
                         System.out.println(String.join(",", row));
                     }
 
-                    response.setContentType("text/csv");
-                    response.setHeader("Content-Disposition", "attachment; filename=\"products.csv\"");
+                    response.setContentType("application/json");
+                    response.setCharacterEncoding("UTF-8");
                     PrintWriter out = response.getWriter();
-                    try (CSVWriter writer = new CSVWriter(out)) {
-                        writer.writeAll(csvData);
-                    }
-
+                    out.print(new Gson().toJson(csvData));
+                    out.flush();
                 } catch (SQLException e) {
                     throw new ServletException("Database error occurred", e);
                 }

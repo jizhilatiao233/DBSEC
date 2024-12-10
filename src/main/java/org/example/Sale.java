@@ -32,7 +32,6 @@ public class Sale {
     public int getOrderID() {
         return orderID;
     }
-
     public void setOrderID(int orderID) {
         this.orderID = orderID;
     }
@@ -40,7 +39,6 @@ public class Sale {
     public int getProductID() {
         return productID;
     }
-
     public void setProductID(int productID) {
         this.productID = productID;
     }
@@ -48,7 +46,6 @@ public class Sale {
     public String getProductName() {
         return productName;
     }
-
     public void setProductName(String productName) {
         this.productName = productName;
     }
@@ -56,7 +53,6 @@ public class Sale {
     public int getStaffID() {
         return staffID;
     }
-
     public void setStaffID(int staffID) {
         this.staffID = staffID;
     }
@@ -64,7 +60,6 @@ public class Sale {
     public String getStaffName() {
         return staffName;
     }
-
     public void setStaffName(String staffName) {
         this.staffName = staffName;
     }
@@ -72,7 +67,6 @@ public class Sale {
     public int getQuantitySold() {
         return quantitySold;
     }
-
     public void setQuantitySold(int quantitySold) {
         this.quantitySold = quantitySold;
     }
@@ -80,7 +74,6 @@ public class Sale {
     public BigDecimal getSellingPrice() {
         return sellingPrice;
     }
-
     public void setSellingPrice(BigDecimal sellingPrice) {
         this.sellingPrice = sellingPrice;
     }
@@ -88,7 +81,6 @@ public class Sale {
     public BigDecimal getActualPayment() {
         return actualPayment;
     }
-
     public void setActualPayment(BigDecimal actualPayment) {
         this.actualPayment = actualPayment;
     }
@@ -96,7 +88,6 @@ public class Sale {
     public BigDecimal getProfit() {
         return profit;
     }
-
     public void setProfit(BigDecimal profit) {
         this.profit = profit;
     }
@@ -104,7 +95,6 @@ public class Sale {
     public String getSalesDate() {
         return salesDate;
     }
-
     public void setSalesDate(String salesDate) {
         this.salesDate = salesDate;
     }
