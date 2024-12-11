@@ -304,7 +304,6 @@
                 <option value="staffName">收银员姓名</option>
                 <option value="sellingPrice">商品单价</option>
                 <option value="quantitySold">商品数量</option>
-                <option value="actualPayment">实际支付</option>
                 <option value="profit">利润</option>
                 <option value="salesDate">销售日期</option>
             </select>

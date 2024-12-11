@@ -335,7 +335,6 @@
         <form method="get" action="customerManagement.jsp">
             <select name="sortBy">
                 <option value="">排序方式</option>
-                <option value="email">按邮箱排序</option>
                 <option value="name">按姓名排序</option>
                 <option value="joinDate">按加入日期排序</option>
             </select>
@@ -357,10 +356,11 @@
         <!-- 新增VIP等级筛选 -->
         <select name="vipLevel">
             <option value="">选择VIP等级</option>
-            <option value="VIP 1">VIP 1</option>
-            <option value="VIP 2">VIP 2</option>
-            <option value="VIP 3">VIP 3</option>
-            <option value="VIP 4">VIP 4</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="4">5</option>
         </select>
             <button type="submit">筛选</button>
         </form>

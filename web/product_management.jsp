@@ -359,15 +359,6 @@
             <button type="submit">筛选</button>
         </form>
 
-<%--        <form method="post" action="batchDelete">--%>
-<%--            <button type="submit">批量删除</button>--%>
-<%--        </form>--%>
-
-        <!-- 导出CSV按钮 (DEPRECATED) -->
-<%--        <form id="exportCSVForm" action="javascript:void(0)">--%>
-<%--            <button type="submit" onclick="exportCSV()">导出CSV</button>--%>
-<%--        </form>--%>
-
         <!-- 添加商品按钮 -->
         <button onclick="openModal('add')">添加商品</button>
 

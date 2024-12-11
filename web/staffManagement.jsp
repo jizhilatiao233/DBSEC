@@ -302,7 +302,7 @@
             <button type="submit">排序</button>
 
             <input type="text" name="searchName" placeholder="姓名">
-            <input type="text" name="searchPhone" placeholder="手机号">
+            <input type="text" name="searchPhone" placeholder="联系方式">
 
             <button type="submit">搜索</button>
         </form>
@@ -344,7 +344,7 @@
         <tr>
             <th>员工ID</th>
             <th>姓名</th>
-            <th>手机号</th>
+            <th>联系方式</th>
             <th>加入日期</th>
             <th>职位</th>
             <th>操作</th>
@@ -383,7 +383,7 @@
             <input type="text" name="employeeName" id="employeeName" required>
 
             <!-- 联系方式 -->
-            <label for="employeePhone">手机号:</label>
+            <label for="employeePhone">联系方式:</label>
             <input type="text" name="employeePhone" id="employeePhone" required>
 
             <!-- 职位 -->

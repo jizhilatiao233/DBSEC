@@ -406,13 +406,6 @@
             <label for="productName">商品名称:</label>
             <select name="productName" id="productName" required>
                 <option value="">请选择商品</option>
-                <!-- 商品列表动态加载 -->
-<%--                <%--%>
-<%--                    List<Product> productList = ProductDAO.getAllProducts();--%>
-<%--                    for (Product product : productList) {--%>
-<%--                        out.print("<option value='" + product.getId() + "'>" + product.getName() + "</option>");--%>
-<%--                    }--%>
-<%--                %>--%>
             </select>
 
             <!-- 进货数量 -->
@@ -465,14 +458,6 @@
             <label for="productName">商品名称:</label>
             <select name="productName" id="productName" required>
                 <option value="">请选择商品</option>
-                <!-- 商品列表动态加载 -->
-<%--                <%--%>
-<%--                    // 从数据库或其他来源获取商品列表并填充--%>
-<%--                    List<Product> productList = ProductDAO.getAllProducts();--%>
-<%--                    for (Product product : productList) {--%>
-<%--                        out.print("<option value='" + product.getId() + "'>" + product.getName() + "</option>");--%>
-<%--                    }--%>
-<%--                %>--%>
             </select>
 
             <!-- 进货数量 -->

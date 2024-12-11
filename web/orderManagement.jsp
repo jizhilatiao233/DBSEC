@@ -342,7 +342,6 @@
       <th>订单号</th>
       <th>客户姓名</th>
       <th>收银员姓名</th>
-      <th>总金额</th>
       <th>实付金额</th>
       <th>订单日期</th>
       <th>操作</th>
@@ -354,7 +353,6 @@
       <td>101</td>
       <td>张三</td>
       <td>收银员A</td>
-      <td>100</td>
       <td>80</td>
       <td>2024-12-05</td>
       <td>
@@ -394,10 +392,6 @@
       <label for="customerName">客户名称:</label>
       <input type="text" name="customerName" id="customerName" readonly>
 
-      <!-- 折扣 -->
-      <label for="discount">折扣:</label>
-      <input type="number" name="discount" id="discount" required>
-
       <!-- 实付金额 -->
       <label for="ActualPayment">实付金额:</label>
       <input type="number" name="ActualPayment" id="ActualPayment" required>
@@ -426,8 +420,6 @@
         <th>商品名称</th>
         <th>商品单价</th>
         <th>商品数目</th>
-        <th>总金额</th>
-        <th>折扣</th>
         <th>实付金额</th>
       </tr>
       </thead>
@@ -438,8 +430,6 @@
         <td>10</td>
         <td>3</td>
         <td>30</td>
-        <td>0.8</td>
-        <td>24</td>
       </tr>
       <!-- 更多订单数据 -->
       </tbody>
