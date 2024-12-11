@@ -248,7 +248,6 @@
   <a href="orderManagement.jsp" class="active"><i class="fas fa-box"></i> 订单管理</a>
   <a href="incomingInformation.jsp"><i class="fas fa-chart-line"></i> 进货信息</a>
   <a href="staffManagement.jsp"><i class="fas fa-users"></i> 员工管理</a>
-  <a href="Logout?redirect=index.jsp"><i class="fas fa-sign-out-alt"></i> 退出</a>
 </nav>
 
 <div class="user-info">

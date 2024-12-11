@@ -280,14 +280,13 @@
 </header>
 
 <nav>
-    <a href="admin_dashboard.jsp" class="active"><i class="fas fa-tachometer-alt"></i> 首页</a>
-    <a href="product_list.jsp"><i class="fas fa-cogs"></i> 商品管理</a>
+    <a href="admin_dashboard.jsp" ><i class="fas fa-tachometer-alt"></i> 首页</a>
+    <a href="product_management"><i class="fas fa-cogs"></i> 商品管理</a>
     <a href="salesManagement.jsp"><i class="fas fa-shopping-cart"></i> 销售管理</a>
     <a href="customerManagement.jsp"><i class="fas fa-warehouse"></i> 客户管理</a>
     <a href="orderManagement.jsp"><i class="fas fa-box"></i> 订单管理</a>
     <a href="incomingInformation.jsp"><i class="fas fa-chart-line"></i> 进货信息</a>
-    <a href="staffManagement.jsp"><i class="fas fa-users"></i> 员工管理</a>
-    <a href="logout.jsp"><i class="fas fa-sign-out-alt"></i> 退出</a>
+    <a href="staffManagement.jsp" class="active"><i class="fas fa-users"></i> 员工管理</a>
 </nav>
 
 <div class="user-info">
@@ -303,7 +302,7 @@
         }
     %>
   </span>
-    <a href="logout.jsp" class="logout-btn"><i class="fas fa-sign-out-alt"></i> 退出</a>
+    <a href="Logout?redirect=index.jsp" class="logout-btn"><i class="fas fa-sign-out-alt"></i> 退出</a>
 </div>
 
 <div class="container">
@@ -358,7 +357,6 @@
     <table>
         <thead>
         <tr>
-            <th><input type="checkbox" id="selectAll"> 全选</th>
             <th>员工ID</th>
             <th>姓名</th>
             <th>手机号</th>
@@ -369,7 +367,6 @@
         </thead>
         <tbody id="employeeList">
         <tr>
-            <td><input type="checkbox" name="selectedEmployee" value="1"></td>
             <td>1001</td>
             <td>张三</td>
             <td>13800000000</td>

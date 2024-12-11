@@ -158,7 +158,7 @@
             display: inline-flex;
             align-items: center;
         }
-        .action-bar input[type="text"], .action-bar select {
+        .action-bar input[type="text"], input[type="number"],.action-bar select {
             padding: 8px;
             border: 1px solid #ccc;
             border-radius: 4px;
@@ -269,14 +269,13 @@
 
 <!-- Side Navigation -->
 <nav id="sideNav">
-    <a href="admin_dashboard.jsp"><i class="fas fa-tachometer-alt"></i> 仪表盘</a>
+    <a href="admin_dashboard.jsp"><i class="fas fa-tachometer-alt"></i> 首页</a>
     <a href="product_management.jsp" class="active"><i class="fas fa-cogs"></i> 商品管理</a>
     <a href="salesManagement.jsp"><i class="fas fa-shopping-cart"></i> 销售管理</a>
     <a href="customerManagement.jsp"><i class="fas fa-warehouse"></i> 客户管理</a>
     <a href="orderManagement.jsp"><i class="fas fa-box"></i> 订单管理</a>
     <a href="incomingInformation.jsp"><i class="fas fa-chart-line"></i> 进货信息</a>
     <a href="staffManagement.jsp"><i class="fas fa-users"></i> 员工管理</a>
-    <a href='Logout?redirect=index.jsp'><i class="fas fa-sign-out-alt"></i> 退出</a>
 </nav>
 <div class="user-info">
         <span>
@@ -328,10 +327,10 @@
                 <!-- 商品类别将在这里动态生成 -->
             </select>
 
-            <label for="minPrice">最低价格:</label>
-            <input type="number" name="minPrice" id="minPrice" placeholder="最低价格" min="0" step="0.01">
-            <label for="maxPrice">最高价格:</label>
-            <input type="number" name="maxPrice" id="maxPrice" placeholder="最高价格" min="0" step="0.01">
+            <label for="minPrice">最低售价:</label>
+            <input type="number" name="minPrice" id="minPrice" placeholder="最低售价" min="0" step="0.01">
+            <label for="maxPrice">最高售价:</label>
+            <input type="number" name="maxPrice" id="maxPrice" placeholder="最高售价" min="0" step="0.01">
 
             <button type="submit">筛选</button>
         </form>
@@ -354,7 +353,6 @@
     <table>
         <thead>
         <tr>
-            <th><input type="checkbox" id="selectAll"> 全选</th>
             <th>商品ID</th>
             <th>商品名称</th>
             <th>类别</th>
@@ -391,7 +389,7 @@
             <input type="text" name="productName" id="productName" required>
 
             <label for="category">类别:</label>
-            <input type="text" name="category" id="category" required>
+            <input type="text" name="category" id="category" >
 
             <label for="purchasePrice">进价:</label>
             <input type="number" name="purchasePrice" id="purchasePrice" min="0" step="0.01" required>
@@ -584,11 +582,6 @@
             .catch(error => console.error('Error checking stock warning:', error));
     }
 
-    // 全选操作
-    document.getElementById('selectAll').addEventListener('change', function () {
-        var checkboxes = document.querySelectorAll('input[name="selectedProducts"]');
-        checkboxes.forEach(checkbox => checkbox.checked = this.checked);
-    });
 
     // 获取商品列表
     const itemsPerPage = 10; // 每页显示的商品数量
@@ -628,7 +621,7 @@
                     data.products.forEach(product => {
                         const row = document.createElement('tr');
 
-                        row.innerHTML = '<td><input type="checkbox" name="selectedProducts" value="' + product.productId + '"></td>' +
+                        row.innerHTML =
                             '<td>' + product.productId + '</td>' +
                             '<td>' + product.productName + '</a></td>' +
                             '<td>' + product.category + '</td>' +

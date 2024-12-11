@@ -238,14 +238,13 @@
 
 <!-- Side Navigation -->
 <nav id="sideNav">
-    <a href="admin_dashboard.jsp" class="active"><i class="fas fa-tachometer-alt"></i> 仪表盘</a>
+    <a href="admin_dashboard.jsp" class="active"><i class="fas fa-tachometer-alt"></i> 首页</a>
     <a href="product_management.jsp"><i class="fas fa-cogs"></i> 商品管理</a>
     <a href="salesManagement.jsp"><i class="fas fa-shopping-cart"></i> 销售管理</a>
     <a href="customerManagement.jsp"><i class="fas fa-warehouse"></i> 客户管理</a>
     <a href="orderManagement.jsp"><i class="fas fa-box"></i> 订单管理</a>
     <a href="incomingInformation.jsp"><i class="fas fa-chart-line"></i> 进货信息</a>
     <a href="staffManagement.jsp"><i class="fas fa-users"></i> 员工管理</a> <!-- 新增员工管理 -->
-    <a href='Logout?redirect=index.jsp'><i class="fas fa-sign-out-alt"></i> 退出</a>
 </nav>
 
 <!-- Hamburger Button for Mobile -->
