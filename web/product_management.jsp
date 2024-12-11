@@ -109,6 +109,28 @@
         .action-btns a:hover {
             background-color: #003366;
         }
+        .action-btns e {
+            padding: 8px 16px;
+            background-color: #7bd168;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: background-color 0.3s;
+        }
+        .action-btns e:hover {
+            background-color: #5a9a4b;
+        }
+        .action-btns c {
+            padding: 8px 16px;
+            background-color: #f16969;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: background-color 0.3s;
+        }
+        .action-btns c:hover {
+            background-color: #ef444b;
+        }
 
         .footer {
             background-color: #0066cc;
@@ -275,6 +297,11 @@
             text-decoration: underline;
         }
 
+        input[type="number"] {
+            width: 100px; /* 设置输入框的宽度为100px */
+        }
+
+
     </style>
 </head>
 <body>
@@ -358,10 +385,9 @@
 
             <button type="submit">筛选</button>
         </form>
-
-        <!-- 添加商品按钮 -->
-        <button onclick="openModal('add')">添加商品</button>
-
+        <div class="button-group">
+            <button onclick="openModal('add')">添加商品</button>
+        </div>
     </div>
 
     <!-- 商品列表展示 -->
@@ -646,8 +672,8 @@
                             '<td>' + product.warehouseStock + '</td>' +
                             '<td>' +
                             '<div class="action-btns">' +
-                                '<a href="javascript:void(0)" onclick="openModal(\'edit\', ' + product.productId + ')">编辑</a>' +
-                                '<a href="javascript:void(0)" onclick="offShelf(' + product.productId + ')">下架</a>' +
+                                '<e href="javascript:void(0)" onclick="openModal(\'edit\', ' + product.productId + ')">编辑</e>' +
+                                '<c href="javascript:void(0)" onclick="offShelf(' + product.productId + ')">下架</>' +
                             '</div>' +
                             '</td>';
 

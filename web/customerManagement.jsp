@@ -99,6 +99,12 @@
             justify-content: center;
         }
 
+        /* 操作按钮 */
+        .action-btns {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
         .action-btns a {
             padding: 8px 16px;
             background-color: #4d94ff;
@@ -107,9 +113,30 @@
             border-radius: 6px;
             transition: background-color 0.3s;
         }
-
         .action-btns a:hover {
             background-color: #003366;
+        }
+        .action-btns e {
+            padding: 8px 16px;
+            background-color: #7bd168;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: background-color 0.3s;
+        }
+        .action-btns e:hover {
+            background-color: #5a9a4b;
+        }
+        .action-btns c {
+            padding: 8px 16px;
+            background-color: #f16969;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: background-color 0.3s;
+        }
+        .action-btns c:hover {
+            background-color: #ef444b;
         }
 
         .footer {
@@ -287,6 +314,25 @@
         .modal-content button:hover {
             background-color: #003366;
         }
+
+        select[name="vipLevel"] {
+            margin-right: 0;
+        }
+
+        button[type="submit"] {
+            margin-left: 5px;
+        }
+
+        /* 按钮组之间的间距 */
+        .button-group {
+            display: flex;
+            gap: 10px;  /* 使按钮之间的距离更小 */
+        }
+
+        .button-group button {
+            margin: 0;  /* 清除默认的按钮间距 */
+        }
+
     </style>
 </head>
 <body>
@@ -366,9 +412,6 @@
         </form>
 
         <div class="button-group">
-            <form method="post" action="batchDeleteCustomer">
-                <button type="submit">批量删除</button>
-            </form>
             <button onclick="openModal('add')">添加客户</button>
             <form method="get" action="exportCSV.jsp">
                 <button type="submit">导出CSV</button>
@@ -402,8 +445,8 @@
             <td>VIP 1</td> <!-- 示例VIP等级 -->
             <td>
                 <div class="action-btns">
-                    <a onclick="openModal('edit', 1001)">编辑</a>
-                    <a onclick="deleteCustomer(1001)">删除</a>
+                    <e onclick="openModal('edit', 1001)">编辑</e>
+                    <c onclick="deleteCustomer(1001)">删除</c>
                 </div>
             </td>
         </tr>

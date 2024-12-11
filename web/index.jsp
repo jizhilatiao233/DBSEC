@@ -116,11 +116,11 @@
 <body>
 
 <div class="login-container">
-    <h1>Welcome to Shop Management</h1>
-    <p>Choose your role to proceed:</p>
+    <h1>欢迎使用超市管理系统</h1>
+    <p>选择身份</p>
     <div class="button-group">
-        <a href="login_staff.jsp">Staff</a>
-        <a href="login_customer.jsp">Customer</a>
+        <a href="login_staff.jsp">员工</a>
+        <a href="login_customer.jsp">客户</a>
     </div>
 </div>
 

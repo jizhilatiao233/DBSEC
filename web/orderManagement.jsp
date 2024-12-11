@@ -108,6 +108,29 @@
     .action-btns a:hover {
       background-color: #003366;
     }
+    .action-btns e {
+      padding: 8px 16px;
+      background-color: #7bd168;
+      color: white;
+      text-decoration: none;
+      border-radius: 6px;
+      transition: background-color 0.3s;
+    }
+    .action-btns e:hover {
+      background-color: #5a9a4b;
+    }
+    .action-btns c {
+      padding: 8px 16px;
+      background-color: #f16969;
+      color: white;
+      text-decoration: none;
+      border-radius: 6px;
+      transition: background-color 0.3s;
+    }
+    .action-btns c:hover {
+      background-color: #ef444b;
+    }
+
 
     .footer {
       background-color: #0066cc;
@@ -315,16 +338,11 @@
       <input type="date" name="orderDate" placeholder="选择日期">
       <button type="submit">筛选</button>
 
-      <label for="totalcost">消费金额:</label>
+      <label for="totalcost" style="margin-left: 10px;">消费金额:</label>
       <input type="text" name="totalcost" id="totalcost" placeholder="消费金额" readonly>
     </form>
 
     <div class="button-group">
-      <!-- 批量删除表单 -->
-      <form method="post" action="batchDeleteOrders.jsp">
-        <button type="submit">批量删除</button>
-      </form>
-
       <!-- 添加订单按钮 -->
       <button onclick="openModal('add')">添加订单</button>
 
@@ -357,8 +375,8 @@
       <td>2024-12-05</td>
       <td>
         <div class="action-btns">
-          <a href="javascript:void(0)" onclick="openModal('detail', 1001)">详情</a>
-          <a href="deleteOrder.jsp?id=101" onclick="return confirm('确定要删除该订单吗？')">删除</a>
+          <e href="javascript:void(0)" onclick="openModal('detail', 1001)">详情</e>
+          <c href="deleteOrder.jsp?id=101" onclick="return confirm('确定要删除该订单吗？')">删除</c>
         </div>
       </td>
     </tr>

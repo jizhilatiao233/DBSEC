@@ -108,6 +108,28 @@
         .action-btns a:hover {
             background-color: #003366;
         }
+        .action-btns e {
+            padding: 8px 16px;
+            background-color: #7bd168;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: background-color 0.3s;
+        }
+        .action-btns e:hover {
+            background-color: #5a9a4b;
+        }
+        .action-btns c {
+            padding: 8px 16px;
+            background-color: #f16969;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: background-color 0.3s;
+        }
+        .action-btns c:hover {
+            background-color: #ef444b;
+        }
 
         .footer {
             background-color: #0066cc;
@@ -322,11 +344,6 @@
         </form>
 
         <div class="button-group">
-            <!-- 批量删除表单 -->
-            <form method="post" action="batchDeleteEmployee.jsp">
-                <button type="submit">批量删除</button>
-            </form>
-
             <!-- 添加员工按钮 -->
             <button onclick="openModal('add')">添加员工</button>
 
@@ -359,8 +376,8 @@
             <td>收银员</td>
             <td>
                 <div class="action-btns">
-                    <a href="javascript:void(0)" onclick="openModal('detail', 1001)">详情</a>
-                    <a href="deleteStaff.jsp?id=1001" onclick="return confirm('确定要删除该员工吗？')">删除</a>
+                    <e href="javascript:void(0)" onclick="openModal('detail', 1001)">详情</e>
+                    <c href="deleteStaff.jsp?id=1001" onclick="return confirm('确定要删除该员工吗？')">删除</c>
                 </div>
             </td>
         </tr>

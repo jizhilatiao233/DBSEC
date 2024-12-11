@@ -318,7 +318,7 @@
             <input type="date" name="salesDate" id="salesDate" placeholder="销售日期">
             <button type="submit">筛选</button>
 
-            <label for="totalAmount">总销售额:</label>
+            <label for="totalAmount" style="margin-left: 10px;">总销售额:</label>
             <input type="text" name="totalAmount" id="totalAmount" placeholder="总销售额" readonly>
         </form>
 
