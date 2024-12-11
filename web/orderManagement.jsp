@@ -119,8 +119,9 @@
       width: 100%;
     }
 
+    /* Right Top User Identity Section */
     .user-info {
-      position: absolute;
+      position: absolute ;
       top: 20px;
       right: 20px;
       background-color: #0066cc;
@@ -130,6 +131,22 @@
       font-size: 16px;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     }
+
+    .user-info .info-btn {
+      background-color: #4489e3;
+      color: white;
+      padding: 5px 10px;
+      border-radius: 4px;
+      text-decoration: none;
+      font-size: 14px;
+      display: inline-block;
+      cursor: pointer;
+    }
+
+    .user-info .info-btn:hover {
+      background-color: #2475ef;
+    }
+
     .user-info .logout-btn {
       background-color: #f44336;
       color: white;
@@ -140,6 +157,7 @@
       display: inline-block;
       cursor: pointer;
     }
+
     .user-info .logout-btn:hover {
       background-color: #d32f2f;
     }
@@ -250,20 +268,28 @@
   <a href="staffManagement.jsp"><i class="fas fa-users"></i> 员工管理</a>
 </nav>
 
+<!-- Right Top User Info -->
 <div class="user-info">
-  <span>
-    <i class="fas fa-user"></i>
-    <%
-      String userName = (String) session.getAttribute("username");
-      String role = (String) session.getAttribute("role");
-      if (userName != null) {
-        out.print(userName + " (" + role + ")");
-      } else {
-        out.print("访客");
-      }
-    %>
-  </span>
-  <a href="Logout?redirect=index.jsp" class="logout-btn"><i class="fas fa-sign-out-alt"></i> 退出</a>
+    <span>
+        <a href='userInformation.jsp' id="userInfoBtn" class="info-btn">
+        <i class="fas fa-user"></i>
+        <%
+          // 从 session 获取当前用户的信息
+          String userName = (String) session.getAttribute("username");
+          String role = (String) session.getAttribute("role");
+          if (userName != null) {
+        %>
+            <span><%= userName %> (<%= role %>)</span>
+        <%
+        } else {
+        %>
+            <span>访客</span>
+        <%
+          }
+        %>
+        </a>
+    </span>
+  <a href='Logout?redirect=index.jsp' class="logout-btn"><i class="fas fa-sign-out-alt"></i> 退出</a>
 </div>
 
 <div class="container">
@@ -288,6 +314,9 @@
       <input type="text" name="employeeName" placeholder="选择收银员">
       <input type="date" name="orderDate" placeholder="选择日期">
       <button type="submit">筛选</button>
+
+      <label for="totalcost">消费金额:</label>
+      <input type="text" name="totalcost" id="totalcost" placeholder="消费金额" readonly>
     </form>
 
     <div class="button-group">
@@ -479,6 +508,23 @@
     document.getElementById('detailModal').style.display = 'none';
     document.getElementById('addModal').style.display = 'none';
   }
+
+  // 监听筛选按钮点击事件
+  document.querySelector("form").onsubmit = function(event) {
+    event.preventDefault(); // 防止表单默认提交
+
+    // 假设这些是从筛选条件得到的商品价格
+    let prices = [100, 200, 50];  // 这里你可以通过实际的筛选结果动态生成
+
+    // 计算总金额
+    let totalcost = prices.reduce((sum, price) => sum + price, 0);
+
+    // 将计算出的总金额填充到输入框中
+    document.getElementById("totalcost").value = totalcost;
+
+    // 提交表单
+    event.target.submit();
+  };
 
 
 </script>

@@ -158,7 +158,7 @@
             color: white;
             text-align: center;
             padding: 10px;
-            position: fixed;
+            position: sticky;
             bottom: 0;
             width: 100%;
         }
@@ -185,6 +185,10 @@
             font-size: 14px;
             display: inline-block;
             cursor: pointer;
+        }
+
+        .user-info .info-btn:hover {
+            background-color: #2475ef;
         }
 
         .user-info .logout-btn {
@@ -305,7 +309,7 @@
 <!-- Right Top User Info -->
 <div class="user-info">
     <span>
-        <a href="javascript:void(0);" id="userInfoBtn" class="info-btn">
+        <a href='userInformation.jsp' id="userInfoBtn" class="info-btn">
         <i class="fas fa-user"></i>
         <%
             // 从 session 获取当前用户的信息
@@ -325,22 +329,6 @@
     </span>
     <a href='Logout?redirect=index.jsp' class="logout-btn"><i class="fas fa-sign-out-alt"></i> 退出</a>
 </div>
-
-<!-- 模态框 -->
-<div id="userModal" class="modal">
-    <div class="modal-content">
-        <span class="close-btn">&times;</span>
-        <h2>账户信息</h2>
-        <form action="UpdateUserInfo" method="POST">
-            <label for="username">用户名:</label>
-            <input type="text" id="username" name="username" value="<%= userName != null ? userName : "" %>" required>
-            <label for="role">角色:</label>
-            <input type="text" id="role" name="role" value="<%= role != null ? role : "" %>" required>
-            <button type="submit" class="btn">保存修改</button>
-        </form>
-    </div>
-</div>
-
 
 <!-- Main Content Section -->
 <div class="container">
@@ -407,26 +395,6 @@
     function toggleNav() {
         var sideNav = document.getElementById('sideNav');
         sideNav.classList.toggle('open');
-    }
-    // 获取模态框
-    var modal = document.getElementById("userModal");
-    // 获取按钮
-    var btn = document.getElementById("userInfoBtn");
-    // 获取关闭按钮
-    var span = document.getElementsByClassName("close-btn")[0];
-    // 当点击按钮时，打开模态框
-    btn.onclick = function() {
-        modal.style.display = "block";
-    }
-    // 当点击关闭按钮时，关闭模态框
-    span.onclick = function() {
-        modal.style.display = "none";
-    }
-    // 当用户点击模态框外部时，关闭模态框
-    window.onclick = function(event) {
-        if (event.target == modal) {
-            modal.style.display = "none";
-        }
     }
 
 </script>

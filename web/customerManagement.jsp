@@ -122,8 +122,9 @@
             width: 100%;
         }
 
+        /* Right Top User Identity Section */
         .user-info {
-            position: absolute;
+            position: absolute ;
             top: 20px;
             right: 20px;
             background-color: #0066cc;
@@ -132,6 +133,21 @@
             border-radius: 30px;
             font-size: 16px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .user-info .info-btn {
+            background-color: #4489e3;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 14px;
+            display: inline-block;
+            cursor: pointer;
+        }
+
+        .user-info .info-btn:hover {
+            background-color: #2475ef;
         }
 
         .user-info .logout-btn {
@@ -148,20 +164,6 @@
         .user-info .logout-btn:hover {
             background-color: #d32f2f;
         }
-
-        /* 调整搜索框和批量删除框宽度一致 */
-        /* 调整 action-bar 为 flex 布局，确保所有按钮和搜索框在一排 */
-        /*.action-bar {*/
-        /*    display: flex;*/
-        /*    flex-direction: column;  !* 将布局方向设置为列方向，确保元素在垂直方向排列 *!*/
-        /*    justify-content: flex-start;  !* 垂直方向上左对齐 *!*/
-        /*    align-items: flex-start;  !* 垂直方向上左对齐 *!*/
-        /*    gap: 10px;  !* 各个输入框和按钮之间的间距 *!*/
-        /*    margin-bottom: 20px;*/
-        /*}*/
-
-        /* 修改后的 action-bar 样式 */
-
 
         /* 新增的按钮组容器，确保按钮在同一行显示 */
         .button-group {
@@ -303,20 +305,28 @@
     <a href="staffManagement.jsp"><i class="fas fa-users"></i> 员工管理</a>
 </nav>
 
+<!-- Right Top User Info -->
 <div class="user-info">
-  <span>
-    <i class="fas fa-user"></i>
-    <%
-        String userName = (String) session.getAttribute("username");
-        String role = (String) session.getAttribute("role");
-        if (userName != null) {
-            out.print(userName + " (" + role + ")");
+    <span>
+        <a href='userInformation.jsp' id="userInfoBtn" class="info-btn">
+        <i class="fas fa-user"></i>
+        <%
+            // 从 session 获取当前用户的信息
+            String userName = (String) session.getAttribute("username");
+            String role = (String) session.getAttribute("role");
+            if (userName != null) {
+        %>
+            <span><%= userName %> (<%= role %>)</span>
+        <%
         } else {
-            out.print("访客");
-        }
-    %>
-  </span>
-    <a href="Logout?redirect=index.jsp" class="logout-btn"><i class="fas fa-sign-out-alt"></i> 退出</a>
+        %>
+            <span>访客</span>
+        <%
+            }
+        %>
+        </a>
+    </span>
+    <a href='Logout?redirect=index.jsp' class="logout-btn"><i class="fas fa-sign-out-alt"></i> 退出</a>
 </div>
 
 <div class="container">
@@ -332,10 +342,7 @@
             <button type="submit">排序</button>
 
             <input type="text" name="searchName" placeholder="姓名">
-            <input type="text" name="searchPhone" placeholder="手机号">
-            <input type="email" name="searchEmail" placeholder="邮箱">
-            <input type="text" name="searchAddress" placeholder="地址">
-//表里没有地址的 考虑改或者删
+            <input type="email" name="searchEmail" placeholder="联系方式">
 
             <button type="submit">搜索</button>
         </form>
@@ -354,11 +361,6 @@
             <option value="VIP 2">VIP 2</option>
             <option value="VIP 3">VIP 3</option>
             <option value="VIP 4">VIP 4</option>
-        </select>
-        <select name="status">
-            <option value="">客户状态</option>
-            <option value="active">已激活</option>
-            <option value="inactive">已停用</option>
         </select>
             <button type="submit">筛选</button>
         </form>
@@ -381,11 +383,8 @@
         <tr>
             <th>客户ID</th>
             <th>姓名</th>
-            <th>手机号</th>
-            <th>邮箱</th>
-            <th>地址</th>
+            <th>联系方式</th>
             <th>加入日期</th>
-            <th>状态</th>
             <th>消费总金额</th> <!-- 新增列 -->
             <th>VIP等级</th> <!-- 新增列 -->
             <th>操作</th>
@@ -398,10 +397,7 @@
             <td>1001</td>
             <td>张三</td>
             <td>13800000000</td>
-            <td>zhangsan@example.com</td>
-            <td>北京市朝阳区</td>
             <td>2022-01-01</td>
-            <td>已激活</td>
             <td>￥5000</td> <!-- 示例消费总金额 -->
             <td>VIP 1</td> <!-- 示例VIP等级 -->
             <td>

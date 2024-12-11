@@ -51,17 +51,17 @@ INSERT INTO Product (ProductName, Category, PurchasePrice, SellingPrice, ShelfSt
     ('Onion Powder', 'Grocery', 0.50, 0.70, 150, 320);
 
 -- Customer
-INSERT INTO Customer (CustomerName, ContactInfo, Username, Password, IsVIP, PurchaseSum) VALUES
-    ('Alice Johnson', 'alice@example.com', 'alicej', SHA2('alicepass', 256), TRUE, 31341),
-    ('Bob Smith', 'bob@example.com', 'bobsmith', SHA2('bobpass', 256), TRUE, 321),
-    ('Catherine Lee', 'catherine@example.com', 'cathylee', SHA2('cathypass', 256), TRUE, 4636.9),
-    ('David Brown', 'david@example.com', 'daveb', SHA2('davepass', 256), FALSE, 132),
-    ('Evelyn Clark', 'evelyn@example.com', 'eveclark', SHA2('evepass', 256), FALSE, 1.9),
-    ('Frank White', 'frank@example.com', 'frankw', SHA2('frankpass', 256), FALSE, 1333.56),
-    ('Grace Adams', 'grace@example.com', NULL, NULL, FALSE, 2341),
-    ('Henry Green', 'henry@example.com', 'henryg', SHA2('henrypass', 256), FALSE, 341),
-    ('Isabella King', 'isabella@example.com', 'isabellak', SHA2('isapass', 256), FALSE, 4235),
-    ('Jack Wilson', 'jack@example.com', NULL, NULL, FALSE, 1241);
+INSERT INTO Customer (CustomerName, ContactInfo, Username, Password, VIPLevel, PurchaseSum) VALUES
+    ('Alice Johnson', 'alice@example.com', 'alicej', SHA2('alicepass', 256), 1, 31341),
+    ('Bob Smith', 'bob@example.com', 'bobsmith', SHA2('bobpass', 256), 2, 321),
+    ('Catherine Lee', 'catherine@example.com', 'cathylee', SHA2('cathypass', 256), 3, 4636.9),
+    ('David Brown', 'david@example.com', 'daveb', SHA2('davepass', 256), 4, 132),
+    ('Evelyn Clark', 'evelyn@example.com', 'eveclark', SHA2('evepass', 256), 5, 1.9),
+    ('Frank White', 'frank@example.com', 'frankw', SHA2('frankpass', 256), 4, 1333.56),
+    ('Grace Adams', 'grace@example.com', NULL, NULL, 3, 2341),
+    ('Henry Green', 'henry@example.com', 'henryg', SHA2('henrypass', 256), 3, 341),
+    ('Isabella King', 'isabella@example.com', 'isabellak', SHA2('isapass', 256), 2, 4235),
+    ('Jack Wilson', 'jack@example.com', NULL, NULL, 1, 1241);
 
 -- Admin
 INSERT INTO Admin (AdminName, ContactInfo, Username, Password, Position) VALUES

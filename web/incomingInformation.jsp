@@ -126,8 +126,9 @@
             width: 100%;
         }
 
+        /* Right Top User Identity Section */
         .user-info {
-            position: absolute;
+            position: absolute ;
             top: 20px;
             right: 20px;
             background-color: #0066cc;
@@ -136,6 +137,21 @@
             border-radius: 30px;
             font-size: 16px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .user-info .info-btn {
+            background-color: #4489e3;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 14px;
+            display: inline-block;
+            cursor: pointer;
+        }
+
+        .user-info .info-btn:hover {
+            background-color: #2475ef;
         }
 
         .user-info .logout-btn {
@@ -242,39 +258,29 @@
     <a href="staffManagement.jsp"><i class="fas fa-users"></i> 员工管理</a>
 </nav>
 
+<!-- Right Top User Info -->
 <div class="user-info">
-  <span>
-    <i class="fas fa-user"></i>
-    <%
-        String userName = (String) session.getAttribute("username");
-        String role = (String) session.getAttribute("role");
-        if (userName != null) {
-            out.print(userName + " (" + role + ")");
+    <span>
+        <a href='userInformation.jsp' id="userInfoBtn" class="info-btn">
+        <i class="fas fa-user"></i>
+        <%
+            // 从 session 获取当前用户的信息
+            String userName = (String) session.getAttribute("username");
+            String role = (String) session.getAttribute("role");
+            if (userName != null) {
+        %>
+            <span><%= userName %> (<%= role %>)</span>
+        <%
         } else {
-            out.print("访客");
-        }
-    %>
-  </span>
-    <a href="Logout?redirect=index.jsp" class="logout-btn"><i class="fas fa-sign-out-alt"></i> 退出</a>
+        %>
+            <span>访客</span>
+        <%
+            }
+        %>
+        </a>
+    </span>
+    <a href='Logout?redirect=index.jsp' class="logout-btn"><i class="fas fa-sign-out-alt"></i> 退出</a>
 </div>
-
-<%--<div class="container">--%>
-<%--    <h2>进货订单管理</h2>--%>
-
-<%--    <div class="action-bar">--%>
-<%--        <form method="get" action="incomingInformation.jsp">--%>
-<%--            <select name="supplier">--%>
-<%--                <option value="">选择供应商</option>--%>
-<%--                <!-- 动态加载供应商 -->--%>
-<%--            </select>--%>
-
-<%--            <button type="submit">筛选</button>--%>
-<%--        </form>--%>
-
-<%--        <button onclick="openModal('add')" class="action-btn">添加进货订单</button>--%>
-
-<%--    </div>--%>
-<%--    --%>
     <div class="container">
         <h2>进货订单管理</h2>
 
