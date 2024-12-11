@@ -176,6 +176,17 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
 
+        .user-info .info-btn {
+            background-color: #4489e3;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 14px;
+            display: inline-block;
+            cursor: pointer;
+        }
+
         .user-info .logout-btn {
             background-color: #f44336;
             color: white;
@@ -227,6 +238,45 @@
             }
         }
 
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            width: 400px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-content input, .modal-content select, .modal-content button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+        }
+
+        .modal-content button {
+            background-color: #4d94ff;
+            color: white;
+            cursor: pointer;
+        }
+
+        .modal-content button:hover {
+            background-color: #003366;
+        }
+
     </style>
 </head>
 <body>
@@ -254,21 +304,43 @@
 
 <!-- Right Top User Info -->
 <div class="user-info">
-        <span>
-            <i class="fas fa-user"></i>
-            <%
-                // 从 session 获取当前用户的信息
-                String userName = (String) session.getAttribute("username");
-                String role = (String) session.getAttribute("role");
-                if (userName != null) {
-                    out.print(userName + " (" + role + ")");
-                } else {
-                    out.print("访客");
-                }
-            %>
-        </span>
+    <span>
+        <a href="javascript:void(0);" id="userInfoBtn" class="info-btn">
+        <i class="fas fa-user"></i>
+        <%
+            // 从 session 获取当前用户的信息
+            String userName = (String) session.getAttribute("username");
+            String role = (String) session.getAttribute("role");
+            if (userName != null) {
+        %>
+            <span><%= userName %> (<%= role %>)</span>
+        <%
+        } else {
+        %>
+            <span>访客</span>
+        <%
+            }
+        %>
+        </a>
+    </span>
     <a href='Logout?redirect=index.jsp' class="logout-btn"><i class="fas fa-sign-out-alt"></i> 退出</a>
 </div>
+
+<!-- 模态框 -->
+<div id="userModal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn">&times;</span>
+        <h2>账户信息</h2>
+        <form action="UpdateUserInfo" method="POST">
+            <label for="username">用户名:</label>
+            <input type="text" id="username" name="username" value="<%= userName != null ? userName : "" %>" required>
+            <label for="role">角色:</label>
+            <input type="text" id="role" name="role" value="<%= role != null ? role : "" %>" required>
+            <button type="submit" class="btn">保存修改</button>
+        </form>
+    </div>
+</div>
+
 
 <!-- Main Content Section -->
 <div class="container">
@@ -336,6 +408,27 @@
         var sideNav = document.getElementById('sideNav');
         sideNav.classList.toggle('open');
     }
+    // 获取模态框
+    var modal = document.getElementById("userModal");
+    // 获取按钮
+    var btn = document.getElementById("userInfoBtn");
+    // 获取关闭按钮
+    var span = document.getElementsByClassName("close-btn")[0];
+    // 当点击按钮时，打开模态框
+    btn.onclick = function() {
+        modal.style.display = "block";
+    }
+    // 当点击关闭按钮时，关闭模态框
+    span.onclick = function() {
+        modal.style.display = "none";
+    }
+    // 当用户点击模态框外部时，关闭模态框
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+
 </script>
 
 </body>
