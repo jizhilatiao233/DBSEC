@@ -6,10 +6,11 @@ public class Admin {
     private String contactInfo;
     private String username;
     private String password;
+    private String joinDate;
     private String position;
 
     // Constructor
-    public Admin(int adminID, String adminName, String contactInfo, String username, String password, String position) {
+    public Admin(int adminID, String adminName, String contactInfo, String username, String password, String joinDate, String position) {
         this.adminID = adminID;
         this.adminName = adminName;
         this.contactInfo = contactInfo;
@@ -52,6 +53,13 @@ public class Admin {
     }
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getJoinDate() {
+        return joinDate;
+    }
+    public void setJoinDate(String joinDate) {
+        this.joinDate = joinDate;
     }
 
     public String getPosition() {

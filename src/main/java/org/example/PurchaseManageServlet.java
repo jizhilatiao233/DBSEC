@@ -340,9 +340,9 @@ public class PurchaseManageServlet extends HttpServlet {
                 admins.add(new Admin(
                         rs.getInt("AdminID"),
                         rs.getString("AdminName"),
-                        // ContactInfo, Username, Password, Position is not needed
-                        null, null, null, null
-                ));
+                        // ContactInfo, Username, Password, JoinDate, Position is not needed
+                        null, null, null, null, null
+                        ));
             }
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");

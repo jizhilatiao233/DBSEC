@@ -79,6 +79,16 @@
         <url-pattern>/StaffManage</url-pattern>
     </servlet-mapping>
 
+    <!-- AdminInformation Servlet -->
+    <servlet>
+        <servlet-name>AdminInformationServlet</servlet-name>
+        <servlet-class>org.example.AdminInformationServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AdminInformationServlet</servlet-name>
+        <url-pattern>/AdminInformation</url-pattern>
+    </servlet-mapping>
+
     <!-- DEPRECATED -->
     <!-- Purchase Servlet -->
     <servlet>
