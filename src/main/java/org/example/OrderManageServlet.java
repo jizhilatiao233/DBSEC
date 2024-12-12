@@ -254,6 +254,7 @@ public class OrderManageServlet extends HttpServlet {
             ResultSet rs = stmt.executeQuery();
             response.setContentType("text/csv");
             response.setHeader("Content-Disposition", "attachment; filename=\"orders.csv\"");
+            response.setCharacterEncoding("UTF-8");
             PrintWriter out = response.getWriter();
             out.println("OrderID,CustomerID,CustomerName,StaffID,StaffName,TotalAmount,ActualPayment,OrderDate");
             while (rs.next()) {

@@ -463,6 +463,7 @@ public class PurchaseManageServlet extends HttpServlet {
             ResultSet rs = stmt.executeQuery();
             response.setContentType("text/csv");
             response.setHeader("Content-Disposition", "attachment; filename=\"purchases.csv\"");
+            response.setCharacterEncoding("UTF-8");
             PrintWriter out = response.getWriter();
             out.println("PurchaseID,ProductID,ProductName,QuantityPurchased,PurchasePrice,TotalCost,PurchaseDate,AdminID,AdminName,SupplierID,SupplierName");
             while (rs.next()) {

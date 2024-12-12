@@ -406,6 +406,7 @@ public class CustomerManageServlet extends HttpServlet {
             ResultSet rs = stmt.executeQuery();
             response.setContentType("text/csv");
             response.setHeader("Content-Disposition", "attachment; filename=\"customers.csv\"");
+            response.setCharacterEncoding("UTF-8");
             PrintWriter out = response.getWriter();
             out.println("CustomerID,CustomerName,ContactInfo,Username,Password,JoinDate,TotalConsumption,VIPLevel");
             while (rs.next()) {
