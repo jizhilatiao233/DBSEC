@@ -424,7 +424,7 @@
     <div class="modal-content">
         <h2 id="modalTitle"></h2>
         <form id="productForm" onsubmit="return submitModal();">
-            <input type="hidden" name="productId" id="productId">
+            <input type="hidden" name="productID" id="productID">
             <input type="hidden" name="action" id="action">
 
             <label for="productName">商品名称:</label>
@@ -460,7 +460,7 @@
 
 <script>
     // 打开弹窗
-    function openModal(action, productId = null) {
+    function openModal(action, productID = null) {
         var modal = document.getElementById('productModal');
         var modalTitle = document.getElementById('modalTitle');
         var productForm = document.getElementById('productForm');
@@ -470,7 +470,7 @@
         if (action === 'add') {
             modalTitle.textContent = '添加商品';
             document.getElementById('action').value = 'addProduct';
-            document.getElementById('productId').value = '';
+            document.getElementById('productID').value = '';
             document.getElementById('productName').value = '';
             document.getElementById('category').value = '';
             document.getElementById('purchasePrice').value = '';
@@ -482,12 +482,12 @@
         } else if (action === 'edit') {
             modalTitle.textContent = '编辑商品';
             document.getElementById('action').value = 'editProduct';
-            document.getElementById('productId').value = productId;
+            document.getElementById('productID').value = productID;
             restockRow.style.display = 'block';
             addStockRow.style.display = 'none';
 
             // 通过AJAX获取商品详情来填充表单
-            fetch('product?action=getProductDetails&productId=' + productId)
+            fetch('product?action=getProductDetails&productID=' + productID)
                 .then(response => response.json())
                 .then(data => {
                     document.getElementById('productName').value = data.productName;
@@ -552,10 +552,10 @@
     }
 
     // 下架商品
-    function offShelf(productId) {
+    function offShelf(productID) {
         if (confirm('确定要下架此商品吗？')) {
             // 获取商品详情
-            fetch('product?action=getProductDetails&productId=' + productId)
+            fetch('product?action=getProductDetails&productID=' + productID)
                 .then(response => response.json())
                 .then(data => {
                     const shelfStock = data.shelfStock;
@@ -564,7 +564,7 @@
                     // 更新商品信息
                     const formData = new FormData();
                     formData.append('action', 'editProduct');
-                    formData.append('productId', productId);
+                    formData.append('productID', productID);
                     formData.append('productName', data.productName);
                     formData.append('category', data.category);
                     formData.append('purchasePrice', data.purchasePrice);
@@ -664,7 +664,7 @@
                         const row = document.createElement('tr');
 
                         row.innerHTML =
-                            '<td>' + product.productId + '</td>' +
+                            '<td>' + product.productID + '</td>' +
                             '<td>' + product.productName + '</a></td>' +
                             '<td>' + product.category + '</td>' +
                             '<td>' + product.purchasePrice + '</td>' +
@@ -673,8 +673,8 @@
                             '<td>' + product.warehouseStock + '</td>' +
                             '<td>' +
                             '<div class="action-btns">' +
-                                '<e href="javascript:void(0)" onclick="openModal(\'edit\', ' + product.productId + ')">编辑</e>' +
-                                '<c href="javascript:void(0)" onclick="offShelf(' + product.productId + ')">下架</>' +
+                                '<e href="javascript:void(0)" onclick="openModal(\'edit\', ' + product.productID + ')">编辑</e>' +
+                                '<c href="javascript:void(0)" onclick="offShelf(' + product.productID + ')">下架</>' +
                             '</div>' +
                             '</td>';
 

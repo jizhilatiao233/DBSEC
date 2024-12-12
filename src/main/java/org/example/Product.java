@@ -3,7 +3,7 @@ package org.example;
 import java.math.BigDecimal;
 
 public class Product {
-    private int productId;
+    private int productID;
     private String productName;
     private String category;
     private BigDecimal purchasePrice;
@@ -12,8 +12,8 @@ public class Product {
     private int warehouseStock;
 
     // Constructor
-    public Product(int productId, String productName, String category, BigDecimal purchasePrice, BigDecimal sellingPrice, int shelfStock, int warehouseStock) {
-        this.productId = productId;
+    public Product(int productID, String productName, String category, BigDecimal purchasePrice, BigDecimal sellingPrice, int shelfStock, int warehouseStock) {
+        this.productID = productID;
         this.productName = productName;
         this.category = category;
         this.purchasePrice = purchasePrice;
@@ -23,18 +23,16 @@ public class Product {
     }
 
     // Getters and Setters
-    public int getProductId() {
-        return productId;
+    public int getProductID() {
+        return productID;
     }
-
-    public void setProductId(int productId) {
-        this.productId = productId;
+    public void setProductID(int productID) {
+        this.productID = productID;
     }
 
     public String getProductName() {
         return productName;
     }
-
     public void setProductName(String productName) {
         this.productName = productName;
     }
@@ -42,7 +40,6 @@ public class Product {
     public String getCategory() {
         return category;
     }
-
     public void setCategory(String category) {
         this.category = category;
     }
@@ -50,7 +47,6 @@ public class Product {
     public BigDecimal getPurchasePrice() {
         return purchasePrice;
     }
-
     public void setPurchasePrice(BigDecimal purchasePrice) {
         this.purchasePrice = purchasePrice;
     }
@@ -58,7 +54,6 @@ public class Product {
     public BigDecimal getSellingPrice() {
         return sellingPrice;
     }
-
     public void setSellingPrice(BigDecimal sellingPrice) {
         this.sellingPrice = sellingPrice;
     }
@@ -66,7 +61,6 @@ public class Product {
     public int getShelfStock() {
         return shelfStock;
     }
-
     public void setShelfStock(int shelfStock) {
         this.shelfStock = shelfStock;
     }
@@ -74,7 +68,6 @@ public class Product {
     public int getWarehouseStock() {
         return warehouseStock;
     }
-
     public void setWarehouseStock(int warehouseStock) {
         this.warehouseStock = warehouseStock;
     }

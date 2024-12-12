@@ -150,11 +150,11 @@ public class ProductServlet extends HttpServlet {
             }
             // getProductDetails action
             else if ("getProductDetails".equals(action)) {
-                String productId = request.getParameter("productId");
+                String productID = request.getParameter("productID");
 
                 String query = "SELECT * FROM Product WHERE ProductID = ?";
                 try (PreparedStatement stmt = conn.prepareStatement(query)) {
-                    stmt.setInt(1, Integer.parseInt(productId));
+                    stmt.setInt(1, Integer.parseInt(productID));
                     ResultSet rs = stmt.executeQuery();
                     if (rs.next()) {
                         Product product = new Product(
@@ -289,7 +289,7 @@ public class ProductServlet extends HttpServlet {
             }
             // editProduct action
             else if("editProduct".equals(action)) {
-                String productId = request.getParameter("productId");
+                String productID = request.getParameter("productID");
                 String productName = request.getParameter("productName");
                 String category = request.getParameter("category");
                 String purchasePrice = request.getParameter("purchasePrice");
@@ -305,18 +305,18 @@ public class ProductServlet extends HttpServlet {
                     stmt.setBigDecimal(4, new java.math.BigDecimal(sellingPrice));
                     stmt.setInt(5, Integer.parseInt(shelfStock));
                     stmt.setInt(6, Integer.parseInt(warehouseStock));
-                    stmt.setInt(7, Integer.parseInt(productId));
+                    stmt.setInt(7, Integer.parseInt(productID));
                     stmt.executeUpdate();
                     response.setStatus(HttpServletResponse.SC_OK);
                 }
             }
             // deleteProduct action
             else if("deleteProduct".equals(action)) {
-                String productId = request.getParameter("productId");
+                String productID = request.getParameter("productID");
 
                 String query = "DELETE FROM Product WHERE ProductID = ?";
                 try (PreparedStatement stmt = conn.prepareStatement(query)) {
-                    stmt.setInt(1, Integer.parseInt(productId));
+                    stmt.setInt(1, Integer.parseInt(productID));
                     stmt.executeUpdate();
                     response.setStatus(HttpServletResponse.SC_OK);
                 }

@@ -23,7 +23,7 @@ public class ProductManageServlet extends HttpServlet {
             String action = getFormValue(request, "action");
             // addProduct action
             if ("addProduct".equals(action)) {
-                String productId = getFormValue(request, "productId");
+                String productID = getFormValue(request, "productID");
                 String productName = getFormValue(request, "productName");
                 String category = getFormValue(request, "category");
                 double purchasePrice = Double.parseDouble(getFormValue(request, "purchasePrice"));
@@ -45,7 +45,7 @@ public class ProductManageServlet extends HttpServlet {
             }
             // editProduct action
             else if ("editProduct".equals(action)) {
-                String productId = getFormValue(request, "productId");
+                String productID = getFormValue(request, "productID");
                 String productName = getFormValue(request, "productName");
                 String category = getFormValue(request, "category");
                 double purchasePrice = Double.parseDouble(getFormValue(request, "purchasePrice"));
@@ -60,17 +60,17 @@ public class ProductManageServlet extends HttpServlet {
                     stmt.setBigDecimal(4, new java.math.BigDecimal(sellingPrice));
                     stmt.setInt(5, shelfStock);
                     stmt.setInt(6, warehouseStock);
-                    stmt.setInt(7, Integer.parseInt(productId));
+                    stmt.setInt(7, Integer.parseInt(productID));
                     stmt.executeUpdate();
                     response.setStatus(HttpServletResponse.SC_OK);
                 }
             }
             // deleteProduct action
             else if ("deleteProduct".equals(action)) {
-                String productId = getFormValue(request, "productId");
+                String productID = getFormValue(request, "productID");
                 String query = "DELETE FROM Product WHERE ProductID = ?";
                 try (PreparedStatement stmt = conn.prepareStatement(query)) {
-                    stmt.setInt(1, Integer.parseInt(productId));
+                    stmt.setInt(1, Integer.parseInt(productID));
                     stmt.executeUpdate();
                     response.setStatus(HttpServletResponse.SC_OK);
                 }

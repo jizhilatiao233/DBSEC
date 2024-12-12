@@ -24,6 +24,13 @@ public class SalesManageServlet extends HttpServlet {
                 throw new ServletException("Database access error", e);
             }
         }
+        else if ("getSalesVolume".equals(action)) {
+            try (Connection conn = DatabaseConnection.getConnection()) {
+                getSalesVolume(request, response, conn);
+            } catch (Exception e) {
+                throw new ServletException("Database access error", e);
+            }
+        }
         else if ("exportCSV".equals(action)) {
             try (Connection conn = DatabaseConnection.getConnection()) {
                 exportCSV(request, response, conn);
@@ -160,6 +167,64 @@ public class SalesManageServlet extends HttpServlet {
             PrintWriter out = response.getWriter();
             SalesResponse salesResponse = new SalesResponse(sales, totalPages);
             out.print(new Gson().toJson(salesResponse));
+            out.flush();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void getSalesVolume(HttpServletRequest request, HttpServletResponse response, Connection conn) throws IOException {
+        // filter parameters
+        String orderID = request.getParameter("orderID");
+        String productName = request.getParameter("productName");
+        String staffName = request.getParameter("staffName");
+        String salesDate = request.getParameter("salesDate");
+
+        // build query
+        StringBuilder queryBuilder = new StringBuilder("SELECT SUM(s.ActualPayment) as SalesVolume " +
+                "FROM Sales s " +
+                "JOIN Product p ON s.ProductID = p.ProductID " +
+                "JOIN Staff st ON s.StaffID = st.StaffID " +
+                "WHERE 1=1 ");
+        if (orderID != null && !orderID.isEmpty()) {
+            queryBuilder.append("AND s.OrderID = ? ");
+        }
+        if (productName != null && !productName.isEmpty()) {
+            queryBuilder.append("AND p.ProductName LIKE ? ");
+        }
+        if (staffName != null && !staffName.isEmpty()) {
+            queryBuilder.append("AND st.StaffName LIKE ? ");
+        }
+        if (salesDate != null && !salesDate.isEmpty()) {
+            queryBuilder.append("AND DATE(s.SalesDate) = ? ");
+        }
+        String query = queryBuilder.toString();
+
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            int paramIndex = 1;
+            // set filter parameters
+            if (orderID != null && !orderID.isEmpty()) {
+                stmt.setString(paramIndex++, orderID);
+            }
+            if (productName != null && !productName.isEmpty()) {
+                stmt.setString(paramIndex++, "%" + productName + "%");
+            }
+            if (staffName != null && !staffName.isEmpty()) {
+                stmt.setString(paramIndex++, "%" + staffName + "%");
+            }
+            if (salesDate != null && !salesDate.isEmpty()) {
+                stmt.setString(paramIndex++, salesDate);
+            }
+
+            ResultSet rs = stmt.executeQuery();
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+            PrintWriter out = response.getWriter();
+            if (rs.next()) {
+                out.print(new Gson().toJson(rs.getBigDecimal("SalesVolume")));
+            } else {
+                out.print(new Gson().toJson(0));
+            }
             out.flush();
         } catch (SQLException e) {
             throw new RuntimeException(e);

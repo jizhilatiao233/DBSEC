@@ -45,6 +45,13 @@ public class StaffManageServlet extends HttpServlet {
                 throw new ServletException("Database access error", e);
             }
         }
+        else if ("deleteStaff".equals(action)) {
+            try (Connection conn = DatabaseConnection.getConnection()) {
+                deleteStaff(request, response, conn);
+            } catch (Exception e) {
+                throw new ServletException("Database access error", e);
+            }
+        }
         else {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid action");
         }
@@ -79,7 +86,6 @@ public class StaffManageServlet extends HttpServlet {
         }
 
         // filter parameters
-        String staffID = request.getParameter("staffID");
         String staffName = request.getParameter("staffName");
         String contactInfo = request.getParameter("contactInfo");
         String fromJoinDate = request.getParameter("fromJoinDate");
@@ -97,10 +103,6 @@ public class StaffManageServlet extends HttpServlet {
                 "FROM Staff s " +
                 "JOIN Admin a ON s.AdminID = a.AdminID " +
                 "WHERE 1=1 ");
-        if (staffID != null && !staffID.isEmpty()) {
-            queryBuilder.append("AND s.StaffID = ? ");
-            countQueryBuilder.append("AND s.StaffID = ? ");
-        }
         if (staffName != null && !staffName.isEmpty()) {
             queryBuilder.append("AND s.StaffName LIKE ? ");
             countQueryBuilder.append("AND s.StaffName LIKE ? ");
@@ -137,11 +139,6 @@ public class StaffManageServlet extends HttpServlet {
         try (PreparedStatement stmt = conn.prepareStatement(query);
              PreparedStatement countStmt = conn.prepareStatement(countQuery)) {
             int paramIndex = 1;
-            if (staffID != null && !staffID.isEmpty()) {
-                stmt.setInt(paramIndex, Integer.parseInt(staffID));
-                countStmt.setInt(paramIndex, Integer.parseInt(staffID));
-                paramIndex++;
-            }
             if (staffName != null && !staffName.isEmpty()) {
                 stmt.setString(paramIndex, "%" + staffName + "%");
                 countStmt.setString(paramIndex, "%" + staffName + "%");
@@ -376,6 +373,23 @@ public class StaffManageServlet extends HttpServlet {
                 ));
             }
             out.flush();
+        } catch (SQLException e) {
+            throw new IOException("Database access error", e);
+        }
+    }
+
+    // 删除员工：逻辑注销，不从数据库中删除，方法为设置Position为“已注销”
+    private void deleteStaff(HttpServletRequest request, HttpServletResponse response, Connection conn) throws IOException {
+        int staffID = Integer.parseInt(request.getParameter("staffID"));
+        String query = "UPDATE Staff SET Position = '已注销' WHERE StaffID = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, staffID);
+            int rowsAffected = stmt.executeUpdate();
+            if (rowsAffected > 0) {
+                response.sendRedirect("staffManagement.jsp");
+            } else {
+                response.sendError(HttpServletResponse.SC_NOT_FOUND, "Staff not found");
+            }
         } catch (SQLException e) {
             throw new IOException("Database access error", e);
         }

@@ -31,6 +31,13 @@ public class OrderManageServlet extends HttpServlet {
                 throw new ServletException("Database access error", e);
             }
         }
+        else if ("getOrdersVolume".equals(action)) {
+            try (Connection conn = DatabaseConnection.getConnection()) {
+                getOrdersVolume(request, response, conn);
+            } catch (Exception e) {
+                throw new ServletException("Database access error", e);
+            }
+        }
         else if ("deleteOrder".equals(action)) {
             try (Connection conn = DatabaseConnection.getConnection()) {
                 deleteOrder(request, response, conn);
@@ -167,15 +174,66 @@ public class OrderManageServlet extends HttpServlet {
         }
     }
 
+    private void getOrdersVolume(HttpServletRequest request, HttpServletResponse response, Connection conn) throws IOException {
+        // filter parameters
+        String customerName = request.getParameter("customerName");
+        String staffName = request.getParameter("staffName");
+        String orderDate = request.getParameter("orderDate");
+
+        // build query
+        StringBuilder queryBuilder = new StringBuilder("SELECT SUM(o.ActualPayment) as OrdersVolume " +
+                "FROM Orders o " +
+                "JOIN Customer c ON o.CustomerID = c.CustomerID " +
+                "JOIN Staff s ON o.StaffID = s.StaffID " +
+                "WHERE 1=1 ");
+        if (customerName != null && !customerName.isEmpty()) {
+            queryBuilder.append("AND c.CustomerName LIKE ? ");
+        }
+        if (staffName != null && !staffName.isEmpty()) {
+            queryBuilder.append("AND s.StaffName LIKE ? ");
+        }
+        if (orderDate != null && !orderDate.isEmpty()) {
+            queryBuilder.append("AND DATE(o.OrderDate) = ? ");
+        }
+        String query = queryBuilder.toString();
+
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            int paramIndex = 1;
+            // set filter parameters
+            if (customerName != null && !customerName.isEmpty()) {
+                stmt.setString(paramIndex++, "%" + customerName + "%");
+            }
+            if (staffName != null && !staffName.isEmpty()) {
+                stmt.setString(paramIndex++, "%" + staffName + "%");
+            }
+            if (orderDate != null && !orderDate.isEmpty()) {
+                stmt.setString(paramIndex++, orderDate);
+            }
+
+            ResultSet rs = stmt.executeQuery();
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+            PrintWriter out = response.getWriter();
+            if (rs.next()) {
+                out.print(new Gson().toJson(rs.getBigDecimal("OrdersVolume")));
+            } else {
+                out.print(new Gson().toJson(0));
+            }
+            out.flush();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     private void getOrderDetails(HttpServletRequest request, HttpServletResponse response, Connection conn) throws IOException {
-        int orderId = Integer.parseInt(request.getParameter("orderId"));
+        int orderID = Integer.parseInt(request.getParameter("orderID"));
         String query = "SELECT o.OrderID, o.CustomerID, c.CustomerName, o.StaffID, s.StaffName, o.TotalAmount, o.ActualPayment, DATE(o.OrderDate) as OrderDate " +
                 "FROM Orders o " +
                 "JOIN Customer c ON o.CustomerID = c.CustomerID " +
                 "JOIN Staff s ON o.StaffID = s.StaffID " +
                 "WHERE o.OrderID = ?";
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setInt(1, orderId);
+            stmt.setInt(1, orderID);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 Order order = new Order(
@@ -276,15 +334,15 @@ public class OrderManageServlet extends HttpServlet {
     }
 
     private void deleteOrder(HttpServletRequest request, HttpServletResponse response, Connection conn) throws IOException {
-        int orderId = Integer.parseInt(request.getParameter("orderId"));
+        int orderID = Integer.parseInt(request.getParameter("orderID"));
         // 删除订单前，需要先删除订单中的每一条销售记录
         String getSalesQuery = "SELECT ProductID FROM Sales WHERE OrderID = ?";
         try (PreparedStatement stmt = conn.prepareStatement(getSalesQuery)) {
-            stmt.setInt(1, orderId);
+            stmt.setInt(1, orderID);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
-                int productId = rs.getInt("ProductID");
-                _deleteSale(conn, orderId, productId);
+                int productID = rs.getInt("ProductID");
+                _deleteSale(conn, orderID, productID);
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -292,7 +350,7 @@ public class OrderManageServlet extends HttpServlet {
         // 删除订单
         String deleteOrderQuery = "DELETE FROM Orders WHERE OrderID = ?";
         try (PreparedStatement stmt = conn.prepareStatement(deleteOrderQuery)) {
-            stmt.setInt(1, orderId);
+            stmt.setInt(1, orderID);
             stmt.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
