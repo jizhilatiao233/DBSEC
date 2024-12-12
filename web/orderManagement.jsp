@@ -108,6 +108,29 @@
     .action-btns a:hover {
       background-color: #003366;
     }
+    .action-btns e {
+      padding: 8px 16px;
+      background-color: #7bd168;
+      color: white;
+      text-decoration: none;
+      border-radius: 6px;
+      transition: background-color 0.3s;
+    }
+    .action-btns e:hover {
+      background-color: #5a9a4b;
+    }
+    .action-btns c {
+      padding: 8px 16px;
+      background-color: #f16969;
+      color: white;
+      text-decoration: none;
+      border-radius: 6px;
+      transition: background-color 0.3s;
+    }
+    .action-btns c:hover {
+      background-color: #ef444b;
+    }
+
 
     .footer {
       background-color: #0066cc;
@@ -119,8 +142,9 @@
       width: 100%;
     }
 
+    /* Right Top User Identity Section */
     .user-info {
-      position: absolute;
+      position: absolute ;
       top: 20px;
       right: 20px;
       background-color: #0066cc;
@@ -130,6 +154,22 @@
       font-size: 16px;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     }
+
+    .user-info .info-btn {
+      background-color: #4489e3;
+      color: white;
+      padding: 5px 10px;
+      border-radius: 4px;
+      text-decoration: none;
+      font-size: 14px;
+      display: inline-block;
+      cursor: pointer;
+    }
+
+    .user-info .info-btn:hover {
+      background-color: #2475ef;
+    }
+
     .user-info .logout-btn {
       background-color: #f44336;
       color: white;
@@ -140,6 +180,7 @@
       display: inline-block;
       cursor: pointer;
     }
+
     .user-info .logout-btn:hover {
       background-color: #d32f2f;
     }
@@ -248,23 +289,30 @@
   <a href="orderManagement.jsp" class="active"><i class="fas fa-box"></i> 订单管理</a>
   <a href="incomingInformation.jsp"><i class="fas fa-chart-line"></i> 进货信息</a>
   <a href="staffManagement.jsp"><i class="fas fa-users"></i> 员工管理</a>
-  <a href="Logout?redirect=index.jsp"><i class="fas fa-sign-out-alt"></i> 退出</a>
 </nav>
 
+<!-- Right Top User Info -->
 <div class="user-info">
-  <span>
-    <i class="fas fa-user"></i>
-    <%
-      String userName = (String) session.getAttribute("username");
-      String role = (String) session.getAttribute("role");
-      if (userName != null) {
-        out.print(userName + " (" + role + ")");
-      } else {
-        out.print("访客");
-      }
-    %>
-  </span>
-  <a href="Logout?redirect=index.jsp" class="logout-btn"><i class="fas fa-sign-out-alt"></i> 退出</a>
+    <span>
+        <a href='userInformation.jsp' id="userInfoBtn" class="info-btn">
+        <i class="fas fa-user"></i>
+        <%
+          // 从 session 获取当前用户的信息
+          String userName = (String) session.getAttribute("username");
+          String role = (String) session.getAttribute("role");
+          if (userName != null) {
+        %>
+            <span><%= userName %> (<%= role %>)</span>
+        <%
+        } else {
+        %>
+            <span>访客</span>
+        <%
+          }
+        %>
+        </a>
+    </span>
+  <a href='Logout?redirect=index.jsp' class="logout-btn"><i class="fas fa-sign-out-alt"></i> 退出</a>
 </div>
 
 <div class="container">
@@ -289,14 +337,12 @@
       <input type="text" name="employeeName" placeholder="选择收银员">
       <input type="date" name="orderDate" placeholder="选择日期">
       <button type="submit">筛选</button>
+
+      <label for="totalcost" style="margin-left: 10px;">消费金额:</label>
+      <input type="text" name="totalcost" id="totalcost" placeholder="消费金额" readonly>
     </form>
 
     <div class="button-group">
-      <!-- 批量删除表单 -->
-      <form method="post" action="batchDeleteOrders.jsp">
-        <button type="submit">批量删除</button>
-      </form>
-
       <!-- 添加订单按钮 -->
       <button onclick="openModal('add')">添加订单</button>
 
@@ -314,7 +360,6 @@
       <th>订单号</th>
       <th>客户姓名</th>
       <th>收银员姓名</th>
-      <th>总金额</th>
       <th>实付金额</th>
       <th>订单日期</th>
       <th>操作</th>
@@ -326,13 +371,12 @@
       <td>101</td>
       <td>张三</td>
       <td>收银员A</td>
-      <td>100</td>
       <td>80</td>
       <td>2024-12-05</td>
       <td>
         <div class="action-btns">
-          <a href="javascript:void(0)" onclick="openModal('detail', 1001)">详情</a>
-          <a href="deleteOrder.jsp?id=101" onclick="return confirm('确定要删除该订单吗？')">删除</a>
+          <e href="javascript:void(0)" onclick="openModal('detail', 1001)">详情</e>
+          <c href="deleteOrder.jsp?id=101" onclick="return confirm('确定要删除该订单吗？')">删除</c>
         </div>
       </td>
     </tr>
@@ -366,10 +410,6 @@
       <label for="customerName">客户名称:</label>
       <input type="text" name="customerName" id="customerName" readonly>
 
-      <!-- 折扣 -->
-      <label for="discount">折扣:</label>
-      <input type="number" name="discount" id="discount" required>
-
       <!-- 实付金额 -->
       <label for="ActualPayment">实付金额:</label>
       <input type="number" name="ActualPayment" id="ActualPayment" required>
@@ -398,8 +438,6 @@
         <th>商品名称</th>
         <th>商品单价</th>
         <th>商品数目</th>
-        <th>总金额</th>
-        <th>折扣</th>
         <th>实付金额</th>
       </tr>
       </thead>
@@ -410,8 +448,6 @@
         <td>10</td>
         <td>3</td>
         <td>30</td>
-        <td>0.8</td>
-        <td>24</td>
       </tr>
       <!-- 更多订单数据 -->
       </tbody>
@@ -480,6 +516,23 @@
     document.getElementById('detailModal').style.display = 'none';
     document.getElementById('addModal').style.display = 'none';
   }
+
+  // 监听筛选按钮点击事件
+  document.querySelector("form").onsubmit = function(event) {
+    event.preventDefault(); // 防止表单默认提交
+
+    // 假设这些是从筛选条件得到的商品价格
+    let prices = [100, 200, 50];  // 这里你可以通过实际的筛选结果动态生成
+
+    // 计算总金额
+    let totalcost = prices.reduce((sum, price) => sum + price, 0);
+
+    // 将计算出的总金额填充到输入框中
+    document.getElementById("totalcost").value = totalcost;
+
+    // 提交表单
+    event.target.submit();
+  };
 
 
 </script>

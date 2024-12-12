@@ -17,7 +17,11 @@
             color: #333;
             animation: fadeIn 1s ease-in-out;
         }
-
+        .button-group {
+            display: flex;
+            gap: 10px;  /* 按钮之间的间距 */
+            align-items: center;
+        }
         @keyframes fadeIn {
             0% { opacity: 0; }
             100% { opacity: 1; }
@@ -42,7 +46,6 @@
             box-shadow: 4px 0 8px rgba(0, 0, 0, 0.1);
             transition: all 0.3s ease;
         }
-
         nav a {
             display: block;
             color: white;
@@ -53,19 +56,17 @@
             transition: background-color 0.3s ease;
             position: relative;
         }
-
         nav a:hover {
             background-color: #004d99;
             transform: scale(1.05);
         }
-
         nav a.active {
             background-color: #003366;
         }
 
         .container {
             margin-left: 270px;
-            padding: 30px;
+            padding: 30px 30px 80px;
             transition: margin-left 0.3s ease;
         }
 
@@ -81,13 +82,11 @@
             border-collapse: collapse;
             margin-top: 20px;
         }
-
         table th, table td {
             padding: 10px;
             border: 1px solid #ddd;
             text-align: center;
         }
-
         table th {
             background-color: #4d94ff;
             color: white;
@@ -98,7 +97,6 @@
             gap: 10px;
             justify-content: center;
         }
-
         .action-btns a {
             padding: 8px 16px;
             background-color: #4d94ff;
@@ -107,9 +105,30 @@
             border-radius: 6px;
             transition: background-color 0.3s;
         }
-
         .action-btns a:hover {
             background-color: #003366;
+        }
+        .action-btns e {
+            padding: 8px 16px;
+            background-color: #7bd168;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: background-color 0.3s;
+        }
+        .action-btns e:hover {
+            background-color: #5a9a4b;
+        }
+        .action-btns c {
+            padding: 8px 16px;
+            background-color: #f16969;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: background-color 0.3s;
+        }
+        .action-btns c:hover {
+            background-color: #ef444b;
         }
 
         .footer {
@@ -123,7 +142,7 @@
         }
 
         .user-info {
-            position: absolute;
+            position: absolute ;
             top: 20px;
             right: 20px;
             background-color: #0066cc;
@@ -132,6 +151,21 @@
             border-radius: 30px;
             font-size: 16px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .user-info .info-btn {
+            background-color: #4489e3;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 14px;
+            display: inline-block;
+            cursor: pointer;
+        }
+
+        .user-info .info-btn:hover {
+            background-color: #2475ef;
         }
 
         .user-info .logout-btn {
@@ -149,12 +183,6 @@
             background-color: #d32f2f;
         }
 
-        .button-group {
-            display: flex;
-            gap: 10px;  /* 按钮之间的间距 */
-            align-items: center;
-        }
-
         .action-bar {
             display: flex;
             flex-wrap: wrap;
@@ -162,28 +190,14 @@
             gap: 10px;
             align-items: center;
         }
-
-        /* 输入框和下拉框的样式 */
-        .action-bar input[type="text"], .action-bar input[type="email"], .action-bar input[type="date"], .action-bar select, .action-bar input[type="number"] {
+        .action-bar input[type="text"], input[type="number"],.action-bar select, .action-bar input[type="date"] {
             padding: 8px;
             border: 1px solid #ccc;
             border-radius: 4px;
             margin-right: 10px;
-            width: 120px; /* 设置宽度确保它们整齐 */
-            box-sizing: border-box; /* 确保输入框的宽度包括内边距和边框 */
+            width: 140px;
+            box-sizing: border-box;
         }
-
-        /* 姓名输入框增加左边距，保证与排序下拉框之间有空间 */
-        .action-bar input[name="searchName"] {
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            margin-left: 20px;  /* 增加左边距 */
-            width: 150px; /* 调整宽度，确保元素整齐 */
-            box-sizing: border-box;  /* 确保宽度包含内边距和边框 */
-        }
-
-        /* 按钮的样式 */
         .action-bar button {
             padding: 8px 12px;
             border: 1px solid #0066cc;
@@ -192,45 +206,10 @@
             border-radius: 4px;
             cursor: pointer;
             transition: background-color 0.3s;
-            width: auto;
-            max-width: 120px; /* 限制最大宽度 */
+            max-width: 120px;
         }
-
         .action-bar button:hover {
             background-color: #005bb5;
-        }
-
-        .action-bar form {
-            display: inline-flex;
-            align-items: center;
-        }
-
-        .action-bar form button {
-            margin-left: 20px; /* 按钮之间的间隔 */
-        }
-
-        /* 确保导出CSV按钮样式一致 */
-        .action-bar form button[type="submit"] {
-            padding: 8px 12px;
-            background-color: #0066cc;  /* 绿色按钮 */
-            border-color: #0066cc;
-        }
-
-        .action-bar form button[type="submit"]:hover {
-            background-color: #005bb5; /* 按钮悬停效果 */
-        }
-
-        input[type="email"], input[type="text"],input[type="date"] {
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            margin: 2px 0;
-            width: 100%;
-        }
-
-        input[type="email"]:focus, input[type="text"],input[type="date"]:focus {
-            border-color: #0066cc;
-            outline: none;
         }
 
         .modal {
@@ -245,7 +224,6 @@
             align-items: center;
             z-index: 9999;
         }
-
         .modal-content {
             background-color: #fff;
             padding: 30px;
@@ -253,7 +231,6 @@
             width: 400px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
-
         .modal-content input, .modal-content select, .modal-content button {
             width: 100%;
             padding: 10px;
@@ -261,16 +238,39 @@
             border-radius: 6px;
             border: 1px solid #ddd;
         }
-
         .modal-content button {
             background-color: #4d94ff;
             color: white;
             cursor: pointer;
         }
-
         .modal-content button:hover {
             background-color: #003366;
         }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .pagination a {
+            padding: 10px 15px;
+            margin: 0 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            text-decoration: none;
+            color: #333;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .pagination a:hover {
+            background-color: #4d94ff;
+            color: white;
+        }
+        .pagination a.active {
+            background-color: #0066cc;
+            color: white;
+            border-color: #0066cc;
+        }
+
     </style>
 </head>
 <body>
@@ -280,30 +280,36 @@
 </header>
 
 <nav>
-    <a href="admin_dashboard.jsp" class="active"><i class="fas fa-tachometer-alt"></i> 首页</a>
-    <a href="product_list.jsp"><i class="fas fa-cogs"></i> 商品管理</a>
+    <a href="admin_dashboard.jsp" ><i class="fas fa-tachometer-alt"></i> 首页</a>
+    <a href="product_management"><i class="fas fa-cogs"></i> 商品管理</a>
     <a href="salesManagement.jsp"><i class="fas fa-shopping-cart"></i> 销售管理</a>
     <a href="customerManagement.jsp"><i class="fas fa-warehouse"></i> 客户管理</a>
     <a href="orderManagement.jsp"><i class="fas fa-box"></i> 订单管理</a>
     <a href="incomingInformation.jsp"><i class="fas fa-chart-line"></i> 进货信息</a>
-    <a href="staffManagement.jsp"><i class="fas fa-users"></i> 员工管理</a>
-    <a href="logout.jsp"><i class="fas fa-sign-out-alt"></i> 退出</a>
+    <a href="staffManagement.jsp" class="active"><i class="fas fa-users"></i> 员工管理</a>
 </nav>
-
+<!-- Right Top User Info -->
 <div class="user-info">
-  <span>
-    <i class="fas fa-user"></i>
-    <%
-        String userName = (String) session.getAttribute("username");
-        String role = (String) session.getAttribute("role");
-        if (userName != null) {
-            out.print(userName + " (" + role + ")");
+    <span>
+        <a href='userInformation.jsp' id="userInfoBtn" class="info-btn">
+        <i class="fas fa-user"></i>
+        <%
+            // 从 session 获取当前用户的信息
+            String userName = (String) session.getAttribute("username");
+            String role = (String) session.getAttribute("role");
+            if (userName != null) {
+        %>
+            <span><%= userName %> (<%= role %>)</span>
+        <%
         } else {
-            out.print("访客");
-        }
-    %>
-  </span>
-    <a href="logout.jsp" class="logout-btn"><i class="fas fa-sign-out-alt"></i> 退出</a>
+        %>
+            <span>访客</span>
+        <%
+            }
+        %>
+        </a>
+    </span>
+    <a href='Logout?redirect=index.jsp' class="logout-btn"><i class="fas fa-sign-out-alt"></i> 退出</a>
 </div>
 
 <div class="container">
@@ -318,7 +324,7 @@
             <button type="submit">排序</button>
 
             <input type="text" name="searchName" placeholder="姓名">
-            <input type="text" name="searchPhone" placeholder="手机号">
+            <input type="text" name="searchPhone" placeholder="联系方式">
 
             <button type="submit">搜索</button>
         </form>
@@ -338,11 +344,6 @@
         </form>
 
         <div class="button-group">
-            <!-- 批量删除表单 -->
-            <form method="post" action="batchDeleteEmployee.jsp">
-                <button type="submit">批量删除</button>
-            </form>
-
             <!-- 添加员工按钮 -->
             <button onclick="openModal('add')">添加员工</button>
 
@@ -358,10 +359,9 @@
     <table>
         <thead>
         <tr>
-            <th><input type="checkbox" id="selectAll"> 全选</th>
             <th>员工ID</th>
             <th>姓名</th>
-            <th>手机号</th>
+            <th>联系方式</th>
             <th>加入日期</th>
             <th>职位</th>
             <th>操作</th>
@@ -369,16 +369,15 @@
         </thead>
         <tbody id="employeeList">
         <tr>
-            <td><input type="checkbox" name="selectedEmployee" value="1"></td>
             <td>1001</td>
             <td>张三</td>
             <td>13800000000</td>
             <td>2022-01-01</td>
             <td>收银员</td>
             <td>
-                <div>
-                    <a href="javascript:void(0)" onclick="openModal('detail', 1001)">详情</a>
-                    <a href="deleteIncomingOrder.jsp?id=1001" onclick="return confirm('确定要删除该员工吗？')">删除</a>
+                <div class="action-btns">
+                    <e href="javascript:void(0)" onclick="openModal('detail', 1001)">详情</e>
+                    <c href="deleteStaff.jsp?id=1001" onclick="return confirm('确定要删除该员工吗？')">删除</c>
                 </div>
             </td>
         </tr>
@@ -401,7 +400,7 @@
             <input type="text" name="employeeName" id="employeeName" required>
 
             <!-- 联系方式 -->
-            <label for="employeePhone">手机号:</label>
+            <label for="employeePhone">联系方式:</label>
             <input type="text" name="employeePhone" id="employeePhone" required>
 
             <!-- 职位 -->

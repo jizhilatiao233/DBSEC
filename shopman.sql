@@ -47,7 +47,7 @@ CREATE TABLE Customer (
     ContactInfo VARCHAR(255),                     -- 联系方式
     Username VARCHAR(100),                        -- 用户名（可为空）
     Password VARCHAR(255),                        -- 密码（可为空）
-    IsVIP BOOLEAN DEFAULT FALSE,                  -- 是否为VIP
+    VIPLevel INT NOT NULL,                        -- VIP等级
     PurchaseSum DECIMAL(10, 2) NOT NULL
 );
 
@@ -91,7 +91,6 @@ CREATE TABLE Orders (
     CustomerID INT NOT NULL,                        -- 客户编号 (外键)
     StaffID INT NOT NULL,                           -- 收银员编号 (外键)
     TotalAmount DECIMAL(10, 2),                     -- 订单总金额 (等于包含的所有销售金额之和)
-    ActualPayment DECIMAL(10, 2),                   -- 实际支付金额 (等于包含的所有销售实际支付金额之和)
     OrderDate DATETIME DEFAULT CURRENT_TIMESTAMP,   -- 订单日期
     FOREIGN KEY (CustomerID) REFERENCES Customer(CustomerID),
     FOREIGN KEY (StaffID) REFERENCES Staff(StaffID)

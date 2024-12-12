@@ -120,7 +120,7 @@
         }
 
         .user-info {
-            position: absolute;
+            position: absolute ;
             top: 20px;
             right: 20px;
             background-color: #0066cc;
@@ -130,6 +130,22 @@
             font-size: 16px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
+
+        .user-info .info-btn {
+            background-color: #4489e3;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 14px;
+            display: inline-block;
+            cursor: pointer;
+        }
+
+        .user-info .info-btn:hover {
+            background-color: #2475ef;
+        }
+
         .user-info .logout-btn {
             background-color: #f44336;
             color: white;
@@ -140,6 +156,7 @@
             display: inline-block;
             cursor: pointer;
         }
+
         .user-info .logout-btn:hover {
             background-color: #d32f2f;
         }
@@ -248,41 +265,30 @@
     <a href="orderManagement.jsp"><i class="fas fa-box"></i> 订单管理</a>
     <a href="incomingInformation.jsp"><i class="fas fa-chart-line"></i> 进货信息</a>
     <a href="staffManagement.jsp"><i class="fas fa-users"></i> 员工管理</a>
-    <a href="Logout?redirect=index.jsp"><i class="fas fa-sign-out-alt"></i> 退出</a>
 </nav>
 
 <div class="user-info">
-  <span>
-    <i class="fas fa-user"></i>
-    <%
-        String userName = (String) session.getAttribute("username");
-        String role = (String) session.getAttribute("role");
-        if (userName != null) {
-            out.print(userName + " (" + role + ")");
+    <span>
+        <a href='userInformation.jsp' id="userInfoBtn" class="info-btn">
+        <i class="fas fa-user"></i>
+        <%
+            // 从 session 获取当前用户的信息
+            String userName = (String) session.getAttribute("username");
+            String role = (String) session.getAttribute("role");
+            if (userName != null) {
+        %>
+            <span><%= userName %> (<%= role %>)</span>
+        <%
         } else {
-            out.print("访客");
-        }
-    %>
+        %>
+            <span>访客</span>
+        <%
+            }
+        %>
+        </a>
     </span>
-    <a href="Logout?redirect=index.jsp" class="logout-btn"><i class="fas fa-sign-out-alt"></i> 退出</a>
+    <a href='Logout?redirect=index.jsp' class="logout-btn"><i class="fas fa-sign-out-alt"></i> 退出</a>
 </div>
-
-<%--<div class="container">--%>
-<%--    <h2>进货订单管理</h2>--%>
-
-<%--    <div class="action-bar">--%>
-<%--        <form method="get" action="incomingInformation.jsp">--%>
-<%--            <select name="supplier">--%>
-<%--                <option value="">选择供应商</option>--%>
-<%--                <!-- 动态加载供应商 -->--%>
-<%--            </select>--%>
-
-<%--            <button type="submit">筛选</button>--%>
-<%--        </form>--%>
-
-<%--        <button onclick="openModal('add')" class="action-btn">添加进货订单</button>--%>
-
-<%--    </div>--%>
 
 <div class="container">
     <h2>销售管理</h2>
@@ -298,7 +304,6 @@
                 <option value="staffName">收银员姓名</option>
                 <option value="sellingPrice">商品单价</option>
                 <option value="quantitySold">商品数量</option>
-                <option value="actualPayment">实际支付</option>
                 <option value="profit">利润</option>
                 <option value="salesDate">销售日期</option>
             </select>
@@ -312,6 +317,9 @@
             <input type="text" name="staffName" id="staffName" placeholder="收银员姓名">
             <input type="date" name="salesDate" id="salesDate" placeholder="销售日期">
             <button type="submit">筛选</button>
+
+            <label for="totalAmount" style="margin-left: 10px;">总销售额:</label>
+            <input type="text" name="totalAmount" id="totalAmount" placeholder="总销售额" readonly>
         </form>
 
 <%--        <div class="button-group">--%>
@@ -359,9 +367,9 @@
 
     // 获取销售信息
     function fetchSales({
-        page = currentPage, sortBy = '', sortOrder = '',
-        orderID = '', productName = '', staffName = '', salesDate = ''
-    }) {
+                            page = currentPage, sortBy = '', sortOrder = '',
+                            orderID = '', productName = '', staffName = '', salesDate = ''
+                        }) {
         currentPage = page;
         const offset = (page - 1) * itemsPerPage;
         const URLParams = {
@@ -467,6 +475,23 @@
             staffName: URLParams.staffName || '',
             salesDate: URLParams.salesDate || ''
         });
+    };
+
+    // 监听筛选按钮点击事件
+    document.querySelector("form").onsubmit = function(event) {
+        event.preventDefault(); // 防止表单默认提交
+
+        // 假设这些是从筛选条件得到的商品价格
+        let prices = [100, 200, 50];  // 这里你可以通过实际的筛选结果动态生成
+
+        // 计算总金额
+        let totalAmount = prices.reduce((sum, price) => sum + price, 0);
+
+        // 将计算出的总金额填充到输入框中
+        document.getElementById("totalAmount").value = totalAmount;
+
+        // 提交表单
+        event.target.submit();
     };
 
 </script>

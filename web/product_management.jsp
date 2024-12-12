@@ -109,6 +109,28 @@
         .action-btns a:hover {
             background-color: #003366;
         }
+        .action-btns e {
+            padding: 8px 16px;
+            background-color: #7bd168;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: background-color 0.3s;
+        }
+        .action-btns e:hover {
+            background-color: #5a9a4b;
+        }
+        .action-btns c {
+            padding: 8px 16px;
+            background-color: #f16969;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: background-color 0.3s;
+        }
+        .action-btns c:hover {
+            background-color: #ef444b;
+        }
 
         .footer {
             background-color: #0066cc;
@@ -120,7 +142,7 @@
             width: 100%;
         }
 
-        /* 用户信息 */
+        /* Right Top User Identity Section */
         .user-info {
             position: absolute;
             top: 20px;
@@ -132,6 +154,22 @@
             font-size: 16px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
+
+        .user-info .info-btn {
+            background-color: #4489e3;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 14px;
+            display: inline-block;
+            cursor: pointer;
+        }
+
+        .user-info .info-btn:hover {
+            background-color: #2475ef;
+        }
+
         .user-info .logout-btn {
             background-color: #f44336;
             color: white;
@@ -142,6 +180,7 @@
             display: inline-block;
             cursor: pointer;
         }
+
         .user-info .logout-btn:hover {
             background-color: #d32f2f;
         }
@@ -158,7 +197,7 @@
             display: inline-flex;
             align-items: center;
         }
-        .action-bar input[type="text"], .action-bar select {
+        .action-bar input[type="text"], input[type="number"],.action-bar select {
             padding: 8px;
             border: 1px solid #ccc;
             border-radius: 4px;
@@ -258,6 +297,11 @@
             text-decoration: underline;
         }
 
+        input[type="number"] {
+            width: 100px; /* 设置输入框的宽度为100px */
+        }
+
+
     </style>
 </head>
 <body>
@@ -269,29 +313,35 @@
 
 <!-- Side Navigation -->
 <nav id="sideNav">
-    <a href="admin_dashboard.jsp"><i class="fas fa-tachometer-alt"></i> 仪表盘</a>
+    <a href="admin_dashboard.jsp"><i class="fas fa-tachometer-alt"></i> 首页</a>
     <a href="product_management.jsp" class="active"><i class="fas fa-cogs"></i> 商品管理</a>
     <a href="salesManagement.jsp"><i class="fas fa-shopping-cart"></i> 销售管理</a>
     <a href="customerManagement.jsp"><i class="fas fa-warehouse"></i> 客户管理</a>
     <a href="orderManagement.jsp"><i class="fas fa-box"></i> 订单管理</a>
     <a href="incomingInformation.jsp"><i class="fas fa-chart-line"></i> 进货信息</a>
     <a href="staffManagement.jsp"><i class="fas fa-users"></i> 员工管理</a>
-    <a href='Logout?redirect=index.jsp'><i class="fas fa-sign-out-alt"></i> 退出</a>
 </nav>
+<!-- Right Top User Info -->
 <div class="user-info">
-        <span>
-            <i class="fas fa-user"></i>
-            <%
-                // 从 session 获取当前用户的信息
-                String userName = (String) session.getAttribute("username");
-                String role = (String) session.getAttribute("role");
-                if (userName != null) {
-                    out.print(userName + " (" + role + ")");
-                } else {
-                    out.print("访客");
-                }
-            %>
-        </span>
+    <span>
+        <a href='userInformation.jsp' id="userInfoBtn" class="info-btn">
+        <i class="fas fa-user"></i>
+        <%
+            // 从 session 获取当前用户的信息
+            String userName = (String) session.getAttribute("username");
+            String role = (String) session.getAttribute("role");
+            if (userName != null) {
+        %>
+            <span><%= userName %> (<%= role %>)</span>
+        <%
+        } else {
+        %>
+            <span>访客</span>
+        <%
+            }
+        %>
+        </a>
+    </span>
     <a href='Logout?redirect=index.jsp' class="logout-btn"><i class="fas fa-sign-out-alt"></i> 退出</a>
 </div>
 <!-- Main Content Section -->
@@ -329,33 +379,22 @@
                 <!-- 商品类别将在这里动态生成 -->
             </select>
 
-            <label for="minPrice">最低价格:</label>
-            <input type="number" name="minPrice" id="minPrice" placeholder="最低价格" min="0" step="0.01">
-            <label for="maxPrice">最高价格:</label>
-            <input type="number" name="maxPrice" id="maxPrice" placeholder="最高价格" min="0" step="0.01">
+            <label for="minPrice">最低售价:</label>
+            <input type="number" name="minPrice" id="minPrice" placeholder="最低售价" min="0" step="0.01">
+            <label for="maxPrice">最高售价:</label>
+            <input type="number" name="maxPrice" id="maxPrice" placeholder="最高售价" min="0" step="0.01">
 
             <button type="submit">筛选</button>
         </form>
-
-<%--        <form method="post" action="batchDelete">--%>
-<%--            <button type="submit">批量删除</button>--%>
-<%--        </form>--%>
-
-        <!-- 导出CSV按钮 (DEPRECATED) -->
-        <%--        <form id="exportCSVForm" action="javascript:void(0)">--%>
-        <%--            <button type="submit" onclick="exportCSV()">导出CSV</button>--%>
-        <%--        </form>--%>
-
-        <!-- 添加商品按钮 -->
-        <button onclick="openModal('add')">添加商品</button>
-
+        <div class="button-group">
+            <button onclick="openModal('add')">添加商品</button>
+        </div>
     </div>
 
     <!-- 商品列表展示 -->
     <table>
         <thead>
         <tr>
-            <th><input type="checkbox" id="selectAll"> 全选</th>
             <th>商品ID</th>
             <th>商品名称</th>
             <th>类别</th>
@@ -585,11 +624,6 @@
             .catch(error => console.error('Error checking stock warning:', error));
     }
 
-    // 全选操作
-    document.getElementById('selectAll').addEventListener('change', function () {
-        var checkboxes = document.querySelectorAll('input[name="selectedProducts"]');
-        checkboxes.forEach(checkbox => checkbox.checked = this.checked);
-    });
 
     // 获取商品列表
     const itemsPerPage = 10; // 每页显示的商品数量
@@ -629,7 +663,7 @@
                     data.products.forEach(product => {
                         const row = document.createElement('tr');
 
-                        row.innerHTML = '<td><input type="checkbox" name="selectedProducts" value="' + product.productId + '"></td>' +
+                        row.innerHTML =
                             '<td>' + product.productId + '</td>' +
                             '<td>' + product.productName + '</a></td>' +
                             '<td>' + product.category + '</td>' +
@@ -639,8 +673,8 @@
                             '<td>' + product.warehouseStock + '</td>' +
                             '<td>' +
                             '<div class="action-btns">' +
-                                '<a href="javascript:void(0)" onclick="openModal(\'edit\', ' + product.productId + ')">编辑</a>' +
-                                '<a href="javascript:void(0)" onclick="offShelf(' + product.productId + ')">下架</a>' +
+                                '<e href="javascript:void(0)" onclick="openModal(\'edit\', ' + product.productId + ')">编辑</e>' +
+                                '<c href="javascript:void(0)" onclick="offShelf(' + product.productId + ')">下架</>' +
                             '</div>' +
                             '</td>';
 

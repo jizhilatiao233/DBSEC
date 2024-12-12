@@ -158,7 +158,7 @@
             color: white;
             text-align: center;
             padding: 10px;
-            position: fixed;
+            position: sticky;
             bottom: 0;
             width: 100%;
         }
@@ -174,6 +174,21 @@
             border-radius: 30px;
             font-size: 16px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .user-info .info-btn {
+            background-color: #4489e3;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 14px;
+            display: inline-block;
+            cursor: pointer;
+        }
+
+        .user-info .info-btn:hover {
+            background-color: #2475ef;
         }
 
         .user-info .logout-btn {
@@ -227,6 +242,45 @@
             }
         }
 
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            width: 400px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-content input, .modal-content select, .modal-content button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+        }
+
+        .modal-content button {
+            background-color: #4d94ff;
+            color: white;
+            cursor: pointer;
+        }
+
+        .modal-content button:hover {
+            background-color: #003366;
+        }
+
     </style>
 </head>
 <body>
@@ -238,14 +292,13 @@
 
 <!-- Side Navigation -->
 <nav id="sideNav">
-    <a href="admin_dashboard.jsp" class="active"><i class="fas fa-tachometer-alt"></i> 仪表盘</a>
+    <a href="admin_dashboard.jsp" class="active"><i class="fas fa-tachometer-alt"></i> 首页</a>
     <a href="product_management.jsp"><i class="fas fa-cogs"></i> 商品管理</a>
     <a href="salesManagement.jsp"><i class="fas fa-shopping-cart"></i> 销售管理</a>
     <a href="customerManagement.jsp"><i class="fas fa-warehouse"></i> 客户管理</a>
     <a href="orderManagement.jsp"><i class="fas fa-box"></i> 订单管理</a>
     <a href="incomingInformation.jsp"><i class="fas fa-chart-line"></i> 进货信息</a>
     <a href="staffManagement.jsp"><i class="fas fa-users"></i> 员工管理</a> <!-- 新增员工管理 -->
-    <a href='Logout?redirect=index.jsp'><i class="fas fa-sign-out-alt"></i> 退出</a>
 </nav>
 
 <!-- Hamburger Button for Mobile -->
@@ -255,19 +308,25 @@
 
 <!-- Right Top User Info -->
 <div class="user-info">
-        <span>
-            <i class="fas fa-user"></i>
-            <%
-                // 从 session 获取当前用户的信息
-                String userName = (String) session.getAttribute("username");
-                String role = (String) session.getAttribute("role");
-                if (userName != null) {
-                    out.print(userName + " (" + role + ")");
-                } else {
-                    out.print("访客");
-                }
-            %>
-        </span>
+    <span>
+        <a href='userInformation.jsp' id="userInfoBtn" class="info-btn">
+        <i class="fas fa-user"></i>
+        <%
+            // 从 session 获取当前用户的信息
+            String userName = (String) session.getAttribute("username");
+            String role = (String) session.getAttribute("role");
+            if (userName != null) {
+        %>
+            <span><%= userName %> (<%= role %>)</span>
+        <%
+        } else {
+        %>
+            <span>访客</span>
+        <%
+            }
+        %>
+        </a>
+    </span>
     <a href='Logout?redirect=index.jsp' class="logout-btn"><i class="fas fa-sign-out-alt"></i> 退出</a>
 </div>
 
@@ -337,6 +396,7 @@
         var sideNav = document.getElementById('sideNav');
         sideNav.classList.toggle('open');
     }
+
 </script>
 
 </body>

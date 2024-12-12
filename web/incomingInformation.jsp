@@ -115,6 +115,28 @@
         .action-btns a:hover {
             background-color: #003366;
         }
+        .action-btns e {
+            padding: 8px 16px;
+            background-color: #7bd168;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: background-color 0.3s;
+        }
+        .action-btns e:hover {
+            background-color: #5a9a4b;
+        }
+        .action-btns c {
+            padding: 8px 16px;
+            background-color: #f16969;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: background-color 0.3s;
+        }
+        .action-btns c:hover {
+            background-color: #ef444b;
+        }
 
         .footer {
             background-color: #0066cc;
@@ -126,8 +148,9 @@
             width: 100%;
         }
 
+        /* Right Top User Identity Section */
         .user-info {
-            position: absolute;
+            position: absolute ;
             top: 20px;
             right: 20px;
             background-color: #0066cc;
@@ -136,6 +159,21 @@
             border-radius: 30px;
             font-size: 16px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .user-info .info-btn {
+            background-color: #4489e3;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 14px;
+            display: inline-block;
+            cursor: pointer;
+        }
+
+        .user-info .info-btn:hover {
+            background-color: #2475ef;
         }
 
         .user-info .logout-btn {
@@ -233,49 +271,38 @@
 </header>
 
 <nav>
-    <a href="admin_dashboard.jsp" class="active"><i class="fas fa-tachometer-alt"></i> 首页</a>
+    <a href="admin_dashboard.jsp" ><i class="fas fa-tachometer-alt"></i> 首页</a>
     <a href="product_management.jsp"><i class="fas fa-cogs"></i> 商品管理</a>
     <a href="salesManagement.jsp"><i class="fas fa-shopping-cart"></i> 销售管理</a>
     <a href="customerManagement.jsp"><i class="fas fa-warehouse"></i> 客户管理</a>
     <a href="orderManagement.jsp"><i class="fas fa-box"></i> 订单管理</a>
-    <a href="incomingInformation.jsp"><i class="fas fa-chart-line"></i> 进货信息</a>
+    <a href="incomingInformation.jsp" class="active"><i class="fas fa-chart-line"></i> 进货信息</a>
     <a href="staffManagement.jsp"><i class="fas fa-users"></i> 员工管理</a>
-    <a href="logout.jsp"><i class="fas fa-sign-out-alt"></i> 退出</a>
 </nav>
 
+<!-- Right Top User Info -->
 <div class="user-info">
-  <span>
-    <i class="fas fa-user"></i>
-    <%
-        String userName = (String) session.getAttribute("username");
-        String role = (String) session.getAttribute("role");
-        if (userName != null) {
-            out.print(userName + " (" + role + ")");
+    <span>
+        <a href='userInformation.jsp' id="userInfoBtn" class="info-btn">
+        <i class="fas fa-user"></i>
+        <%
+            // 从 session 获取当前用户的信息
+            String userName = (String) session.getAttribute("username");
+            String role = (String) session.getAttribute("role");
+            if (userName != null) {
+        %>
+            <span><%= userName %> (<%= role %>)</span>
+        <%
         } else {
-            out.print("访客");
-        }
-    %>
-  </span>
-    <a href="logout.jsp" class="logout-btn"><i class="fas fa-sign-out-alt"></i> 退出</a>
+        %>
+            <span>访客</span>
+        <%
+            }
+        %>
+        </a>
+    </span>
+    <a href='Logout?redirect=index.jsp' class="logout-btn"><i class="fas fa-sign-out-alt"></i> 退出</a>
 </div>
-
-<%--<div class="container">--%>
-<%--    <h2>进货订单管理</h2>--%>
-
-<%--    <div class="action-bar">--%>
-<%--        <form method="get" action="incomingInformation.jsp">--%>
-<%--            <select name="supplier">--%>
-<%--                <option value="">选择供应商</option>--%>
-<%--                <!-- 动态加载供应商 -->--%>
-<%--            </select>--%>
-
-<%--            <button type="submit">筛选</button>--%>
-<%--        </form>--%>
-
-<%--        <button onclick="openModal('add')" class="action-btn">添加进货订单</button>--%>
-
-<%--    </div>--%>
-<%--    --%>
     <div class="container">
         <h2>进货订单管理</h2>
 
@@ -291,21 +318,13 @@
                     <option value="totalCost">按订单总价排序</option>
                 </select>
                 <button type="submit">排序</button>
-
-                <!-- 搜索条件 -->
-                <input type="text" name="searchProduct" placeholder="商品名称">
-                <input type="text" name="searchSupplier" placeholder="供应商">
-                <input type="text" name="searchResponsible" placeholder="负责人">
-
-                <!-- 进货日期筛选 -->
-                <input type="date" name="incomingDate" placeholder="进货日期">
-
-
-                <button type="submit">搜索</button>
             </form>
             <br>
             <!-- 进货金额筛选 -->
             <form method="get" action="incomingInformation.jsp">
+                <select name="product">
+                    <option value="">选择商品</option>
+                </select>
                 <input type="number" name="minTotalCost" placeholder="最低订单总价" step="0.01" min="0">
                 <input type="number" name="maxTotalCost" placeholder="最高订单总价" step="0.01" min="0">
 
@@ -319,30 +338,15 @@
                 <!-- 供应商筛选 -->
                 <select name="supplier">
                     <option value="">选择供应商</option>
-                    <!-- 供应商列表动态加载 -->
-                    <%-- 通过后台动态加载供应商数据 --%>
-                    <%-- for (Supplier supplier : supplierList) { %>
-                    <%-- out.print("<option value='" + supplier.getId() + "'>" + supplier.getName() + "</option>"); --%>
-                    <%-- } --%>
                 </select>
                 <select name="supplier">
                     <option value="">选择负责人</option>
-                    <!-- 负责人列表动态加载 -->
-                    <%-- 通过后台动态加载供应商数据 --%>
-                    <%-- for (Supplier supplier : supplierList) { %>
-                    <%-- out.print("<option value='" + supplier.getId() + "'>" + supplier.getName() + "</option>"); --%>
-                    <%-- } --%>
                 </select>
 
                 <button type="submit">筛选</button>
             </form>
 
             <div class="button-group">
-                <!-- 批量删除表单 -->
-                <form method="post" action="batchDeleteIncomingOrders.jsp">
-                    <button type="submit">批量删除</button>
-                </form>
-
                 <!-- 添加进货订单按钮 -->
                 <button onclick="openModal('add')">添加进货订单</button>
 
@@ -380,8 +384,8 @@
             <td>管理员A</td>
             <td>
                 <div class="action-btns">
-                    <a href="javascript:void(0)" onclick="openModal('edit', 1001)">编辑</a>
-                    <a href="deleteIncomingOrder.jsp?id=1001" onclick="return confirm('确定要删除该进货订单吗？')">删除</a>
+                    <e href="javascript:void(0)" onclick="openModal('edit', 1001)">编辑</e>
+                    <c href="deleteIncomingOrder.jsp?id=1001" onclick="return confirm('确定要删除该进货订单吗？')">删除</c>
                 </div>  //这里应该要改一下1001这
             </td>
         </tr>
@@ -401,13 +405,6 @@
             <label for="productName">商品名称:</label>
             <select name="productName" id="productName" required>
                 <option value="">请选择商品</option>
-                <!-- 商品列表动态加载 -->
-<%--                <%--%>
-<%--                    List<Product> productList = ProductDAO.getAllProducts();--%>
-<%--                    for (Product product : productList) {--%>
-<%--                        out.print("<option value='" + product.getId() + "'>" + product.getName() + "</option>");--%>
-<%--                    }--%>
-<%--                %>--%>
             </select>
 
             <!-- 进货数量 -->
@@ -430,12 +427,6 @@
             <label for="supplier">供应商:</label>
             <select name="supplier" id="supplier" required>
                 <option value="">请选择供应商</option>
-<%--                <%--%>
-<%--                    List<Supplier> supplierList = SupplierDAO.getAllSuppliers();--%>
-<%--                    for (Supplier supplier : supplierList) {--%>
-<%--                        out.print("<option value='" + supplier.getId() + "'>" + supplier.getName() + "</option>");--%>
-<%--                    }--%>
-<%--                %>--%>
             </select>
 
             <!-- 负责人 -->
@@ -460,14 +451,6 @@
             <label for="productName">商品名称:</label>
             <select name="productName" id="productName" required>
                 <option value="">请选择商品</option>
-                <!-- 商品列表动态加载 -->
-<%--                <%--%>
-<%--                    // 从数据库或其他来源获取商品列表并填充--%>
-<%--                    List<Product> productList = ProductDAO.getAllProducts();--%>
-<%--                    for (Product product : productList) {--%>
-<%--                        out.print("<option value='" + product.getId() + "'>" + product.getName() + "</option>");--%>
-<%--                    }--%>
-<%--                %>--%>
             </select>
 
             <!-- 进货数量 -->

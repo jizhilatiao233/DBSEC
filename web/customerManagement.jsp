@@ -99,6 +99,12 @@
             justify-content: center;
         }
 
+        /* 操作按钮 */
+        .action-btns {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
         .action-btns a {
             padding: 8px 16px;
             background-color: #4d94ff;
@@ -107,9 +113,30 @@
             border-radius: 6px;
             transition: background-color 0.3s;
         }
-
         .action-btns a:hover {
             background-color: #003366;
+        }
+        .action-btns e {
+            padding: 8px 16px;
+            background-color: #7bd168;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: background-color 0.3s;
+        }
+        .action-btns e:hover {
+            background-color: #5a9a4b;
+        }
+        .action-btns c {
+            padding: 8px 16px;
+            background-color: #f16969;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: background-color 0.3s;
+        }
+        .action-btns c:hover {
+            background-color: #ef444b;
         }
 
         .footer {
@@ -122,8 +149,9 @@
             width: 100%;
         }
 
+        /* Right Top User Identity Section */
         .user-info {
-            position: absolute;
+            position: absolute ;
             top: 20px;
             right: 20px;
             background-color: #0066cc;
@@ -132,6 +160,21 @@
             border-radius: 30px;
             font-size: 16px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .user-info .info-btn {
+            background-color: #4489e3;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 14px;
+            display: inline-block;
+            cursor: pointer;
+        }
+
+        .user-info .info-btn:hover {
+            background-color: #2475ef;
         }
 
         .user-info .logout-btn {
@@ -148,20 +191,6 @@
         .user-info .logout-btn:hover {
             background-color: #d32f2f;
         }
-
-        /* 调整搜索框和批量删除框宽度一致 */
-        /* 调整 action-bar 为 flex 布局，确保所有按钮和搜索框在一排 */
-        /*.action-bar {*/
-        /*    display: flex;*/
-        /*    flex-direction: column;  !* 将布局方向设置为列方向，确保元素在垂直方向排列 *!*/
-        /*    justify-content: flex-start;  !* 垂直方向上左对齐 *!*/
-        /*    align-items: flex-start;  !* 垂直方向上左对齐 *!*/
-        /*    gap: 10px;  !* 各个输入框和按钮之间的间距 *!*/
-        /*    margin-bottom: 20px;*/
-        /*}*/
-
-        /* 修改后的 action-bar 样式 */
-
 
         /* 新增的按钮组容器，确保按钮在同一行显示 */
         .button-group {
@@ -285,6 +314,25 @@
         .modal-content button:hover {
             background-color: #003366;
         }
+
+        select[name="vipLevel"] {
+            margin-right: 0;
+        }
+
+        button[type="submit"] {
+            margin-left: 5px;
+        }
+
+        /* 按钮组之间的间距 */
+        .button-group {
+            display: flex;
+            gap: 10px;  /* 使按钮之间的距离更小 */
+        }
+
+        .button-group button {
+            margin: 0;  /* 清除默认的按钮间距 */
+        }
+
     </style>
 </head>
 <body>
@@ -294,30 +342,37 @@
 </header>
 
 <nav>
-    <a href="admin_dashboard.jsp" class="active"><i class="fas fa-tachometer-alt"></i> 首页</a>
-    <a href="product_list.jsp"><i class="fas fa-cogs"></i> 商品管理</a>
+    <a href="admin_dashboard.jsp" ><i class="fas fa-tachometer-alt"></i> 首页</a>
+    <a href="product_management.jsp"><i class="fas fa-cogs"></i> 商品管理</a>
     <a href="salesManagement.jsp"><i class="fas fa-shopping-cart"></i> 销售管理</a>
-    <a href="customerManagement.jsp"><i class="fas fa-warehouse"></i> 客户管理</a>
+    <a href="customerManagement.jsp" class="active"><i class="fas fa-warehouse"></i> 客户管理</a>
     <a href="orderManagement.jsp"><i class="fas fa-box"></i> 订单管理</a>
     <a href="incomingInformation.jsp"><i class="fas fa-chart-line"></i> 进货信息</a>
     <a href="staffManagement.jsp"><i class="fas fa-users"></i> 员工管理</a>
-    <a href="logout.jsp"><i class="fas fa-sign-out-alt"></i> 退出</a>
 </nav>
 
+<!-- Right Top User Info -->
 <div class="user-info">
-  <span>
-    <i class="fas fa-user"></i>
-    <%
-        String userName = (String) session.getAttribute("username");
-        String role = (String) session.getAttribute("role");
-        if (userName != null) {
-            out.print(userName + " (" + role + ")");
+    <span>
+        <a href='userInformation.jsp' id="userInfoBtn" class="info-btn">
+        <i class="fas fa-user"></i>
+        <%
+            // 从 session 获取当前用户的信息
+            String userName = (String) session.getAttribute("username");
+            String role = (String) session.getAttribute("role");
+            if (userName != null) {
+        %>
+            <span><%= userName %> (<%= role %>)</span>
+        <%
         } else {
-            out.print("访客");
-        }
-    %>
-  </span>
-    <a href="logout.jsp" class="logout-btn"><i class="fas fa-sign-out-alt"></i> 退出</a>
+        %>
+            <span>访客</span>
+        <%
+            }
+        %>
+        </a>
+    </span>
+    <a href='Logout?redirect=index.jsp' class="logout-btn"><i class="fas fa-sign-out-alt"></i> 退出</a>
 </div>
 
 <div class="container">
@@ -326,17 +381,13 @@
         <form method="get" action="customerManagement.jsp">
             <select name="sortBy">
                 <option value="">排序方式</option>
-                <option value="email">按邮箱排序</option>
                 <option value="name">按姓名排序</option>
                 <option value="joinDate">按加入日期排序</option>
             </select>
             <button type="submit">排序</button>
 
             <input type="text" name="searchName" placeholder="姓名">
-            <input type="text" name="searchPhone" placeholder="手机号">
-            <input type="email" name="searchEmail" placeholder="邮箱">
-            <input type="text" name="searchAddress" placeholder="地址">
-//表里没有地址的 考虑改或者删
+            <input type="email" name="searchEmail" placeholder="联系方式">
 
             <button type="submit">搜索</button>
         </form>
@@ -351,23 +402,16 @@
         <!-- 新增VIP等级筛选 -->
         <select name="vipLevel">
             <option value="">选择VIP等级</option>
-            <option value="VIP 1">VIP 1</option>
-            <option value="VIP 2">VIP 2</option>
-            <option value="VIP 3">VIP 3</option>
-            <option value="VIP 4">VIP 4</option>
-        </select>
-        <select name="status">
-            <option value="">客户状态</option>
-            <option value="active">已激活</option>
-            <option value="inactive">已停用</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="4">5</option>
         </select>
             <button type="submit">筛选</button>
         </form>
 
         <div class="button-group">
-            <form method="post" action="batchDeleteCustomer">
-                <button type="submit">批量删除</button>
-            </form>
             <button onclick="openModal('add')">添加客户</button>
             <form method="get" action="exportCSV.jsp">
                 <button type="submit">导出CSV</button>
@@ -380,14 +424,10 @@
     <table>
         <thead>
         <tr>
-            <th><input type="checkbox" id="selectAll"> 全选</th>
             <th>客户ID</th>
             <th>姓名</th>
-            <th>手机号</th>
-            <th>邮箱</th>
-            <th>地址</th>
+            <th>联系方式</th>
             <th>加入日期</th>
-            <th>状态</th>
             <th>消费总金额</th> <!-- 新增列 -->
             <th>VIP等级</th> <!-- 新增列 -->
             <th>操作</th>
@@ -397,20 +437,16 @@
         <!-- 客户数据将通过 AJAX 动态加载 -->
         <!-- 示例数据 -->
         <tr>
-            <td><input type="checkbox" name="selectedCustomers" value="1"></td>
             <td>1001</td>
             <td>张三</td>
             <td>13800000000</td>
-            <td>zhangsan@example.com</td>
-            <td>北京市朝阳区</td>
             <td>2022-01-01</td>
-            <td>已激活</td>
             <td>￥5000</td> <!-- 示例消费总金额 -->
             <td>VIP 1</td> <!-- 示例VIP等级 -->
             <td>
                 <div class="action-btns">
-                    <a onclick="openModal('edit', 1001)">编辑</a>
-                    <a onclick="deleteCustomer(1001)">删除</a>
+                    <e onclick="openModal('edit', 1001)">编辑</e>
+                    <c onclick="deleteCustomer(1001)">删除</c>
                 </div>
             </td>
         </tr>
