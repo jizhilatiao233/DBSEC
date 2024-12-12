@@ -413,9 +413,7 @@
 
         <div class="button-group">
             <button onclick="openModal('add')">添加客户</button>
-            <form method="get" action="exportCSV.jsp">
-                <button type="submit">导出CSV</button>
-            </form>
+            <button onclick="exportCSV()">导出CSV</button>
         </div>
     </div>
 
@@ -460,6 +458,38 @@
 <div class="footer">
     <p>&copy; 2024 超市管理系统 | 版权所有</p>
 </div>
+<!-- 添加客户和编辑客户的弹窗 -->
+<div id="customerModal" class="modal">
+    <div class="modal-content">
+        <h2 id="modalTitle">添加客户</h2>
+        <form id="customerForm" method="post" action="">
+            <label for="customerName">姓名:</label>
+            <input type="text" id="customerName" name="customerName" required>
+
+            <label for="customerContact">联系方式:</label>
+            <input type="text" id="customerContact" name="customerContact" required>
+
+            <label for="joinDate">加入日期:</label>
+            <input type="date" id="joinDate" name="joinDate" required>
+
+            <label for="amount">消费总金额:</label>
+            <input type="number" id="amount" name="amount" required>
+
+            <label for="vipLevel">VIP等级:</label>
+            <select id="vipLevel" name="vipLevel" required>
+                <option value="">请选择</option>
+                <option value="1">VIP1</option>
+                <option value="2">VIP2</option>
+                <option value="3">VIP3</option>
+                <option value="4">VIP4</option>
+                <option value="5">VIP5</option>
+            </select>
+
+            <button type="submit">确认</button>
+            <button type="button" onclick="closeModal()">取消</button>
+        </form>
+    </div>
+</div>
 
 <script>
     function openModal(action, customerId = null) {
@@ -488,7 +518,48 @@
     document.getElementById('selectAll').addEventListener('change', function () {
         document.querySelectorAll('input[name="selectedCustomers"]').forEach(checkbox => checkbox.checked = this.checked);
     });
+
+    // 导出 CSV 函数
+    function exportCSV() {
+        // 请求获取 JSON 数据
+        fetch('/api/customers')  // 假设你的后端提供了这个接口
+            .then(response => response.json())
+            .then(data => {
+                // 将 JSON 数据转换为 CSV 格式
+                const csv = convertToCSV(data);
+
+                // 创建一个临时链接来触发下载
+                const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement('a');
+                const url = URL.createObjectURL(blob);
+
+                link.setAttribute('href', url);
+                link.setAttribute('download', 'customer_data.csv');
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            })
+            .catch(error => {
+                console.error('Error exporting CSV:', error);
+            });
+    }
+
+    // 将 JSON 转换为 CSV 格式的函数
+    function convertToCSV(data) {
+        const header = Object.keys(data[0]);  // 获取对象的键作为 CSV 的头部
+        const rows = data.map(item => header.map(field => item[field]));  // 将每一行数据转化为数组
+
+        // 将 CSV 的头部和数据拼接成字符串
+        const csv = [
+            header.join(','),  // 将头部的字段连接成一行
+            ...rows.map(row => row.join(','))  // 每一行数据用逗号连接
+        ].join('\n');
+
+        return csv;
+    }
 </script>
+
+
 
 </body>
 </html>

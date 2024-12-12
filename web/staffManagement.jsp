@@ -419,28 +419,53 @@
     </div>
 </div>
 
-<!-- 查看员工信息详情 -->
 <div class="modal" id="detailModal">
     <div class="modal-content">
         <h3>员工信息</h3>
-        <p><strong>姓名:</strong> <span id="employeeName"></span></p>
-        <p><strong>电话:</strong> <span id="employeePhone"></span></p>
-        <p><strong>职位:</strong> <span id="position"></span></p>
-        <p><strong>管理人员:</strong>
-        <table>
-            <tbody id="employeeList">
-            <tr>
-                <td><input type="checkbox" name="selectedEmployee" value=""></td>
-                <td>1001</td>
-                <td>张三</td>
-                <td>13800000000</td>
-                <td>2022-01-01</td>
-                <td>收银员</td>
-            </tr>
-            </tbody>
-        </table>
-        </p>
-        <button type="button" onclick="closeModal()">返回</button>
+        <form action="employeeDetail.jsp" method="POST">
+            <!-- 员工ID：详情时显示 -->
+            <input type="hidden" name="employeeId" id="employeeId" value="">
+
+            <!-- 员工姓名 -->
+            <label for="employeeName">姓名:</label>
+            <input type="text" name="employeeName" id="employeeName" value="" readonly>
+
+            <!-- 联系方式 -->
+            <label for="employeePhone">联系方式:</label>
+            <input type="text" name="employeePhone" id="employeePhone" value="" readonly>
+
+            <!-- 职位 -->
+            <label for="position">职位:</label>
+            <input type="text" name="position" id="position" value="" readonly>
+
+            <!-- 管理人员 -->
+            <label for="employeeList">管理人员:</label>
+            <table>
+                <thead>
+                <tr>
+                    <th>选择</th>
+                    <th>员工编号</th>
+                    <th>姓名</th>
+                    <th>联系方式</th>
+                    <th>加入时间</th>
+                    <th>职位</th>
+                </tr>
+                </thead>
+                <tbody id="employeeList">
+                <!-- 示例行，实际内容通过 JS 动态生成 -->
+                <tr>
+                    <td><input type="checkbox" name="selectedEmployee" value=""></td>
+                    <td>1001</td>
+                    <td>张三</td>
+                    <td>13800000000</td>
+                    <td>2022-01-01</td>
+                    <td>收银员</td>
+                </tr>
+                </tbody>
+            </table>
+
+            <button type="button" onclick="closeModal()">返回</button>
+        </form>
     </div>
 </div>
 

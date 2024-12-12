@@ -297,10 +297,6 @@
             text-decoration: underline;
         }
 
-        input[type="number"] {
-            width: 100px; /* 设置输入框的宽度为100px */
-        }
-
 
     </style>
 </head>
@@ -387,7 +383,16 @@
         </form>
         <div class="button-group">
             <button onclick="openModal('add')">添加商品</button>
+            <button onclick="exportCSV({
+        sortBy: getURLParam('sortBy') || '',
+        sortOrder: getURLParam('sortOrder') || '',
+        productName: getURLParam('search') || '',
+        category: getURLParam('category') || '',
+        minPrice: getURLParam('minPrice') || '',
+        maxPrice: getURLParam('maxPrice') || ''
+        })">导出CSV</button>
         </div>
+
     </div>
 
     <!-- 商品列表展示 -->
@@ -438,12 +443,12 @@
             <label for="sellingPrice">售价:</label>
             <input type="number" name="sellingPrice" id="sellingPrice" min="0" step="0.01" required>
 
-            <div id="restockRow" style="display: none;">
+            <div id="restockRow">
                 <label for="restockAmount">货架补货:</label>
-                <input type="number" name="restockAmount" id="restockAmount" min="0" value="0">
+                <input type="number" name="restockAmount" id="restockAmount" min="0" value="0" step="1">
             </div>
 
-            <div id="addStockRow" style="display: none;">
+            <div id="addStockRow" >
                 <label for="shelfStock">上架数量:</label>
                 <input type="number" name="shelfStock" id="shelfStock" min="0" value="0">
 
@@ -735,30 +740,60 @@
         }
     }
 
-    // 导出CSV (DEPRECATED)
-    // TODO: 修改此函数
-    function exportCSV() {
-        const params = getUrlParams();
 
+    // 监听导出按钮点击事件
+    // 获取URL中的查询参数
+    function getURLParam(param) {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(param);
+    }
+
+    function exportCSV({sortBy = '', sortOrder = '',productName = '', category = '', minPrice = '', maxPrice = ''})
+    {
+        // 向后端请求数据
         fetch('product?action=exportCSV' +
-            '&productName=' + params.search +
-            '&category=' + params.category +
-            '&minPrice=' + params.minPrice +
-            '&maxPrice=' + params.maxPrice +
-            '&sortBy=' + params.sortBy +
-            '&sortOrder=' + params.sortOrder)
-                .then(response => response.blob())
-            .then(blob => {
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.style.display = 'none';
-                a.href = url;
-                a.download = 'products.csv';
-                document.body.appendChild(a);
-                a.click();
-                window.URL.revokeObjectURL(url);
+            '&sortBy=' + sortBy +
+            '&sortOrder=' + sortOrder +
+            '&productName=' + productName +
+            '&category=' + category +
+            '&minPrice=' + minPrice +
+            '&maxPrice=' + maxPrice
+        )
+            .then(response => response.json())  // 后端返回的是CSV数据的JSON格式
+            .then(data => {
+                // 将返回的数据转化为CSV格式
+                const csvContent = convertToCSV(data);
+
+                // 创建Blob对象并触发下载
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = 'products.csv';  // 下载的文件名
+                link.click();
             })
-            .catch(error => console.error('Error exporting CSV:', error));
+            .catch(error => {
+                console.error('Error exporting CSV:', error);
+            });
+    }
+
+    // 将数据转化为CSV格式
+    function convertToCSV(data) {
+        // 表头（字段名）
+        const header = ['ProductID', 'ProductName', 'Category', 'PurchasePrice', 'SellingPrice', 'ShelfStock', 'WarehouseStock'];
+
+        // 将每一行数据转化为CSV格式
+        const rows = data.map(item => [
+            item.ProductID,
+            item.ProductName,
+            item.Category,
+            item.PurchasePrice,
+            item.SellingPrice,
+            item.ShelfStock,
+            item.WarehouseStock
+        ]);
+
+        // 拼接CSV内容：先添加表头，再加上数据行
+        return [header, ...rows].map(row => row.join(',')).join('\n');
     }
 
     // 获取URL参数
