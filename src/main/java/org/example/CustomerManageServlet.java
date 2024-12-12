@@ -90,8 +90,9 @@ public class CustomerManageServlet extends HttpServlet {
         String contactInfo = request.getParameter("contactInfo");
         String minTotalConsumption = request.getParameter("maxTotalConsumption");
         String maxTotalConsumption = request.getParameter("minTotalConsumption");
-        String fromJoinDate = request.getParameter("fromJoinDate");
-        String toJoinDate = request.getParameter("toJoinDate");
+        String joinDate = request.getParameter("JoinDate");
+//        String fromJoinDate = request.getParameter("fromJoinDate");
+//        String toJoinDate = request.getParameter("toJoinDate");
         String vipLevel = request.getParameter("vipLevel");
 
         // build query
@@ -114,14 +115,18 @@ public class CustomerManageServlet extends HttpServlet {
             queryBuilder.append(" AND TotalConsumption <= ?");
             countQueryBuilder.append(" AND TotalConsumption <= ?");
         }
-        if (fromJoinDate != null && !fromJoinDate.isEmpty()) {
-            queryBuilder.append(" AND JoinDate >= ?");
-            countQueryBuilder.append(" AND JoinDate >= ?");
+        if (joinDate != null && !joinDate.isEmpty()) {
+            queryBuilder.append(" AND DATE(JoinDate) = ?");
+            countQueryBuilder.append(" AND DATE(JoinDate) = ?");
         }
-        if (toJoinDate != null && !toJoinDate.isEmpty()) {
-            queryBuilder.append(" AND JoinDate <= ?");
-            countQueryBuilder.append(" AND JoinDate <= ?");
-        }
+//        if (fromJoinDate != null && !fromJoinDate.isEmpty()) {
+//            queryBuilder.append(" AND JoinDate >= ?");
+//            countQueryBuilder.append(" AND JoinDate >= ?");
+//        }
+//        if (toJoinDate != null && !toJoinDate.isEmpty()) {
+//            queryBuilder.append(" AND JoinDate <= ?");
+//            countQueryBuilder.append(" AND JoinDate <= ?");
+//        }
         if (vipLevel != null && !vipLevel.isEmpty()) {
             queryBuilder.append(" AND VIPLevel = ?");
             countQueryBuilder.append(" AND VIPLevel = ?");
@@ -154,16 +159,21 @@ public class CustomerManageServlet extends HttpServlet {
                 countStmt.setDouble(paramIndex, Double.parseDouble(maxTotalConsumption));
                 paramIndex++;
             }
-            if (fromJoinDate != null && !fromJoinDate.isEmpty()) {
-                stmt.setString(paramIndex, fromJoinDate);
-                countStmt.setString(paramIndex, fromJoinDate);
+            if (joinDate != null && !joinDate.isEmpty()) {
+                stmt.setString(paramIndex, joinDate);
+                countStmt.setString(paramIndex, joinDate);
                 paramIndex++;
             }
-            if (toJoinDate != null && !toJoinDate.isEmpty()) {
-                stmt.setString(paramIndex, toJoinDate);
-                countStmt.setString(paramIndex, toJoinDate);
-                paramIndex++;
-            }
+//            if (fromJoinDate != null && !fromJoinDate.isEmpty()) {
+//                stmt.setString(paramIndex, fromJoinDate);
+//                countStmt.setString(paramIndex, fromJoinDate);
+//                paramIndex++;
+//            }
+//            if (toJoinDate != null && !toJoinDate.isEmpty()) {
+//                stmt.setString(paramIndex, toJoinDate);
+//                countStmt.setString(paramIndex, toJoinDate);
+//                paramIndex++;
+//            }
             if (vipLevel != null && !vipLevel.isEmpty()) {
                 stmt.setInt(paramIndex, Integer.parseInt(vipLevel));
                 countStmt.setInt(paramIndex, Integer.parseInt(vipLevel));
@@ -332,8 +342,9 @@ public class CustomerManageServlet extends HttpServlet {
         String contactInfo = request.getParameter("contactInfo");
         String minTotalConsumption = request.getParameter("maxTotalConsumption");
         String maxTotalConsumption = request.getParameter("minTotalConsumption");
-        String fromJoinDate = request.getParameter("fromJoinDate");
-        String toJoinDate = request.getParameter("toJoinDate");
+        String joinDate = request.getParameter("JoinDate");
+//        String fromJoinDate = request.getParameter("fromJoinDate");
+//        String toJoinDate = request.getParameter("toJoinDate");
         String vipLevel = request.getParameter("vipLevel");
 
         // sort parameters
@@ -360,12 +371,15 @@ public class CustomerManageServlet extends HttpServlet {
         if (maxTotalConsumption != null && !maxTotalConsumption.isEmpty()) {
             queryBuilder.append(" AND TotalConsumption <= ?");
         }
-        if (fromJoinDate != null && !fromJoinDate.isEmpty()) {
-            queryBuilder.append(" AND JoinDate >= ?");
+        if (joinDate != null && !joinDate.isEmpty()) {
+            queryBuilder.append(" AND DATE(JoinDate) = ?");
         }
-        if (toJoinDate != null && !toJoinDate.isEmpty()) {
-            queryBuilder.append(" AND JoinDate <= ?");
-        }
+//        if (fromJoinDate != null && !fromJoinDate.isEmpty()) {
+//            queryBuilder.append(" AND JoinDate >= ?");
+//        }
+//        if (toJoinDate != null && !toJoinDate.isEmpty()) {
+//            queryBuilder.append(" AND JoinDate <= ?");
+//        }
         if (vipLevel != null && !vipLevel.isEmpty()) {
             queryBuilder.append(" AND VIPLevel = ?");
         }
@@ -390,14 +404,18 @@ public class CustomerManageServlet extends HttpServlet {
                 stmt.setDouble(paramIndex, Double.parseDouble(maxTotalConsumption));
                 paramIndex++;
             }
-            if (fromJoinDate != null && !fromJoinDate.isEmpty()) {
-                stmt.setString(paramIndex, fromJoinDate);
+            if (joinDate != null && !joinDate.isEmpty()) {
+                stmt.setString(paramIndex, joinDate);
                 paramIndex++;
             }
-            if (toJoinDate != null && !toJoinDate.isEmpty()) {
-                stmt.setString(paramIndex, toJoinDate);
-                paramIndex++;
-            }
+//            if (fromJoinDate != null && !fromJoinDate.isEmpty()) {
+//                stmt.setString(paramIndex, fromJoinDate);
+//                paramIndex++;
+//            }
+//            if (toJoinDate != null && !toJoinDate.isEmpty()) {
+//                stmt.setString(paramIndex, toJoinDate);
+//                paramIndex++;
+//            }
             if (vipLevel != null && !vipLevel.isEmpty()) {
                 stmt.setInt(paramIndex, Integer.parseInt(vipLevel));
                 paramIndex++;
