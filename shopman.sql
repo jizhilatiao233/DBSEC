@@ -48,6 +48,7 @@ CREATE TABLE Customer (
     Username VARCHAR(100),                        -- 用户名（可为空）
     Password VARCHAR(255),                        -- 密码（可为空）
     JoinDate DATETIME DEFAULT CURRENT_TIMESTAMP,  -- 加入日期
+    TotalConsumption DECIMAL(10, 2) DEFAULT 0,    -- 总消费金额 (等于本客户所有订单的ActualPayment之和)
     VIPLevel INT NOT NULL,                        -- VIP等级
     PurchaseSum DECIMAL(10, 2) NOT NULL
 );
@@ -195,6 +196,39 @@ BEGIN
     UPDATE Orders
     SET ActualPayment = (SELECT SUM(ActualPayment) FROM Sales WHERE OrderID = OLD.OrderID)
     WHERE OrderID = OLD.OrderID;
+END;
+
+-- 创建触发器：在插入Orders记录时更新Customer的TotalConsumption
+CREATE TRIGGER update_customer_total_consumption_after_order_insert
+    AFTER INSERT ON Orders
+    FOR EACH ROW
+BEGIN
+    -- 更新Customer的TotalConsumption
+    UPDATE Customer
+    SET TotalConsumption = (SELECT SUM(ActualPayment) FROM Orders WHERE CustomerID = NEW.CustomerID)
+    WHERE CustomerID = NEW.CustomerID;
+END;
+
+-- 创建触发器：在更新Orders记录时更新Customer的TotalConsumption
+CREATE TRIGGER update_customer_total_consumption_after_order_update
+    AFTER UPDATE ON Orders
+    FOR EACH ROW
+BEGIN
+    -- 更新Customer的TotalConsumption
+    UPDATE Customer
+    SET TotalConsumption = (SELECT SUM(ActualPayment) FROM Orders WHERE CustomerID = NEW.CustomerID)
+    WHERE CustomerID = NEW.CustomerID;
+END;
+
+-- 创建触发器：在删除Orders记录时更新Customer的TotalConsumption
+CREATE TRIGGER update_customer_total_consumption_after_order_delete
+    AFTER DELETE ON Orders
+    FOR EACH ROW
+BEGIN
+    -- 更新Customer的TotalConsumption
+    UPDATE Customer
+    SET TotalConsumption = (SELECT SUM(ActualPayment) FROM Orders WHERE CustomerID = OLD.CustomerID)
+    WHERE CustomerID = OLD.CustomerID;
 END;
 
 commit;
