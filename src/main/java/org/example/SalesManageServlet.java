@@ -24,6 +24,13 @@ public class SalesManageServlet extends HttpServlet {
                 throw new ServletException("Database access error", e);
             }
         }
+        else if ("exportCSV".equals(action)) {
+            try (Connection conn = DatabaseConnection.getConnection()) {
+                exportCSV(request, response, conn);
+            } catch (Exception e) {
+                throw new ServletException("Database access error", e);
+            }
+        }
         else {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid action");
         }
@@ -153,6 +160,85 @@ public class SalesManageServlet extends HttpServlet {
             PrintWriter out = response.getWriter();
             SalesResponse salesResponse = new SalesResponse(sales, totalPages);
             out.print(new Gson().toJson(salesResponse));
+            out.flush();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void exportCSV(HttpServletRequest request, HttpServletResponse response, Connection conn) throws IOException {
+        // filter parameters
+        String orderID = request.getParameter("orderID");
+        String productName = request.getParameter("productName");
+        String staffName = request.getParameter("staffName");
+        String salesDate = request.getParameter("salesDate");
+
+        // sort parameters
+        String sortBy = request.getParameter("sortBy");
+        String sortOrder = request.getParameter("sortOrder");
+        if (sortBy == null || sortBy.isEmpty()) {
+            sortBy = "OrderID";
+        }
+        if (sortOrder == null || sortOrder.isEmpty()) {
+            sortOrder = "ASC";
+        }
+
+        // build query
+        StringBuilder queryBuilder = new StringBuilder("SELECT s.OrderID, s.ProductID, p.ProductName, s.StaffID, st.StaffName, s.QuantitySold, s.SellingPrice, s.ActualPayment, s.Profit, DATE(s.SalesDate) as SalesDate " +
+                "FROM Sales s " +
+                "JOIN Product p ON s.ProductID = p.ProductID " +
+                "JOIN Staff st ON s.StaffID = st.StaffID " +
+                "WHERE 1=1 ");
+        if (orderID != null && !orderID.isEmpty()) {
+            queryBuilder.append("AND s.OrderID = ? ");
+        }
+        if (productName != null && !productName.isEmpty()) {
+            queryBuilder.append("AND p.ProductName LIKE ? ");
+        }
+        if (staffName != null && !staffName.isEmpty()) {
+            queryBuilder.append("AND st.StaffName LIKE ? ");
+        }
+        if (salesDate != null && !salesDate.isEmpty()) {
+            queryBuilder.append("AND DATE(s.SalesDate) = ? ");
+        }
+        queryBuilder.append("ORDER BY ").append(sortBy).append(" ").append(sortOrder);
+        String query = queryBuilder.toString();
+
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            int paramIndex = 1;
+            // set filter parameters
+            if (orderID != null && !orderID.isEmpty()) {
+                stmt.setString(paramIndex++, orderID);
+            }
+            if (productName != null && !productName.isEmpty()) {
+                stmt.setString(paramIndex++, "%" + productName + "%");
+            }
+            if (staffName != null && !staffName.isEmpty()) {
+                stmt.setString(paramIndex++, "%" + staffName + "%");
+            }
+            if (salesDate != null && !salesDate.isEmpty()) {
+                stmt.setString(paramIndex++, salesDate);
+            }
+
+            ResultSet rs = stmt.executeQuery();
+            response.setContentType("text/csv");
+            response.setHeader("Content-Disposition", "attachment; filename=\"sales.csv\"");
+            PrintWriter out = response.getWriter();
+            out.println("OrderID,ProductID,ProductName,StaffID,StaffName,QuantitySold,SellingPrice,ActualPayment,Profit,SalesDate");
+            while (rs.next()) {
+                out.println(String.join(",",
+                        Integer.toString(rs.getInt("OrderID")),
+                        Integer.toString(rs.getInt("ProductID")),
+                        rs.getString("ProductName"),
+                        Integer.toString(rs.getInt("StaffID")),
+                        rs.getString("StaffName"),
+                        Integer.toString(rs.getInt("QuantitySold")),
+                        rs.getBigDecimal("SellingPrice").toPlainString(),
+                        rs.getBigDecimal("ActualPayment").toPlainString(),
+                        rs.getBigDecimal("Profit").toPlainString(),
+                        rs.getString("SalesDate")
+                ));
+            }
             out.flush();
         } catch (SQLException e) {
             throw new RuntimeException(e);

@@ -46,6 +46,34 @@ public class PurchaseManageServlet extends HttpServlet {
                 throw new ServletException("Database access error", e);
             }
         }
+        else if ("exportCSV".equals(action)) {
+            try (Connection conn = DatabaseConnection.getConnection()) {
+                exportCSV(request, response, conn);
+            } catch (Exception e) {
+                throw new ServletException("Database access error", e);
+            }
+        }
+        else if ("addPurchase".equals(action)) {
+            try (Connection conn = DatabaseConnection.getConnection()) {
+                addPurchase(request, response, conn);
+            } catch (Exception e) {
+                throw new ServletException("Database access error", e);
+            }
+        }
+        else if ("editPurchase".equals(action)) {
+            try (Connection conn = DatabaseConnection.getConnection()) {
+                editPurchase(request, response, conn);
+            } catch (Exception e) {
+                throw new ServletException("Database access error", e);
+            }
+        }
+        else if ("deletePurchase".equals(action)) {
+            try (Connection conn = DatabaseConnection.getConnection()) {
+                deletePurchase(request, response, conn);
+            } catch (Exception e) {
+                throw new ServletException("Database access error", e);
+            }
+        }
         else {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid action");
         }
@@ -326,14 +354,199 @@ public class PurchaseManageServlet extends HttpServlet {
         }
     }
 
-    // TODO: addPurchase method
-    private void addPurchase(HttpServletRequest request, HttpServletResponse response, Connection conn) throws IOException {
+    private void exportCSV(HttpServletRequest request, HttpServletResponse response, Connection conn) throws IOException {
+        // filter parameters
+        String productName = request.getParameter("productName");
+        String supplierName = request.getParameter("supplierName");
+        String adminName = request.getParameter("adminName");
+        String purchaseDate = request.getParameter("purchaseDate");
+        String minTotalCost = request.getParameter("minTotalCost");
+        String maxTotalCost = request.getParameter("maxTotalCost");
+        String minPurchasePrice = request.getParameter("minPurchasePrice");
+        String maxPurchasePrice = request.getParameter("maxPurchasePrice");
+        String fromPurchaseDate = request.getParameter("fromPurchaseDate");
+        String toPurchaseDate = request.getParameter("toPurchaseDate");
 
+        // sort parameters
+        String sortBy = request.getParameter("sortBy");
+        String sortOrder = request.getParameter("sortOrder");
+        if (sortBy == null || sortBy.isEmpty()) {
+            sortBy = "PurchaseID";
+        }
+        if (sortOrder == null || sortOrder.isEmpty()) {
+            sortOrder = "ASC";
+        }
+
+        // build query
+        StringBuilder queryBuilder = new StringBuilder("SELECT p.PurchaseID, p.ProductID, pr.ProductName, p.QuantityPurchased, p.PurchasePrice, p.TotalCost, DATE(p.PurchaseDate) as PurchaseDate, p.AdminID, a.AdminName, p.SupplierID, s.SupplierName " +
+                "FROM Purchase p " +
+                "JOIN Product pr ON p.ProductID = pr.ProductID " +
+                "JOIN Admin a ON p.AdminID = a.AdminID " +
+                "JOIN Supplier s ON p.SupplierID = s.SupplierID " +
+                "WHERE 1=1 ");
+        if (productName != null && !productName.isEmpty()) {
+            queryBuilder.append("AND pr.ProductName LIKE ? ");
+        }
+        if (supplierName != null && !supplierName.isEmpty()) {
+            queryBuilder.append("AND s.SupplierName LIKE ? ");
+        }
+        if (adminName != null && !adminName.isEmpty()) {
+            queryBuilder.append("AND a.AdminName LIKE ? ");
+        }
+        if (purchaseDate != null && !purchaseDate.isEmpty()) {
+            queryBuilder.append("AND DATE(p.PurchaseDate) = ? ");
+        }
+        if (minTotalCost != null && !minTotalCost.isEmpty()) {
+            queryBuilder.append("AND p.TotalCost >= ? ");
+        }
+        if (maxTotalCost != null && !maxTotalCost.isEmpty()) {
+            queryBuilder.append("AND p.TotalCost <= ? ");
+        }
+        if (minPurchasePrice != null && !minPurchasePrice.isEmpty()) {
+            queryBuilder.append("AND p.PurchasePrice >= ? ");
+        }
+        if (maxPurchasePrice != null && !maxPurchasePrice.isEmpty()) {
+            queryBuilder.append("AND p.PurchasePrice <= ? ");
+        }
+        if (fromPurchaseDate != null && !fromPurchaseDate.isEmpty()) {
+            queryBuilder.append("AND DATE(p.PurchaseDate) >= ? ");
+        }
+        if (toPurchaseDate != null && !toPurchaseDate.isEmpty()) {
+            queryBuilder.append("AND DATE(p.PurchaseDate) <= ? ");
+        }
+        queryBuilder.append("ORDER BY ").append(sortBy).append(" ").append(sortOrder);
+        String query = queryBuilder.toString();
+
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            int paramIndex = 1;
+            if (productName != null && !productName.isEmpty()) {
+                stmt.setString(paramIndex, "%" + productName + "%");
+                paramIndex++;
+            }
+            if (supplierName != null && !supplierName.isEmpty()) {
+                stmt.setString(paramIndex, "%" + supplierName + "%");
+                paramIndex++;
+            }
+            if (adminName != null && !adminName.isEmpty()) {
+                stmt.setString(paramIndex, "%" + adminName + "%");
+                paramIndex++;
+            }
+            if (purchaseDate != null && !purchaseDate.isEmpty()) {
+                stmt.setString(paramIndex, purchaseDate);
+                paramIndex++;
+            }
+            if (minTotalCost != null && !minTotalCost.isEmpty()) {
+                stmt.setBigDecimal(paramIndex, new BigDecimal(minTotalCost));
+                paramIndex++;
+            }
+            if (maxTotalCost != null && !maxTotalCost.isEmpty()) {
+                stmt.setBigDecimal(paramIndex, new BigDecimal(maxTotalCost));
+                paramIndex++;
+            }
+            if (minPurchasePrice != null && !minPurchasePrice.isEmpty()) {
+                stmt.setBigDecimal(paramIndex, new BigDecimal(minPurchasePrice));
+                paramIndex++;
+            }
+            if (maxPurchasePrice != null && !maxPurchasePrice.isEmpty()) {
+                stmt.setBigDecimal(paramIndex, new BigDecimal(maxPurchasePrice));
+                paramIndex++;
+            }
+            if (fromPurchaseDate != null && !fromPurchaseDate.isEmpty()) {
+                stmt.setString(paramIndex, fromPurchaseDate);
+                paramIndex++;
+            }
+            if (toPurchaseDate != null && !toPurchaseDate.isEmpty()) {
+                stmt.setString(paramIndex, toPurchaseDate);
+                paramIndex++;
+            }
+
+            ResultSet rs = stmt.executeQuery();
+            response.setContentType("text/csv");
+            response.setHeader("Content-Disposition", "attachment; filename=\"purchases.csv\"");
+            PrintWriter out = response.getWriter();
+            out.println("PurchaseID,ProductID,ProductName,QuantityPurchased,PurchasePrice,TotalCost,PurchaseDate,AdminID,AdminName,SupplierID,SupplierName");
+            while (rs.next()) {
+                out.println(String.join(",",
+                        Integer.toString(rs.getInt("PurchaseID")),
+                        Integer.toString(rs.getInt("ProductID")),
+                        rs.getString("ProductName"),
+                        Integer.toString(rs.getInt("QuantityPurchased")),
+                        rs.getBigDecimal("PurchasePrice").toPlainString(),
+                        rs.getBigDecimal("TotalCost").toPlainString(),
+                        rs.getString("PurchaseDate"),
+                        Integer.toString(rs.getInt("AdminID")),
+                        rs.getString("AdminName"),
+                        Integer.toString(rs.getInt("SupplierID")),
+                        rs.getString("SupplierName")
+                ));
+            }
+            out.flush();
+        } catch (SQLException e) {
+            throw new IOException("Database access error", e);
+        }
     }
 
-    // TODO: editPurchase method
-    private void editPurchase(HttpServletRequest request, HttpServletResponse response, Connection conn) throws IOException {
+    private void addPurchase(HttpServletRequest request, HttpServletResponse response, Connection conn) throws IOException {
+        int productID = Integer.parseInt(request.getParameter("productID"));
+        int quantityPurchased = Integer.parseInt(request.getParameter("quantityPurchased"));
+        double purchasePrice = Double.parseDouble(request.getParameter("purchasePrice"));
+        String purchaseDate = request.getParameter("purchaseDate");
+        int adminID = Integer.parseInt(request.getParameter("adminID"));
+        int supplierID = Integer.parseInt(request.getParameter("supplierID"));
 
+        String query = "INSERT INTO Purchase (ProductID, QuantityPurchased, PurchasePrice, PurchaseDate, AdminID, SupplierID) VALUES (?, ?, ?, ?, ?, ?)";
+
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, productID);
+            stmt.setInt(2, quantityPurchased);
+            stmt.setDouble(3, purchasePrice);
+            stmt.setString(4, purchaseDate);
+            stmt.setInt(5, adminID);
+            stmt.setInt(6, supplierID);
+            stmt.executeUpdate();
+            response.setStatus(HttpServletResponse.SC_CREATED);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void editPurchase(HttpServletRequest request, HttpServletResponse response, Connection conn) throws IOException {
+        int purchaseID = Integer.parseInt(request.getParameter("purchaseID"));
+        int productID = Integer.parseInt(request.getParameter("productID"));
+        int quantityPurchased = Integer.parseInt(request.getParameter("quantityPurchased"));
+        double purchasePrice = Double.parseDouble(request.getParameter("purchasePrice"));
+        String purchaseDate = request.getParameter("purchaseDate");
+        int adminID = Integer.parseInt(request.getParameter("adminID"));
+        int supplierID = Integer.parseInt(request.getParameter("supplierID"));
+
+        String query = "UPDATE Purchase SET ProductID = ?, QuantityPurchased = ?, PurchasePrice = ?, PurchaseDate = ?, AdminID = ?, SupplierID = ? WHERE PurchaseID = ?";
+
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, productID);
+            stmt.setInt(2, quantityPurchased);
+            stmt.setDouble(3, purchasePrice);
+            stmt.setString(4, purchaseDate);
+            stmt.setInt(5, adminID);
+            stmt.setInt(6, supplierID);
+            stmt.setInt(7, purchaseID);
+            stmt.executeUpdate();
+            response.setStatus(HttpServletResponse.SC_CREATED);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void deletePurchase(HttpServletRequest request, HttpServletResponse response, Connection conn) throws IOException {
+        int purchaseID = Integer.parseInt(request.getParameter("purchaseID"));
+        String query = "DELETE FROM Purchase WHERE PurchaseID = ?";
+
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, purchaseID);
+            stmt.executeUpdate();
+            response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private static class PurchasesResponse {
