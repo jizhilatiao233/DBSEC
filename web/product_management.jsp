@@ -314,6 +314,7 @@
             <label for="sortBy">排序方式:</label>
             <select name="sortBy" id="sortBy">
                 <option value="productName">商品名称</option>
+                <option value="category">商品类别</option>
                 <option value="purchasePrice">进价</option>
                 <option value="sellingPrice">售价</option>
                 <option value="shelfStock">上架数量</option>
@@ -341,9 +342,9 @@
 <%--        </form>--%>
 
         <!-- 导出CSV按钮 (DEPRECATED) -->
-<%--        <form id="exportCSVForm" action="javascript:void(0)">--%>
-<%--            <button type="submit" onclick="exportCSV()">导出CSV</button>--%>
-<%--        </form>--%>
+        <%--        <form id="exportCSVForm" action="javascript:void(0)">--%>
+        <%--            <button type="submit" onclick="exportCSV()">导出CSV</button>--%>
+        <%--        </form>--%>
 
         <!-- 添加商品按钮 -->
         <button onclick="openModal('add')">添加商品</button>

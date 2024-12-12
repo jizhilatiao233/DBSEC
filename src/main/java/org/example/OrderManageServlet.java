@@ -24,6 +24,13 @@ public class OrderManageServlet extends HttpServlet {
                 throw new ServletException("Database access error", e);
             }
         }
+        else if ("getOrderDetails".equals(action)) {
+            try (Connection conn = DatabaseConnection.getConnection()) {
+                getOrderDetails(request, response, conn);
+            } catch (Exception e) {
+                throw new ServletException("Database access error", e);
+            }
+        }
         else {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid action");
         }
@@ -145,7 +152,89 @@ public class OrderManageServlet extends HttpServlet {
             throw new RuntimeException(e);
         }
     }
-    
+
+    private void getOrderDetails(HttpServletRequest request, HttpServletResponse response, Connection conn) throws IOException {
+        int orderId = Integer.parseInt(request.getParameter("orderId"));
+        String query = "SELECT o.OrderID, o.CustomerID, c.CustomerName, o.StaffID, s.StaffName, o.TotalAmount, o.ActualPayment, DATE(o.OrderDate) as OrderDate " +
+                "FROM Orders o " +
+                "JOIN Customer c ON o.CustomerID = c.CustomerID " +
+                "JOIN Staff s ON o.StaffID = s.StaffID " +
+                "WHERE o.OrderID = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, orderId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                Order order = new Order(
+                        rs.getInt("OrderID"),
+                        rs.getInt("CustomerID"),
+                        rs.getString("CustomerName"),
+                        rs.getInt("StaffID"),
+                        rs.getString("StaffName"),
+                        rs.getBigDecimal("TotalAmount"),
+                        rs.getBigDecimal("ActualPayment"),
+                        rs.getString("OrderDate")
+                );
+                response.setContentType("application/json");
+                response.setCharacterEncoding("UTF-8");
+                PrintWriter out = response.getWriter();
+                out.print(new Gson().toJson(order));
+                out.flush();
+            }
+            else {
+                response.sendError(HttpServletResponse.SC_NOT_FOUND, "Order not found");
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void deleteOrder(HttpServletRequest request, HttpServletResponse response, Connection conn) throws IOException {
+        int orderId = Integer.parseInt(request.getParameter("orderId"));
+        // 删除订单前，需要先删除订单中的每一条销售记录
+        String getSalesQuery = "SELECT ProductID FROM Sales WHERE OrderID = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(getSalesQuery)) {
+            stmt.setInt(1, orderId);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                int productId = rs.getInt("ProductID");
+                _deleteSale(conn, orderId, productId);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        // 删除订单
+        String deleteOrderQuery = "DELETE FROM Orders WHERE OrderID = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(deleteOrderQuery)) {
+            stmt.setInt(1, orderId);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void _deleteSale(Connection conn, int orderID, int productID) {
+        //SALES表的主键为联合主键(OrderID, ProductID)，删除一条销售记录需要同时指定OrderID和ProductID
+        StringBuilder queryBuilder = new StringBuilder("DELETE FROM Sales WHERE 1=1");
+        if (orderID == -1 && productID == -1) {
+            queryBuilder.append(" AND 1<>1");
+        }
+        if (orderID != -1) {
+            queryBuilder.append(" AND OrderID = ?");
+        }
+        if (productID != -1) {
+            queryBuilder.append(" AND ProductID = ?");
+        }
+        String query = queryBuilder.toString();
+
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, orderID);
+            stmt.setInt(2, productID);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     private static class OrdersResponse {
         private List<Order> orders;
         private int totalPages;
