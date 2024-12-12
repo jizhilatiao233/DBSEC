@@ -297,10 +297,6 @@
             text-decoration: underline;
         }
 
-        input[type="number"] {
-            width: 100px; /* 设置输入框的宽度为100px */
-        }
-
 
     </style>
 </head>
@@ -388,7 +384,16 @@
         </form>
         <div class="button-group">
             <button onclick="openModal('add')">添加商品</button>
+            <button onclick="exportCSV({
+        sortBy: getURLParam('sortBy') || '',
+        sortOrder: getURLParam('sortOrder') || '',
+        productName: getURLParam('search') || '',
+        category: getURLParam('category') || '',
+        minPrice: getURLParam('minPrice') || '',
+        maxPrice: getURLParam('maxPrice') || ''
+        })">导出CSV</button>
         </div>
+
     </div>
 
     <!-- 商品列表展示 -->
@@ -424,7 +429,7 @@
     <div class="modal-content">
         <h2 id="modalTitle"></h2>
         <form id="productForm" onsubmit="return submitModal();">
-            <input type="hidden" name="productID" id="productID">
+            <input type="hidden" name="productId" id="productId">
             <input type="hidden" name="action" id="action">
 
             <label for="productName">商品名称:</label>
@@ -439,12 +444,12 @@
             <label for="sellingPrice">售价:</label>
             <input type="number" name="sellingPrice" id="sellingPrice" min="0" step="0.01" required>
 
-            <div id="restockRow" style="display: none;">
+            <div id="restockRow">
                 <label for="restockAmount">货架补货:</label>
-                <input type="number" name="restockAmount" id="restockAmount" min="0" value="0">
+                <input type="number" name="restockAmount" id="restockAmount" min="0" value="0" step="1">
             </div>
 
-            <div id="addStockRow" style="display: none;">
+            <div id="addStockRow" >
                 <label for="shelfStock">上架数量:</label>
                 <input type="number" name="shelfStock" id="shelfStock" min="0" value="0">
 
@@ -460,7 +465,7 @@
 
 <script>
     // 打开弹窗
-    function openModal(action, productID = null) {
+    function openModal(action, productId = null) {
         var modal = document.getElementById('productModal');
         var modalTitle = document.getElementById('modalTitle');
         var productForm = document.getElementById('productForm');
@@ -470,7 +475,7 @@
         if (action === 'add') {
             modalTitle.textContent = '添加商品';
             document.getElementById('action').value = 'addProduct';
-            document.getElementById('productID').value = '';
+            document.getElementById('productId').value = '';
             document.getElementById('productName').value = '';
             document.getElementById('category').value = '';
             document.getElementById('purchasePrice').value = '';
@@ -482,12 +487,12 @@
         } else if (action === 'edit') {
             modalTitle.textContent = '编辑商品';
             document.getElementById('action').value = 'editProduct';
-            document.getElementById('productID').value = productID;
+            document.getElementById('productId').value = productId;
             restockRow.style.display = 'block';
             addStockRow.style.display = 'none';
 
             // 通过AJAX获取商品详情来填充表单
-            fetch('product?action=getProductDetails&productID=' + productID)
+            fetch('product?action=getProductDetails&productId=' + productId)
                 .then(response => response.json())
                 .then(data => {
                     document.getElementById('productName').value = data.productName;
@@ -552,10 +557,10 @@
     }
 
     // 下架商品
-    function offShelf(productID) {
+    function offShelf(productId) {
         if (confirm('确定要下架此商品吗？')) {
             // 获取商品详情
-            fetch('product?action=getProductDetails&productID=' + productID)
+            fetch('product?action=getProductDetails&productId=' + productId)
                 .then(response => response.json())
                 .then(data => {
                     const shelfStock = data.shelfStock;
@@ -564,7 +569,7 @@
                     // 更新商品信息
                     const formData = new FormData();
                     formData.append('action', 'editProduct');
-                    formData.append('productID', productID);
+                    formData.append('productId', productId);
                     formData.append('productName', data.productName);
                     formData.append('category', data.category);
                     formData.append('purchasePrice', data.purchasePrice);
@@ -629,10 +634,10 @@
     const itemsPerPage = 10; // 每页显示的商品数量
     let currentPage = 1; // 当前页码
     function fetchProducts({
-            page = currentPage, sortBy = '', sortOrder = '',
-            productName = '', category = '',
-            minPrice = '', maxPrice = ''
-        }) {
+                               page = currentPage, sortBy = '', sortOrder = '',
+                               productName = '', category = '',
+                               minPrice = '', maxPrice = ''
+                           }) {
         currentPage = page;
         const offset = (page - 1) * itemsPerPage;
         const URLParams = {
@@ -664,7 +669,7 @@
                         const row = document.createElement('tr');
 
                         row.innerHTML =
-                            '<td>' + product.productID + '</td>' +
+                            '<td>' + product.productId + '</td>' +
                             '<td>' + product.productName + '</a></td>' +
                             '<td>' + product.category + '</td>' +
                             '<td>' + product.purchasePrice + '</td>' +
@@ -673,8 +678,8 @@
                             '<td>' + product.warehouseStock + '</td>' +
                             '<td>' +
                             '<div class="action-btns">' +
-                                '<e href="javascript:void(0)" onclick="openModal(\'edit\', ' + product.productID + ')">编辑</e>' +
-                                '<c href="javascript:void(0)" onclick="offShelf(' + product.productID + ')">下架</>' +
+                            '<e href="javascript:void(0)" onclick="openModal(\'edit\', ' + product.productId + ')">编辑</e>' +
+                            '<c href="javascript:void(0)" onclick="offShelf(' + product.productId + ')">下架</>' +
                             '</div>' +
                             '</td>';
 
@@ -736,31 +741,51 @@
         }
     }
 
-    // 导出CSV (DEPRECATED)
-    // TODO: 修改此函数
-    function exportCSV() {
-        const params = getUrlParams();
 
-        fetch('product?action=exportCSV' +
-            '&productName=' + params.search +
-            '&category=' + params.category +
-            '&minPrice=' + params.minPrice +
-            '&maxPrice=' + params.maxPrice +
-            '&sortBy=' + params.sortBy +
-            '&sortOrder=' + params.sortOrder)
-                .then(response => response.blob())
-            .then(blob => {
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.style.display = 'none';
-                a.href = url;
-                a.download = 'products.csv';
-                document.body.appendChild(a);
-                a.click();
-                window.URL.revokeObjectURL(url);
-            })
-            .catch(error => console.error('Error exporting CSV:', error));
+    // 监听导出按钮点击事件
+    // 获取URL中的查询参数
+    function getURLParam(param) {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(param);
     }
+
+    function exportCSV({sortBy = '', sortOrder = '',productName = '', category = '', minPrice = '', maxPrice = ''})
+    {
+        // 向后端请求数据
+        fetch('product?action=exportCSV' +
+            '&sortBy=' + sortBy +
+            '&sortOrder=' + sortOrder +
+            '&productName=' + productName +
+            '&category=' + category +
+            '&minPrice=' + minPrice +
+            '&maxPrice=' + maxPrice
+        )
+            .then(response => {
+                // 如果响应状态不正常，抛出错误
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+
+                // 获取二进制数据（CSV文件）
+                return response.blob();
+            })
+            .then(blob => {
+                // 创建 Blob URL 并触发下载
+                const downloadUrl = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = downloadUrl;
+                link.download = 'products.csv'; // 设置下载文件名
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(downloadUrl); // 释放 Blob URL
+            })
+            .catch(error => {
+                console.error('Error exporting CSV:', error);
+                alert('导出失败，请稍后再试！'); // 友好的用户提示
+            });
+    }
+
 
     // 获取URL参数
     function getUrlParams() {

@@ -328,12 +328,19 @@
 <%--                <button type="submit">批量删除</button>--%>
 <%--            </form>--%>
 
-<%--            <!-- 导出 CSV 表单 -->--%>
-<%--            <form method="get" action="exportCSV.jsp">--%>
-<%--                <button type="submit">导出CSV</button>--%>
-<%--            </form>--%>
-<%--        </div>--%>
+            <!-- 导出 CSV 表单 -->
+        <button onclick="exportCSV({
+        sortBy: getURLParam('sortBy') || '',
+        sortOrder: getURLParam('sortOrder') || '',
+        orderID: getURLParam('orderID') || '',
+        productName: getURLParam('productName') || '',
+        staffName: getURLParam('staffName') || '',
+        salesDate: getURLParam('salesDate') || ''
+
+        })">导出CSV</button>
     </div>
+
+
 
     <table>
         <thead>
@@ -441,6 +448,51 @@
             pagination.appendChild(pageBtn);
         }
     }
+    // 获取URL中的查询参数
+    function getURLParam(param) {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(param);
+    }
+
+    function exportCSV({sortBy = '', sortOrder = '',orderID = '', productName = '', staffName = '', salesDate = ''})
+    {
+
+        // 向后端请求数据
+        fetch('product?action=exportCSV' +
+            '&sortBy=' + sortBy +
+            '&sortOrder=' + sortOrder +
+            '&orderID =' + orderID  +
+            '&productName=' + productName +
+            '&staffName=' + staffName +
+            '&salesDate=' + salesDate
+
+        )
+            .then(response => {
+                // 如果响应状态不正常，抛出错误
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+
+                // 获取二进制数据（CSV文件）
+                return response.blob();
+            })
+            .then(blob => {
+                // 创建 Blob URL 并触发下载
+                const downloadUrl = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = downloadUrl;
+                link.download = 'sales.csv'; // 设置下载文件名
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(downloadUrl); // 释放 Blob URL
+            })
+            .catch(error => {
+                console.error('Error exporting CSV:', error);
+                alert('导出失败，请稍后再试！'); // 友好的用户提示
+            });
+    }
+
 
     // 获取URL参数
     function getUrlParams() {
@@ -462,6 +514,7 @@
             .join('&');
         history.pushState(null, '', '?' + queryString);
     }
+
 
     // 页面加载时：获取URL参数；获取销售信息并显示分页按钮
     window.onload = function () {
@@ -493,6 +546,7 @@
         // 提交表单
         event.target.submit();
     };
+
 
 </script>
 

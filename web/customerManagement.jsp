@@ -192,20 +192,14 @@
             background-color: #d32f2f;
         }
 
-        /* 新增的按钮组容器，确保按钮在同一行显示 */
-        .button-group {
-            display: flex;
-            gap: 10px;  /* 按钮之间的间距 */
-            align-items: center;
-        }
 
         .action-bar {
-                     display: flex;
-                     flex-wrap: wrap;  /* 自动换行 */
-                     justify-content: flex-start;
-                     gap: 10px;  /* 元素间距 */
-                     align-items: center; /* 元素垂直居中 */
-                 }
+            display: flex;
+            flex-wrap: wrap;  /* 自动换行 */
+            justify-content: flex-start;
+            gap: 10px;  /* 元素间距 */
+            align-items: center; /* 元素垂直居中 */
+        }
         /* 输入框和下拉框的样式 */
         .action-bar input[type="text"], .action-bar input[type="email"], .action-bar input[type="date"], .action-bar select, .action-bar input[type="number"] {
             padding: 8px;
@@ -216,15 +210,7 @@
             box-sizing: border-box; /* 确保输入框的宽度包括内边距和边框 */
         }
 
-        /* 姓名输入框增加左边距，保证与排序下拉框之间有空间 */
-        .action-bar input[name="searchName"] {
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            margin-left: 20px;  /* 增加左边距 */
-            width: 150px; /* 调整宽度，确保元素整齐 */
-            box-sizing: border-box;  /* 确保宽度包含内边距和边框 */
-        }
+
 
         /* 按钮的样式 */
         .action-bar button {
@@ -235,22 +221,14 @@
             border-radius: 4px;
             cursor: pointer;
             transition: background-color 0.3s;
-            width: auto;
-            max-width: 120px; /* 限制最大宽度 */
+            max-width: 120px;
         }
 
         .action-bar button:hover {
             background-color: #005bb5;
         }
 
-        .action-bar form {
-            display: inline-flex;
-            align-items: center;
-        }
 
-        .action-bar form button {
-            margin-left: 20px; /* 按钮之间的间隔 */
-        }
 
         /* 确保导出CSV按钮样式一致 */
         .action-bar form button[type="submit"] {
@@ -288,7 +266,6 @@
             align-items: center;
             z-index: 9999;
         }
-
         .modal-content {
             background-color: #fff;
             padding: 30px;
@@ -296,7 +273,6 @@
             width: 400px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
-
         .modal-content input, .modal-content select, .modal-content button {
             width: 100%;
             padding: 10px;
@@ -304,13 +280,11 @@
             border-radius: 6px;
             border: 1px solid #ddd;
         }
-
         .modal-content button {
             background-color: #4d94ff;
             color: white;
             cursor: pointer;
         }
-
         .modal-content button:hover {
             background-color: #003366;
         }
@@ -319,18 +293,13 @@
             margin-right: 0;
         }
 
-        button[type="submit"] {
-            margin-left: 5px;
-        }
+
 
         /* 按钮组之间的间距 */
         .button-group {
             display: flex;
-            gap: 10px;  /* 使按钮之间的距离更小 */
-        }
-
-        .button-group button {
-            margin: 0;  /* 清除默认的按钮间距 */
+            gap: 10px;  /* 按钮之间的间距 */
+            align-items: center;
         }
 
     </style>
@@ -379,6 +348,7 @@
     <h2>客户列表</h2>
     <div class="action-bar">
         <form method="get" action="customerManagement.jsp">
+            <!-- 排序下拉框 -->
             <select name="sortBy">
                 <option value="">排序方式</option>
                 <option value="name">按姓名排序</option>
@@ -386,40 +356,43 @@
             </select>
             <button type="submit">排序</button>
 
+            <!-- 搜索框和筛选框 -->
+            <input type="number" name="searchID" placeholder="客户ID">
             <input type="text" name="searchName" placeholder="姓名">
             <input type="email" name="searchEmail" placeholder="联系方式">
+            <input type="date" name="joinDate" placeholder="加入日期">
 
-            <button type="submit">搜索</button>
-        </form>
-        <br>
-        <form method="get" action="customerManagement.jsp">
-        <!-- 新增消费金额筛选 -->
-        <input type="number" name="minSpent" placeholder="最低消费金额" step="0.01" min="0">
-        <input type="number" name="maxSpent" placeholder="最高消费金额" step="0.01" min="0">
-         <!-- 新增加入日期筛选 -->
-        <input type="date" name="startDate" placeholder="开始日期">
-        <input type="date" name="endDate" placeholder="结束日期">
-        <!-- 新增VIP等级筛选 -->
-        <select name="vipLevel">
-            <option value="">选择VIP等级</option>
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="4">5</option>
-        </select>
+            <!-- VIP等级筛选 -->
+            <select name="vipLevel">
+                <option value="">选择VIP等级</option>
+                <option value="1">VIP1</option>
+                <option value="2">VIP2</option>
+                <option value="3">VIP3</option>
+                <option value="4">VIP4</option>
+                <option value="5">VIP5</option>
+            </select>
+
+            <input type="number" name="minSpent" placeholder="最低消费总金额" step="0.01" min="0">
+            <input type="number" name="maxSpent" placeholder="最高消费总金额" step="0.01" min="0">
+            <!-- 筛选按钮 -->
+
             <button type="submit">筛选</button>
-        </form>
 
-        <div class="button-group">
+            <!-- 导出CSV按钮 -->
+            <button onclick="exportCSV({
+            sortBy: getURLParam('sortBy') || '',
+            sortOrder: getURLParam('sortOrder') || '',
+            CustomerID: getURLParam('CustomerID') || '',
+            CustomerName: getURLParam('CustomerName') || '',
+            Contactinfo: getURLParam('Contactinfo') || '',
+            Username: getURLParam('Username') || '',
+            IsVIP: getURLParam('IsVIP') || '',
+            PurchaseSum: getURLParam('PurchaseSum') || ''
+        })">导出CSV</button>
+
             <button onclick="openModal('add')">添加客户</button>
-            <form method="get" action="exportCSV.jsp">
-                <button type="submit">导出CSV</button>
-            </form>
-        </div>
+        </form>
     </div>
-
-
 
     <table>
         <thead>
@@ -460,8 +433,45 @@
 <div class="footer">
     <p>&copy; 2024 超市管理系统 | 版权所有</p>
 </div>
+<!-- 添加客户和编辑客户的弹窗 -->
+<div id="customerModal" class="modal">
+    <div class="modal-content">
+        <h2 id="modalTitle">添加客户</h2>
+        <form id="customerForm" method="post" action="">
+            <label for="customerName">姓名:</label>
+            <input type="text" id="customerName" name="customerName" required>
+
+            <label for="customerContact">联系方式:</label>
+            <input type="text" id="customerContact" name="customerContact" required>
+
+            <label for="joinDate">加入日期:</label>
+            <input type="date" id="joinDate" name="joinDate" required>
+
+            <label for="amount">消费总金额:</label>
+            <input type="number" id="amount" name="amount" required>
+
+            <label for="vipLevel">VIP等级:</label>
+            <select id="vipLevel" name="vipLevel" required>
+                <option value="">请选择</option>
+                <option value="1">VIP1</option>
+                <option value="2">VIP2</option>
+                <option value="3">VIP3</option>
+                <option value="4">VIP4</option>
+                <option value="5">VIP5</option>
+            </select>
+
+            <button type="submit">确认</button>
+            <button type="button" onclick="closeModal()">取消</button>
+        </form>
+    </div>
+</div>
 
 <script>
+    function getURLParam(param) {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(param);
+    }
+
     function openModal(action, customerId = null) {
         const modal = document.getElementById('customerModal');
         const modalTitle = document.getElementById('modalTitle');
@@ -488,7 +498,51 @@
     document.getElementById('selectAll').addEventListener('change', function () {
         document.querySelectorAll('input[name="selectedCustomers"]').forEach(checkbox => checkbox.checked = this.checked);
     });
+
+    function exportCSV({sortBy = '', sortOrder = '',CustomerID = '', CustomerName = '', Contactinfo = '',
+                           Username = '',IsVIP = '', PurchaseSum = '',})
+    {
+        // 向后端请求数据
+        fetch('customer?action=exportCSV' +
+            '&sortBy=' + sortBy +
+            '&sortOrder=' + sortOrder +
+            '&CustomerID=' + CustomerID +
+            '&CustomerName=' + CustomerName+
+            '&Contactinfo=' + Contactinfo +
+            '&Username=' + Username +
+            '&IsVIP=' + IsVIP +
+            '&PurchaseSum =' + PurchaseSum
+        )
+            .then(response => {
+                // 如果响应状态不正常，抛出错误
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+
+                // 获取二进制数据（CSV文件）
+                return response.blob();
+            })
+            .then(blob => {
+                // 创建 Blob URL 并触发下载
+                const downloadUrl = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = downloadUrl;
+                link.download = 'customers.csv'; // 设置下载文件名
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(downloadUrl); // 释放 Blob URL
+            })
+            .catch(error => {
+                console.error('Error exporting CSV:', error);
+                alert('导出失败，请稍后再试！'); // 友好的用户提示
+            });
+    }
+
+
 </script>
+
+
 
 </body>
 </html>
