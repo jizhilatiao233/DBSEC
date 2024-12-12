@@ -91,6 +91,7 @@ CREATE TABLE Orders (
     CustomerID INT NOT NULL,                        -- 客户编号 (外键)
     StaffID INT NOT NULL,                           -- 收银员编号 (外键)
     TotalAmount DECIMAL(10, 2),                     -- 订单总金额 (等于包含的所有销售金额之和)
+    ActualPayment DECIMAL(10, 2),                   -- 实际支付金额 (等于包含的所有销售实际支付金额之和)
     OrderDate DATETIME DEFAULT CURRENT_TIMESTAMP,   -- 订单日期
     FOREIGN KEY (CustomerID) REFERENCES Customer(CustomerID),
     FOREIGN KEY (StaffID) REFERENCES Staff(StaffID)
@@ -144,7 +145,7 @@ BEGIN
     SET NEW.SalesDate = (SELECT OrderDate FROM Orders WHERE OrderID = NEW.OrderID);
 END;
 
--- 创建触发器：在插入Sales记录时更新Orders的TotalAmount
+-- 创建触发器：在插入Sales记录时更新Orders的TotalAmount和ActualPayment
 CREATE TRIGGER update_order_totals_after_sales_insert
     AFTER INSERT ON Sales
     FOR EACH ROW
@@ -153,9 +154,13 @@ BEGIN
     UPDATE Orders
     SET TotalAmount = (SELECT SUM(SellingPrice * QuantitySold) FROM Sales WHERE OrderID = NEW.OrderID)
     WHERE OrderID = NEW.OrderID;
+    -- 更新Orders的ActualPayment
+    UPDATE Orders
+    SET ActualPayment = (SELECT SUM(ActualPayment) FROM Sales WHERE OrderID = NEW.OrderID)
+    WHERE OrderID = NEW.OrderID;
 END;
 
--- 创建触发器：在更新Sales记录时更新Orders的TotalAmount
+-- 创建触发器：在更新Sales记录时更新Orders的TotalAmount和ActualPayment
 CREATE TRIGGER update_order_totals_after_sales_update
     AFTER UPDATE ON Sales
     FOR EACH ROW
@@ -164,13 +169,17 @@ BEGIN
     UPDATE Orders
     SET TotalAmount = (SELECT SUM(SellingPrice * QuantitySold) FROM Sales WHERE OrderID = NEW.OrderID)
     WHERE OrderID = NEW.OrderID;
+    -- 更新Orders的ActualPayment
+    UPDATE Orders
+    SET ActualPayment = (SELECT SUM(ActualPayment) FROM Sales WHERE OrderID = NEW.OrderID)
+    WHERE OrderID = NEW.OrderID;
     -- 设置Sales的SalesDate等于Orders的OrderDate
     UPDATE Sales
     SET SalesDate = (SELECT OrderDate FROM Orders WHERE OrderID = NEW.OrderID)
     WHERE OrderID = NEW.OrderID AND ProductID = NEW.ProductID;
 END;
 
--- 创建触发器：在删除Sales记录时更新Orders的TotalAmount
+-- 创建触发器：在删除Sales记录时更新Orders的TotalAmount和ActualPayment
 CREATE TRIGGER update_order_totals_after_sales_delete
     AFTER DELETE ON Sales
     FOR EACH ROW
@@ -178,6 +187,10 @@ BEGIN
     -- 更新Orders的TotalAmount
     UPDATE Orders
     SET TotalAmount = (SELECT SUM(SellingPrice * QuantitySold) FROM Sales WHERE OrderID = OLD.OrderID)
+    WHERE OrderID = OLD.OrderID;
+    -- 更新Orders的ActualPayment
+    UPDATE Orders
+    SET ActualPayment = (SELECT SUM(ActualPayment) FROM Sales WHERE OrderID = OLD.OrderID)
     WHERE OrderID = OLD.OrderID;
 END;
 
