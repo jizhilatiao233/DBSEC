@@ -323,16 +323,16 @@
             </select>
             <button type="submit">排序</button>
 
+            <input type="number" name="searchID" placeholder="员工ID">
             <input type="text" name="searchName" placeholder="姓名">
             <input type="text" name="searchPhone" placeholder="联系方式">
 
             <button type="submit">搜索</button>
         </form>
-        <br>
+
         <form method="get" action="staffManagement.jsp">
             <!-- 加入日期筛选 -->
-            <input type="date" name="startDate" placeholder="开始日期">
-            <input type="date" name="endDate" placeholder="结束日期">
+            <input type="date" name="joinDate" placeholder="加入日期">
             <!-- 职位筛选 -->
             <select name="position">
                 <option value="">选择职位</option>
@@ -344,16 +344,20 @@
         </form>
 
         <div class="button-group">
+            <button onclick="exportCSV({
+            sortBy: getURLParam('sortBy') || '',
+            sortOrder: getURLParam('sortOrder') || '',
+            employeeId: getURLParam('employeeId') || '',
+            employeeName: getURLParam('employeeName') || '',
+            employeePhone: getURLParam('employeePhone') || '',
+            joinDate: getURLParam('joinDate') || '',
+            position: getURLParam('position') || ''
+        })">导出CSV</button>
             <!-- 添加员工按钮 -->
             <button onclick="openModal('add')">添加员工</button>
 
-            <!-- 导出 CSV 表单 -->
-            <form method="get" action="exportCSV.jsp">
-                <button type="submit">导出CSV</button>
-            </form>
         </div>
     </div>
-
 
 
     <table>
@@ -410,7 +414,7 @@
             </select>
 
             <!-- 管理员 -->
-            <label for="admin">管理员:</label>
+            <label for="admin">管理人员姓名:</label>
             <input type="text" name="admin" id="admin" value="" required>
 
             <button type="submit">添加员工</button>
@@ -474,6 +478,51 @@
 </div>
 
 <script>
+    function getURLParam(param) {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(param);
+    }
+
+    function exportCSV({sortBy = '', sortOrder = '',employeeId = '', employeeName = '', employeePhone = '', joinDate = '', position = ''})
+    {
+
+        // 向后端请求数据
+        fetch('staff?action=exportCSV' +
+            '&sortBy=' + sortBy +
+            '&sortOrder=' + sortOrder +
+            '&employeeId =' + employeeId  +
+            '&employeeName=' + employeeName +
+            '&employeePhone=' + employeePhone +
+            '&joinDate=' + joinDate +
+            '&position=' + position
+
+        )
+            .then(response => {
+                // 如果响应状态不正常，抛出错误
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+
+                // 获取二进制数据（CSV文件）
+                return response.blob();
+            })
+            .then(blob => {
+                // 创建 Blob URL 并触发下载
+                const downloadUrl = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = downloadUrl;
+                link.download = 'staffs.csv'; // 设置下载文件名
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(downloadUrl); // 释放 Blob URL
+            })
+            .catch(error => {
+                console.error('Error exporting CSV:', error);
+                alert('导出失败，请稍后再试！'); // 友好的用户提示
+            });
+    }
+
     function openModal(action, employeeId) {
         // 根据操作类型显示不同的模态框
         if(action === 'detail') {

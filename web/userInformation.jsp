@@ -262,33 +262,12 @@
     <a href="admin_dashboard.jsp" ><i class="fas fa-tachometer-alt"></i> 首页</a>
     <a href="product_management.jsp"><i class="fas fa-cogs"></i> 商品管理</a>
     <a href="salesManagement.jsp"><i class="fas fa-shopping-cart"></i> 销售管理</a>
-    <a href="customerManagement.jsp"><i class="fas fa-warehouse"></i> 客户管理</a>
+    <a href="customerManagement.jsp" class="active"><i class="fas fa-warehouse"></i> 客户管理</a>
     <a href="orderManagement.jsp"><i class="fas fa-box"></i> 订单管理</a>
     <a href="incomingInformation.jsp"><i class="fas fa-chart-line"></i> 进货信息</a>
     <a href="staffManagement.jsp"><i class="fas fa-users"></i> 员工管理</a>
 </nav>
-<div class="user-info">
-    <span>
-        <a href='userInformation.jsp' id="userInfoBtn" class="info-btn">
-        <i class="fas fa-user"></i>
-        <%
-            // 从 session 获取当前用户的信息
-            String userName = (String) session.getAttribute("username");
-            String role = (String) session.getAttribute("role");
-            if (userName != null) {
-        %>
-            <span><%= userName %> (<%= role %>)</span>
-        <%
-        } else {
-        %>
-            <span>访客</span>
-        <%
-            }
-        %>
-        </a>
-    </span>
-    <a href='Logout?redirect=index.jsp' class="logout-btn"><i class="fas fa-sign-out-alt"></i> 退出</a>
-</div>
+
 <!-- 账户信息页面 -->
 <div class="container">
     <h2>账户信息</h2>

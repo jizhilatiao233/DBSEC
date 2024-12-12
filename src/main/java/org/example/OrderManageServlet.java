@@ -31,6 +31,20 @@ public class OrderManageServlet extends HttpServlet {
                 throw new ServletException("Database access error", e);
             }
         }
+        else if ("deleteOrder".equals(action)) {
+            try (Connection conn = DatabaseConnection.getConnection()) {
+                deleteOrder(request, response, conn);
+            } catch (Exception e) {
+                throw new ServletException("Database access error", e);
+            }
+        }
+        else if ("exportCSV".equals(action)) {
+            try (Connection conn = DatabaseConnection.getConnection()) {
+                exportCSV(request, response, conn);
+            } catch (Exception e) {
+                throw new ServletException("Database access error", e);
+            }
+        }
         else {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid action");
         }
@@ -183,6 +197,78 @@ public class OrderManageServlet extends HttpServlet {
             else {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND, "Order not found");
             }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void exportCSV(HttpServletRequest request, HttpServletResponse response, Connection conn) throws IOException {
+        // filter parameters
+        String customerName = request.getParameter("customerName");
+        String staffName = request.getParameter("staffName");
+        String orderDate = request.getParameter("orderDate");
+
+        // sort parameters
+        String sortBy = request.getParameter("sortBy");
+        String sortOrder = request.getParameter("sortOrder");
+        if (sortBy == null || sortBy.isEmpty()) {
+            sortBy = "OrderID";
+        }
+        if (sortOrder == null || sortOrder.isEmpty()) {
+            sortOrder = "ASC";
+        }
+
+        // build query
+        StringBuilder queryBuilder = new StringBuilder("SELECT o.OrderID, o.CustomerID, c.CustomerName, o.StaffID, s.StaffName, o.TotalAmount, o.ActualPayment, DATE(o.OrderDate) as OrderDate " +
+                "FROM Orders o " +
+                "JOIN Customer c ON o.CustomerID = c.CustomerID " +
+                "JOIN Staff s ON o.StaffID = s.StaffID " +
+                "WHERE 1=1 ");
+        if (customerName != null && !customerName.isEmpty()) {
+            queryBuilder.append("AND c.CustomerName LIKE ? ");
+        }
+        if (staffName != null && !staffName.isEmpty()) {
+            queryBuilder.append("AND s.StaffName LIKE ? ");
+        }
+        if (orderDate != null && !orderDate.isEmpty()) {
+            queryBuilder.append("AND DATE(o.OrderDate) = ? ");
+        }
+        queryBuilder.append("ORDER BY ").append(sortBy).append(" ").append(sortOrder);
+        String query = queryBuilder.toString();
+
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            int paramIndex = 1;
+            if (customerName != null && !customerName.isEmpty()) {
+                stmt.setString(paramIndex, "%" + customerName + "%");
+                paramIndex++;
+            }
+            if (staffName != null && !staffName.isEmpty()) {
+                stmt.setString(paramIndex, "%" + staffName + "%");
+                paramIndex++;
+            }
+            if (orderDate != null && !orderDate.isEmpty()) {
+                stmt.setString(paramIndex, orderDate);
+                paramIndex++;
+            }
+
+            ResultSet rs = stmt.executeQuery();
+            response.setContentType("text/csv");
+            response.setHeader("Content-Disposition", "attachment; filename=\"orders.csv\"");
+            PrintWriter out = response.getWriter();
+            out.println("OrderID,CustomerID,CustomerName,StaffID,StaffName,TotalAmount,ActualPayment,OrderDate");
+            while (rs.next()) {
+                out.println(String.join(",",
+                        Integer.toString(rs.getInt("OrderID")),
+                        Integer.toString(rs.getInt("CustomerID")),
+                        rs.getString("CustomerName"),
+                        Integer.toString(rs.getInt("StaffID")),
+                        rs.getString("StaffName"),
+                        rs.getBigDecimal("TotalAmount").toPlainString(),
+                        rs.getBigDecimal("ActualPayment").toPlainString(),
+                        rs.getString("OrderDate")
+                ));
+            }
+            out.flush();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

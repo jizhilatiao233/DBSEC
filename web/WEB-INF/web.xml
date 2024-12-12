@@ -39,6 +39,16 @@
         <url-pattern>/SalesManage</url-pattern>
     </servlet-mapping>
 
+    <!-- CustomerManage Servlet -->
+    <servlet>
+        <servlet-name>CustomerManageServlet</servlet-name>
+        <servlet-class>org.example.CustomerManageServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>CustomerManageServlet</servlet-name>
+        <url-pattern>/CustomerManage</url-pattern>
+    </servlet-mapping>
+
     <!-- OrderManage Servlet -->
     <servlet>
         <servlet-name>OrderManageServlet</servlet-name>

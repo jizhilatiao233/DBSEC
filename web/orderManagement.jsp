@@ -347,8 +347,9 @@
       <button onclick="openModal('add')">添加订单</button>
 
       <!-- 导出 CSV 表单 -->
-      <button onclick="exportCSV()">导出CSV</button>
-
+      <form method="get" action="exportCSV.jsp">
+        <button type="submit">导出CSV</button>
+      </form>
 
     </div>
   </div>
@@ -532,44 +533,7 @@
     // 提交表单
     event.target.submit();
   };
-  // 导出 CSV 函数
-  function exportCSV() {
-    // 请求获取 JSON 数据
-    fetch('/OrderManage')  // 假设你的后端提供了这个接口
-            .then(response => response.json())
-            .then(data => {
-              // 将 JSON 数据转换为 CSV 格式
-              const csv = convertToCSV(data);
 
-              // 创建一个临时链接来触发下载
-              const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-              const link = document.createElement('a');
-              const url = URL.createObjectURL(blob);
-
-              link.setAttribute('href', url);
-              link.setAttribute('download', 'customer_data.csv');
-              document.body.appendChild(link);
-              link.click();
-              document.body.removeChild(link);
-            })
-            .catch(error => {
-              console.error('Error exporting CSV:', error);
-            });
-  }
-
-  // 将 JSON 转换为 CSV 格式的函数
-  function convertToCSV(data) {
-    const header = Object.keys(data[0]);  // 获取对象的键作为 CSV 的头部
-    const rows = data.map(item => header.map(field => item[field]));  // 将每一行数据转化为数组
-
-    // 将 CSV 的头部和数据拼接成字符串
-    const csv = [
-      header.join(','),  // 将头部的字段连接成一行
-      ...rows.map(row => row.join(','))  // 每一行数据用逗号连接
-    ].join('\n');
-
-    return csv;
-  }
 
 </script>
 

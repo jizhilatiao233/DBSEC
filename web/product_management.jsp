@@ -634,10 +634,10 @@
     const itemsPerPage = 10; // 每页显示的商品数量
     let currentPage = 1; // 当前页码
     function fetchProducts({
-            page = currentPage, sortBy = '', sortOrder = '',
-            productName = '', category = '',
-            minPrice = '', maxPrice = ''
-        }) {
+                               page = currentPage, sortBy = '', sortOrder = '',
+                               productName = '', category = '',
+                               minPrice = '', maxPrice = ''
+                           }) {
         currentPage = page;
         const offset = (page - 1) * itemsPerPage;
         const URLParams = {
@@ -678,8 +678,8 @@
                             '<td>' + product.warehouseStock + '</td>' +
                             '<td>' +
                             '<div class="action-btns">' +
-                                '<e href="javascript:void(0)" onclick="openModal(\'edit\', ' + product.productId + ')">编辑</e>' +
-                                '<c href="javascript:void(0)" onclick="offShelf(' + product.productId + ')">下架</>' +
+                            '<e href="javascript:void(0)" onclick="openModal(\'edit\', ' + product.productId + ')">编辑</e>' +
+                            '<c href="javascript:void(0)" onclick="offShelf(' + product.productId + ')">下架</>' +
                             '</div>' +
                             '</td>';
 
@@ -760,42 +760,32 @@
             '&minPrice=' + minPrice +
             '&maxPrice=' + maxPrice
         )
-            .then(response => response.json())  // 后端返回的是CSV数据的JSON格式
-            .then(data => {
-                // 将返回的数据转化为CSV格式
-                const csvContent = convertToCSV(data);
+            .then(response => {
+                // 如果响应状态不正常，抛出错误
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
 
-                // 创建Blob对象并触发下载
-                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                // 获取二进制数据（CSV文件）
+                return response.blob();
+            })
+            .then(blob => {
+                // 创建 Blob URL 并触发下载
+                const downloadUrl = URL.createObjectURL(blob);
                 const link = document.createElement('a');
-                link.href = URL.createObjectURL(blob);
-                link.download = 'products.csv';  // 下载的文件名
+                link.href = downloadUrl;
+                link.download = 'products.csv'; // 设置下载文件名
+                document.body.appendChild(link);
                 link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(downloadUrl); // 释放 Blob URL
             })
             .catch(error => {
                 console.error('Error exporting CSV:', error);
+                alert('导出失败，请稍后再试！'); // 友好的用户提示
             });
     }
 
-    // 将数据转化为CSV格式
-    function convertToCSV(data) {
-        // 表头（字段名）
-        const header = ['ProductID', 'ProductName', 'Category', 'PurchasePrice', 'SellingPrice', 'ShelfStock', 'WarehouseStock'];
-
-        // 将每一行数据转化为CSV格式
-        const rows = data.map(item => [
-            item.ProductID,
-            item.ProductName,
-            item.Category,
-            item.PurchasePrice,
-            item.SellingPrice,
-            item.ShelfStock,
-            item.WarehouseStock
-        ]);
-
-        // 拼接CSV内容：先添加表头，再加上数据行
-        return [header, ...rows].map(row => row.join(',')).join('\n');
-    }
 
     // 获取URL参数
     function getUrlParams() {
