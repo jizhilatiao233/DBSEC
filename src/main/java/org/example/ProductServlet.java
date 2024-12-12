@@ -245,7 +245,24 @@ public class ProductServlet extends HttpServlet {
                     }
 
                     ResultSet rs = stmt.executeQuery();
-
+//                    List<String[]> csvData = new ArrayList<>();
+//                    csvData.add(new String[]{"ProductID", "ProductName", "Category", "PurchasePrice", "SellingPrice", "ShelfStock", "WarehouseStock"});
+//                    while (rs.next()) {
+//                        csvData.add(new String[]{
+//                                String.valueOf(rs.getInt("ProductID")),
+//                                rs.getString("ProductName"),
+//                                rs.getString("Category"),
+//                                rs.getBigDecimal("PurchasePrice").toString(),
+//                                rs.getBigDecimal("SellingPrice").toString(),
+//                                String.valueOf(rs.getInt("ShelfStock")),
+//                                String.valueOf(rs.getInt("WarehouseStock"))
+//                        });
+//                    }
+//                    response.setContentType("application/json");
+//                    response.setCharacterEncoding("UTF-8");
+//                    PrintWriter out = response.getWriter();
+//                    out.print(new Gson().toJson(csvData));
+//                    out.flush();
                     response.setContentType("text/csv");
                     response.setHeader("Content-Disposition", "attachment; filename=\"products.csv\"");
                     PrintWriter out = response.getWriter();
