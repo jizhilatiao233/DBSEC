@@ -49,8 +49,7 @@ CREATE TABLE Customer (
     Password VARCHAR(255),                        -- 密码（可为空）
     JoinDate DATETIME DEFAULT CURRENT_TIMESTAMP,  -- 加入日期
     TotalConsumption DECIMAL(10, 2) DEFAULT 0,    -- 总消费金额 (等于本客户所有订单的ActualPayment之和)
-    VIPLevel INT NOT NULL,                        -- VIP等级
-    PurchaseSum DECIMAL(10, 2) NOT NULL
+    VIPLevel INT NOT NULL                         -- VIP等级
 );
 
 -- 创建管理员表
