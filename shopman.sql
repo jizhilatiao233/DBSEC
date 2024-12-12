@@ -47,6 +47,7 @@ CREATE TABLE Customer (
     ContactInfo VARCHAR(255),                     -- 联系方式
     Username VARCHAR(100),                        -- 用户名（可为空）
     Password VARCHAR(255),                        -- 密码（可为空）
+    JoinDate DATETIME DEFAULT CURRENT_TIMESTAMP,  -- 加入日期
     VIPLevel INT NOT NULL,                        -- VIP等级
     PurchaseSum DECIMAL(10, 2) NOT NULL
 );
@@ -58,6 +59,7 @@ CREATE TABLE Admin (
     ContactInfo VARCHAR(255),                    -- 联系方式
     Username VARCHAR(100) NOT NULL,              -- 用户名
     Password VARCHAR(255) NOT NULL,              -- 密码
+    JoinDate DATETIME DEFAULT CURRENT_TIMESTAMP, -- 加入日期
     Position VARCHAR(100) DEFAULT '管理员'        -- 职位 (固定为“管理员”)
 );
 
@@ -69,6 +71,7 @@ CREATE TABLE Staff (
     ContactInfo VARCHAR(255),                    -- 联系方式
     Username VARCHAR(100) NOT NULL,              -- 用户名
     Password VARCHAR(255) NOT NULL,              -- 密码
+    JoinDate DATETIME DEFAULT CURRENT_TIMESTAMP, -- 加入日期
     Position VARCHAR(100) DEFAULT '收银员',       -- 职位 (固定为“收银员”)
     AdminID INT NOT NULL,                        -- 管理员编号 (外键)
     FOREIGN KEY (AdminID) REFERENCES Admin(AdminID)
