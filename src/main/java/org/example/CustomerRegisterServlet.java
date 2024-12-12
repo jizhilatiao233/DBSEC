@@ -14,6 +14,10 @@ public class CustomerRegisterServlet extends HttpServlet {
         String username = request.getParameter("username");
         String password = PasswordUtil.hashPassword(request.getParameter("password"));
         boolean isVip = "on".equals(request.getParameter("vip"));
+        int VIPLevel = 0;
+        if (isVip) {
+            VIPLevel = 1;
+        }
 
         try (Connection conn = DatabaseConnection.getConnection()) {
             if (isUsernameTaken(conn, username)) {
@@ -24,7 +28,7 @@ public class CustomerRegisterServlet extends HttpServlet {
                 return;
             }
 
-            String query = "INSERT INTO Customer (CustomerName, ContactInfo, Username, Password, IsVIP) VALUES (?, ?, ?, ?, ?)";
+            String query = "INSERT INTO Customer (CustomerName, ContactInfo, Username, Password, VIPLevel) VALUES (?, ?, ?, ?, ?)";
             try (PreparedStatement stmt = conn.prepareStatement(query)) {
                 stmt.setString(1, customerName);
                 stmt.setString(2, contactInfo);
