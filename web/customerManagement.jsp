@@ -385,9 +385,10 @@
             CustomerID: getURLParam('CustomerID') || '',
             CustomerName: getURLParam('CustomerName') || '',
             Contactinfo: getURLParam('Contactinfo') || '',
-            Username: getURLParam('Username') || '',
-            IsVIP: getURLParam('IsVIP') || '',
-            PurchaseSum: getURLParam('PurchaseSum') || ''
+            JoinDate: getURLParam('JoinDate') || '',
+            VIPLevel: getURLParam('VIPLevel') || '',
+            minSpent: getURLParam('minSpent') || '',
+            maxSpent: getURLParam('maxSpent') || ''
         })">导出CSV</button>
 
             <button onclick="openModal('add')">添加客户</button>
@@ -500,7 +501,7 @@
     });
 
     function exportCSV({sortBy = '', sortOrder = '',CustomerID = '', CustomerName = '', Contactinfo = '',
-                           Username = '',IsVIP = '', PurchaseSum = '',})
+                           JoinDate = '',VIPLevel = '', minSpent = '',maxSpent = ''})
     {
         // 向后端请求数据
         fetch('customer?action=exportCSV' +
@@ -509,9 +510,10 @@
             '&CustomerID=' + CustomerID +
             '&CustomerName=' + CustomerName+
             '&Contactinfo=' + Contactinfo +
-            '&Username=' + Username +
-            '&IsVIP=' + IsVIP +
-            '&PurchaseSum =' + PurchaseSum
+            '&JoinDate=' + JoinDate +
+            '&VIPLevel=' + VIPLevel +
+            '&minSpent =' + minSpent +
+            '&maxSpent =' + maxSpent
         )
             .then(response => {
                 // 如果响应状态不正常，抛出错误

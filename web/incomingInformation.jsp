@@ -204,7 +204,7 @@
             border: 1px solid #ccc;
             border-radius: 4px;
             margin-right: 10px;
-            width: 140px;
+            width: 120px;
             box-sizing: border-box;
         }
 
@@ -318,22 +318,26 @@
                     <option value="totalCost">按订单总价排序</option>
                 </select>
                 <button type="submit">排序</button>
+                <!-- 添加进货订单按钮 -->
+                <button onclick="openModal('add')">添加进货订单</button>
+
             </form>
             <br>
             <!-- 进货金额筛选 -->
             <form method="get" action="incomingInformation.jsp">
+                <input type="number" name="ID" placeholder="进货订单号" step="1" min="0">
                 <select name="product">
-                    <option value="">选择商品</option>
+                    <option value="">商品名称</option>
                 </select>
                 <input type="number" name="minTotalCost" placeholder="最低订单总价" step="0.01" min="0">
                 <input type="number" name="maxTotalCost" placeholder="最高订单总价" step="0.01" min="0">
 
                 <input type="number" name="minPurchasePrice" placeholder="最低商品单价" step="0.01" min="0">
-                <input type="number" name="maxPurchasePrice" placeholder="最低订单总价" step="0.01" min="0">
+                <input type="number" name="maxPurchasePrice" placeholder="最低订单单价" step="0.01" min="0">
 
                 <!-- 进货日期筛选 -->
-                <input type="date" name="startDate" placeholder="开始日期">
-                <input type="date" name="endDate" placeholder="结束日期">
+                <input type="date" name="Date" placeholder="进货日期">
+
 
                 <!-- 供应商筛选 -->
                 <select name="supplier">
@@ -344,17 +348,24 @@
                 </select>
 
                 <button type="submit">筛选</button>
+                <!-- 导出 CSV 表单 -->
+                <!-- 导出 CSV 表单 -->
+                <button onclick="exportCSV({
+                sortBy: getURLParam('sortBy') || '',
+                sortOrder: getURLParam('sortOrder') || '',
+                PurchaseID: getURLParam('PurchaseID') || '',
+                ProductName: getURLParam('ProductName') || '',
+                minTotalCost: getURLParam('minTotalCost') || '',
+                maxTotalCost: getURLParam('maxTotalCost') || '',
+                minPurchasePrice: getURLParam('minPurchasePrice') || '',
+                maxPurchasePrice: getURLParam('maxPurchasePrice') || '',
+                OrderDate: getURLParam('OrderDate') || '',
+                SupplierName: getURLParam('SupplierName') || '',
+                AdminName: getURLParam('AdminName') || ''
+                })">导出CSV</button>
+
             </form>
 
-            <div class="button-group">
-                <!-- 添加进货订单按钮 -->
-                <button onclick="openModal('add')">添加进货订单</button>
-
-                <!-- 导出 CSV 表单 -->
-                <form method="get" action="exportCSV.jsp">
-                    <button type="submit">导出CSV</button>
-                </form>
-            </div>
         </div>
 
     <table>
@@ -547,6 +558,54 @@
         var price = parseFloat(document.getElementById('purchasePrice').value) || 0;
         var totalCost = quantity * price;
         document.getElementById('totalCost').value = totalCost.toFixed(2);
+    }
+
+    function getURLParam(param) {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(param);
+    }
+    function exportCSV({sortBy = '', sortOrder = '',PurchaseID = '', ProductName = '', minTotalCost = '', maxTotalCost = '',
+                           minPurchasePrice = '',maxPurchasePrice = '',OrderDate = '',SupplierName = '',AdminName = ''})
+    {
+
+        // 向后端请求数据
+        fetch('purchase?action=exportCSV' +
+            '&sortBy=' + sortBy +
+            '&sortOrder=' + sortOrder +
+            '&PurchaseID=' + PurchaseID +
+            '&ProductName=' + ProductName +
+            '&minTotalCost=' + minTotalCost +
+            '&maxTotalCost=' +  maxTotalCost +
+            '&minPurchasePrice=' + minPurchasePrice +
+            '&maxPurchasePrice=' + maxPurchasePrice +
+            '&OrderDate=' + OrderDate +
+            '&SupplierName=' + SupplierName +
+            '&AdminName=' + AdminName
+        )
+            .then(response => {
+                // 如果响应状态不正常，抛出错误
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+
+                // 获取二进制数据（CSV文件）
+                return response.blob();
+            })
+            .then(blob => {
+                // 创建 Blob URL 并触发下载
+                const downloadUrl = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = downloadUrl;
+                link.download = 'purchase.csv'; // 设置下载文件名
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(downloadUrl); // 释放 Blob URL
+            })
+            .catch(error => {
+                console.error('Error exporting CSV:', error);
+                alert('导出失败，请稍后再试！'); // 友好的用户提示
+            });
     }
 
 </script>
