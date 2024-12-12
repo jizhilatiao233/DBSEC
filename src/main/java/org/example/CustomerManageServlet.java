@@ -90,7 +90,7 @@ public class CustomerManageServlet extends HttpServlet {
         String contactInfo = request.getParameter("contactInfo");
         String minTotalConsumption = request.getParameter("maxTotalConsumption");
         String maxTotalConsumption = request.getParameter("minTotalConsumption");
-        String joinDate = request.getParameter("JoinDate");
+        String joinDate = request.getParameter("joinDate");
 //        String fromJoinDate = request.getParameter("fromJoinDate");
 //        String toJoinDate = request.getParameter("toJoinDate");
         String vipLevel = request.getParameter("vipLevel");
@@ -342,7 +342,7 @@ public class CustomerManageServlet extends HttpServlet {
         String contactInfo = request.getParameter("contactInfo");
         String minTotalConsumption = request.getParameter("maxTotalConsumption");
         String maxTotalConsumption = request.getParameter("minTotalConsumption");
-        String joinDate = request.getParameter("JoinDate");
+        String joinDate = request.getParameter("joinDate");
 //        String fromJoinDate = request.getParameter("fromJoinDate");
 //        String toJoinDate = request.getParameter("toJoinDate");
         String vipLevel = request.getParameter("vipLevel");
