@@ -144,7 +144,7 @@
 
         /* Right Top User Identity Section */
         .user-info {
-            position: absolute ;
+            position: absolute;
             top: 20px;
             right: 20px;
             background-color: #0066cc;
@@ -360,6 +360,7 @@
             <label for="sortBy">排序方式:</label>
             <select name="sortBy" id="sortBy">
                 <option value="productName">商品名称</option>
+                <option value="category">商品类别</option>
                 <option value="purchasePrice">进价</option>
                 <option value="sellingPrice">售价</option>
                 <option value="shelfStock">上架数量</option>
@@ -435,7 +436,7 @@
             <input type="text" name="productName" id="productName" required>
 
             <label for="category">类别:</label>
-            <input type="text" name="category" id="category" >
+            <input type="text" name="category" id="category" required>
 
             <label for="purchasePrice">进价:</label>
             <input type="number" name="purchasePrice" id="purchasePrice" min="0" step="0.01" required>

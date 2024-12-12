@@ -192,7 +192,8 @@ public class ProductServlet extends HttpServlet {
                     out.flush();
                 }
             }
-            // exportCSV action (DEPRECATED)
+            // exportCSV action
+            // http://localhost:8080/ShopManagement_Web_exploded/product?action=exportCSV&sortBy=&sortOrder=&productName=&category=&minPrice=&maxPrice=
             else if ("exportCSV".equals(action)) {
                 // filter parameters
                 String productName = request.getParameter("productName");
