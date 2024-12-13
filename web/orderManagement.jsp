@@ -197,7 +197,7 @@
       border: 1px solid #ccc;
       border-radius: 4px;
       margin-right: 10px;
-      width: 140px;
+      width: 150px;
       box-sizing: border-box;
     }
     .action-bar button {
@@ -238,6 +238,7 @@
       padding: 10px;
       margin: 10px 0;
       border-radius: 6px;
+      background-color: #4d94ff;
       border: 1px solid #ddd;
     }
     .modal-content button {
@@ -344,10 +345,16 @@
     </form>
 
     <div class="button-group">
+
       <!-- 导出 CSV 表单 -->
-      <form method="get" action="exportCSV.jsp">
-        <button type="submit">导出CSV</button>
-      </form>
+      <button onclick="exportCSV({
+        sortBy: getURLParam('sortBy') || '',
+        sortOrder: getURLParam('sortOrder') || '',
+        CustomerID: getURLParam('CustomerID') || '',
+        staffID: getURLParam('staffID') || '',
+        OrderDate: getURLParam('OrderDate') || '',
+        })">导出CSV</button>
+
     </div>
   </div>
 
@@ -617,20 +624,17 @@
     const urlParams = new URLSearchParams(window.location.search);
     return urlParams.get(param);
   }
-
-  function exportCSV({sortBy = '', sortOrder = '',orderID = '', productName = '', staffName = '', salesDate = ''})
+  function exportCSV({sortBy = '', sortOrder = '', CustomerName = '', StaffName = '',OrderDate = ''})
   {
 
     // 向后端请求数据
-    fetch('product?action=exportCSV' +
+    fetch('OrderManage?action=exportCSV' +
             '&sortBy=' + sortBy +
             '&sortOrder=' + sortOrder +
-            '&orderID =' + orderID  +
-            '&productName=' + productName +
-            '&staffName=' + staffName +
-            '&salesDate=' + salesDate
-
-    )
+            '&CustomerName=' + CustomerName +
+            '&StaffName=' + StaffName +
+            '&OrderDate=' + OrderDate
+            )
             .then(response => {
               // 如果响应状态不正常，抛出错误
               if (!response.ok) {
@@ -645,7 +649,7 @@
               const downloadUrl = URL.createObjectURL(blob);
               const link = document.createElement('a');
               link.href = downloadUrl;
-              link.download = 'sales.csv'; // 设置下载文件名
+              link.download = 'orders.csv'; // 设置下载文件名
               document.body.appendChild(link);
               link.click();
               document.body.removeChild(link);

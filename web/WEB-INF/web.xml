@@ -149,5 +149,23 @@
         <servlet-name>CustomerLoginServlet</servlet-name>
         <url-pattern>/CustomerLogin</url-pattern>
     </servlet-mapping>
+    <servlet>
+        <servlet-name>GetUserInfoServlet</servlet-name>
+        <servlet-class>GetUserInfoServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>GetUserInfoServlet</servlet-name>
+        <url-pattern>/api/getUserInfo</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>GetStaffListServlet</servlet-name>
+        <servlet-class>GetStaffListServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>GetStaffListServlet</servlet-name>
+        <url-pattern>/api/getStaffList</url-pattern>
+    </servlet-mapping>
+
 
 </web-app>

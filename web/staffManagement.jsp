@@ -195,7 +195,7 @@
             border: 1px solid #ccc;
             border-radius: 4px;
             margin-right: 10px;
-            width: 140px;
+            width: 110px;
             box-sizing: border-box;
         }
         .action-bar button {
@@ -323,7 +323,7 @@
             </select>
             <button type="submit">排序</button>
 
-            <input type="number" name="searchID" placeholder="员工ID">
+
             <input type="text" name="searchName" placeholder="姓名">
             <input type="text" name="searchPhone" placeholder="联系方式">
 
@@ -332,7 +332,8 @@
 
         <form method="get" action="staffManagement.jsp">
             <!-- 加入日期筛选 -->
-            <input type="date" name="joinDate" placeholder="加入日期">
+            <input type="date" name="fromjoinDate" placeholder="最早加入日期">
+            <input type="date" name="tojoinDate" placeholder="最晚加入日期">
             <!-- 职位筛选 -->
             <select name="position">
                 <option value="">选择职位</option>
@@ -352,8 +353,14 @@
             employeePhone: getURLParam('contactInfo') || '',
             joinDate: getURLParam('joinDate') || '',
             position: getURLParam('position') || ''
+            staffName: getURLParam('staffName') || '',
+            contactInfo: getURLParam('contactInfo') || '',
+            fromJoinDate: getURLParam('fromJoinDate') || '',
+            toJoinDate: getURLParam('toJoinDate') || '',
+            position: getURLParam('position') || '',
+            adminID: getURLParam('adminID') || '',
+            adminName: getURLParam('adminName') || '',
         })">导出CSV</button>
-
         </div>
     </div>
 
@@ -380,6 +387,7 @@
             <td>收银员</td>
             <td>
                 <div class="action-btns">
+                    <e href="javascript:void(0)" onclick="openModal('detail', 1001)">详情</e>
                     <c href="deleteStaff.jsp?id=1001" onclick="return confirm('确定要删除该员工吗？')">删除</c>
                 </div>
             </td>
@@ -422,6 +430,55 @@
     </div>
 </div>
 
+<div class="modal" id="detailModal">
+    <div class="modal-content">
+        <h3>员工信息</h3>
+        <form action="employeeDetail.jsp" method="POST">
+            <!-- 员工ID：详情时显示 -->
+            <input type="hidden" name="employeeId" id="employeeId" value="">
+
+            <!-- 员工姓名 -->
+            <label for="employeeName">姓名:</label>
+            <input type="text" name="employeeName" id="employeeName" value="" readonly>
+
+            <!-- 联系方式 -->
+            <label for="employeePhone">联系方式:</label>
+            <input type="text" name="employeePhone" id="employeePhone" value="" readonly>
+
+            <!-- 职位 -->
+            <label for="position">职位:</label>
+            <input type="text" name="position" id="position" value="" readonly>
+
+            <!-- 管理人员 -->
+            <label for="employeeList">管理人员:</label>
+            <table>
+                <thead>
+                <tr>
+                    <th>选择</th>
+                    <th>员工编号</th>
+                    <th>姓名</th>
+                    <th>联系方式</th>
+                    <th>加入时间</th>
+                    <th>职位</th>
+                </tr>
+                </thead>
+                <tbody id="employeeList">
+                <!-- 示例行，实际内容通过 JS 动态生成 -->
+                <tr>
+                    <td><input type="checkbox" name="selectedEmployee" value=""></td>
+                    <td>1001</td>
+                    <td>张三</td>
+                    <td>13800000000</td>
+                    <td>2022-01-01</td>
+                    <td>收银员</td>
+                </tr>
+                </tbody>
+            </table>
+
+            <button type="button" onclick="closeModal()">返回</button>
+        </form>
+    </div>
+</div>
 
 <div class="footer">
     <p>&copy; 2024 超市管理系统 | 版权所有</p>
@@ -429,19 +486,20 @@
 
 <script>
 
-    function exportCSV({sortBy = '', sortOrder = '',employeeId = '', employeeName = '', employeePhone = '', joinDate = '', position = ''})
+    function exportCSV({sortBy = '', sortOrder = '',staffName = '', contactInfo = '', fromJoinDate = '', toJoinDate = '', position = '', adminID = '', adminName = ''})
     {
 
         // 向后端请求数据
-        fetch('staff?action=exportCSV' +
+        fetch('StaffManage?action=exportCSV' +
             '&sortBy=' + sortBy +
             '&sortOrder=' + sortOrder +
-            '&employeeId =' + employeeId  +
-            '&employeeName=' + employeeName +
-            '&employeePhone=' + employeePhone +
-            '&joinDate=' + joinDate +
-            '&position=' + position
-
+            '&staffName=' + staffName +
+            '&contactInfo=' + contactInfo +
+            '&fromJoinDate=' + fromJoinDate +
+            '&toJoinDate=' + toJoinDate+
+            '&position=' + position +
+            '&adminID =' + adminID  +
+            '&adminName =' + adminName
         )
             .then(response => {
                 // 如果响应状态不正常，抛出错误

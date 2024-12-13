@@ -775,6 +775,9 @@
         const urlParams = new URLSearchParams(window.location.search);
         return urlParams.get(param);
     }
+    function exportCSV({sortBy = '', sortOrder = '', ProductName = '', SupplierName= '',  adminName = '',purchaseDate = '',minTotalCost = '', maxTotalCost = '',
+                           minPurchasePrice = '',maxPurchasePrice = '',fromPurchaseDate='',toPurchaseDate=''})
+    {
 
     // 获取URL参数
     function getUrlParams() {
@@ -788,6 +791,27 @@
         return URLParams;
     }
 
+        // 向后端请求数据
+        fetch('PurchaseManage?action=exportCSV' +
+            '&sortBy=' + sortBy +
+            '&sortOrder=' + sortOrder +
+            '&ProductName=' + ProductName +
+            '&SupplierName=' + SupplierName +
+            '&adminName=' + adminName +
+            '&purchaseDate=' + purchaseDate +
+            '&minTotalCost=' + minTotalCost +
+            '&maxTotalCost=' +  maxTotalCost +
+            '&minPurchasePrice=' + minPurchasePrice +
+            '&maxPurchasePrice=' + maxPurchasePrice +
+            '&fromPurchaseDate=' + fromPurchaseDate +
+            '&toPurchaseDate=' + toPurchaseDate
+
+        )
+            .then(response => {
+                // 如果响应状态不正常，抛出错误
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
     // 更新URL参数
     function updateUrlParams(URLParams) {
         const queryString = Object.keys(URLParams)
