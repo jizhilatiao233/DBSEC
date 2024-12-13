@@ -238,10 +238,10 @@
       padding: 10px;
       margin: 10px 0;
       border-radius: 6px;
+      background-color: #4d94ff;
       border: 1px solid #ddd;
     }
     .modal-content button {
-      background-color: #4d94ff;
       color: white;
       cursor: pointer;
     }
@@ -333,23 +333,27 @@
     <br>
     <!-- 筛选 -->
     <form method="get" action="orderManagement.jsp">
+      <input type="number" name="orderID" placeholder="选择订单ID" min="0">
       <input type="text" name="customerName" placeholder="选择客户">
       <input type="text" name="employeeName" placeholder="选择收银员">
       <input type="date" name="orderDate" placeholder="选择日期">
       <button type="submit">筛选</button>
 
-      <label for="totalcost" style="margin-left: 10px;">消费金额:</label>
-      <input type="text" name="totalcost" id="totalcost" placeholder="消费金额" readonly>
+      <label for="totalcost" style="margin-left: 10px;">消费总金额:</label>
+      <input type="text" name="totalcost" id="totalcost" placeholder="消费总金额" readonly>
     </form>
 
     <div class="button-group">
-      <!-- 添加订单按钮 -->
-      <button onclick="openModal('add')">添加订单</button>
 
       <!-- 导出 CSV 表单 -->
-      <form method="get" action="exportCSV.jsp">
-        <button type="submit">导出CSV</button>
-      </form>
+      <button onclick="exportCSV({
+        sortBy: getURLParam('sortBy') || '',
+        sortOrder: getURLParam('sortOrder') || '',
+        OrderID: getURLParam('OrderID') || '',
+        CustomerID: getURLParam('CustomerID') || '',
+        staffID: getURLParam('staffID') || '',
+        OrderDate: getURLParam('OrderDate') || '',
+        })">导出CSV</button>
 
     </div>
   </div>
@@ -534,6 +538,47 @@
     event.target.submit();
   };
 
+  function getURLParam(param) {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(param);
+  }
+  function exportCSV({sortBy = '', sortOrder = '',OrderID = '', CustomerName = '', StaffName = '',OrderDate = ''})
+  {
+
+    // 向后端请求数据
+    fetch('order?action=exportCSV' +
+            '&sortBy=' + sortBy +
+            '&sortOrder=' + sortOrder +
+            '&OrderID=' + OrderID +
+            '&CustomerName=' + CustomerName +
+            '&StaffName=' + StaffName +
+            '&OrderDate=' + OrderDate
+            )
+            .then(response => {
+              // 如果响应状态不正常，抛出错误
+              if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+              }
+
+              // 获取二进制数据（CSV文件）
+              return response.blob();
+            })
+            .then(blob => {
+              // 创建 Blob URL 并触发下载
+              const downloadUrl = URL.createObjectURL(blob);
+              const link = document.createElement('a');
+              link.href = downloadUrl;
+              link.download = 'orders.csv'; // 设置下载文件名
+              document.body.appendChild(link);
+              link.click();
+              document.body.removeChild(link);
+              URL.revokeObjectURL(downloadUrl); // 释放 Blob URL
+            })
+            .catch(error => {
+              console.error('Error exporting CSV:', error);
+              alert('导出失败，请稍后再试！'); // 友好的用户提示
+            });
+  }
 
 </script>
 

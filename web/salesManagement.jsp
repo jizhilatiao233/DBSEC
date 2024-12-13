@@ -319,6 +319,7 @@
             <button type="submit">筛选</button>
 
             <label for="totalAmount" style="margin-left: 10px;">总销售额:</label>
+            <!-- 总销售额将在这里动态生成 -->
             <input type="text" name="totalAmount" id="totalAmount" placeholder="总销售额" readonly>
         </form>
 
@@ -456,9 +457,8 @@
 
     function exportCSV({sortBy = '', sortOrder = '',orderID = '', productName = '', staffName = '', salesDate = ''})
     {
-
         // 向后端请求数据
-        fetch('product?action=exportCSV' +
+        fetch('sale?action=exportCSV' +
             '&sortBy=' + sortBy +
             '&sortOrder=' + sortOrder +
             '&orderID =' + orderID  +
@@ -516,7 +516,7 @@
     }
 
 
-    // 页面加载时：获取URL参数；获取销售信息并显示分页按钮
+    // 页面加载时：获取URL参数；获取销售信息并显示分页按钮；获取总销售额
     window.onload = function () {
         const URLParams = getUrlParams();
         fetchSales({
@@ -528,25 +528,23 @@
             staffName: URLParams.staffName || '',
             salesDate: URLParams.salesDate || ''
         });
+        getTotalAmount({
+            orderID: URLParams.orderID || '',
+            productName: URLParams.productName || '',
+            staffName: URLParams.staffName || '',
+            salesDate: URLParams.salesDate || ''
+        });
     };
 
-    // 监听筛选按钮点击事件
-    document.querySelector("form").onsubmit = function(event) {
-        event.preventDefault(); // 防止表单默认提交
-
-        // 假设这些是从筛选条件得到的商品价格
-        let prices = [100, 200, 50];  // 这里你可以通过实际的筛选结果动态生成
-
-        // 计算总金额
-        let totalAmount = prices.reduce((sum, price) => sum + price, 0);
-
-        // 将计算出的总金额填充到输入框中
-        document.getElementById("totalAmount").value = totalAmount;
-
-        // 提交表单
-        event.target.submit();
-    };
-
+    function getTotalAmount({orderID = '', productName = '', staffName = '', salesDate = ''}) {
+        fetch('SalesManage?action=getSalesVolume&orderID=' + orderID + '&productName=' + productName + '&staffName=' + staffName + '&salesDate=' + salesDate)
+            .then(response => response.json())
+            .then(data => {
+                const totalAmountInput = document.getElementById('totalAmount');
+                totalAmountInput.value = data;
+            })
+            .catch(error => console.error('Error fetching total amount:', error));
+    }
 
 </script>
 
