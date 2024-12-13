@@ -33,18 +33,17 @@
             box-sizing: border-box;
         }
 
-
         h1 {
             margin-bottom: 20px;
             font-size: 3.2em;
             color: #f1c343;
             text-transform: uppercase;
-            letter-spacing: 5px; /* 更宽的字母间距 */
+            letter-spacing: 5px;
             font-weight: bold;
-            text-shadow: 3px 3px 8px rgba(0, 0, 0, 0.3), 0 0 25px rgba(255, 255, 255, 0.7); /* 文本阴影 */
-            opacity: 0; /* 初始时文字透明 */
-            transform: translateY(30px); /* 初始时下移 */
-            animation: fadeInUp 2s ease-out forwards; /* 应用动画 */
+            text-shadow: 3px 3px 8px rgba(0, 0, 0, 0.3), 0 0 25px rgba(255, 255, 255, 0.7); / 文本阴影 /
+            opacity: 0; / 初始时文字透明 /
+            transform: translateY(30px); / 初始时下移 /
+            animation: fadeInUp 2s ease-out forwards; / 应用动画 */
         }
 
         /* 文字动画效果：淡入 + 从下往上 */
@@ -116,11 +115,9 @@
 <body>
 
 <div class="login-container">
-    <h1>欢迎使用超市管理系统</h1>
-    <p>选择身份</p>
+    <h1>Welcome to the supermarket management system</h1>
     <div class="button-group">
-        <a href="login_staff.jsp">员工</a>
-        <a href="login_customer.jsp">客户</a>
+        <a href="login_staff.jsp">staff</a>
     </div>
 </div>
 

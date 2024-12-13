@@ -318,15 +318,9 @@
             <input type="date" name="salesDate" id="salesDate" placeholder="销售日期">
             <button type="submit">筛选</button>
 
-            <label for="totalAmount" style="margin-left: 10px;">总销售额:</label>
-            <input type="text" name="totalAmount" id="totalAmount" placeholder="总销售额" readonly>
+            <label for="getTotalAmount" style="margin-left: 10px;">总销售额:</label>
+            <input type="text" name="getTotalAmount" id="getTotalAmount" placeholder="总销售额" readonly>
         </form>
-
-<%--        <div class="button-group">--%>
-<%--            <!-- 批量删除表单 -->--%>
-<%--            <form method="post" action="batchDeleteSales.jsp">--%>
-<%--                <button type="submit">批量删除</button>--%>
-<%--            </form>--%>
 
             <!-- 导出 CSV 表单 -->
         <button onclick="exportCSV({
@@ -529,24 +523,15 @@
             salesDate: URLParams.salesDate || ''
         });
     };
-
-    // 监听筛选按钮点击事件
-    document.querySelector("form").onsubmit = function(event) {
-        event.preventDefault(); // 防止表单默认提交
-
-        // 假设这些是从筛选条件得到的商品价格
-        let prices = [100, 200, 50];  // 这里你可以通过实际的筛选结果动态生成
-
-        // 计算总金额
-        let totalAmount = prices.reduce((sum, price) => sum + price, 0);
-
-        // 将计算出的总金额填充到输入框中
-        document.getElementById("totalAmount").value = totalAmount;
-
-        // 提交表单
-        event.target.submit();
-    };
-
+    function getTotalAmount({orderID = '', productName = '', staffName = '', salesDate = ''}) {
+        fetch('SalesManage?action=getSalesVolume&orderID=' + orderID + '&productName=' + productName + '&staffName=' + staffName + '&salesDate=' + salesDate)
+            .then(response => response.json())
+            .then(data => {
+                const totalAmountInput = document.getElementById('totalAmount');
+                totalAmountInput.value = data;
+            })
+            .catch(error => console.error('Error fetching total amount:', error));
+    }
 
 </script>
 

@@ -347,14 +347,12 @@
             <button onclick="exportCSV({
             sortBy: getURLParam('sortBy') || '',
             sortOrder: getURLParam('sortOrder') || '',
-            employeeId: getURLParam('employeeId') || '',
-            employeeName: getURLParam('employeeName') || '',
-            employeePhone: getURLParam('employeePhone') || '',
+            employeeId: getURLParam('staffID') || '',
+            employeeName: getURLParam('staffName') || '',
+            employeePhone: getURLParam('contactInfo') || '',
             joinDate: getURLParam('joinDate') || '',
             position: getURLParam('position') || ''
         })">导出CSV</button>
-            <!-- 添加员工按钮 -->
-            <button onclick="openModal('add')">添加员工</button>
 
         </div>
     </div>
@@ -371,7 +369,9 @@
             <th>操作</th>
         </tr>
         </thead>
-        <tbody id="employeeList">
+        <tbody id="staffTableBody">
+        <!-- 列表将在这里动态生成 -->
+        </tbody>
         <tr>
             <td>1001</td>
             <td>张三</td>
@@ -380,7 +380,6 @@
             <td>收银员</td>
             <td>
                 <div class="action-btns">
-                    <e href="javascript:void(0)" onclick="openModal('detail', 1001)">详情</e>
                     <c href="deleteStaff.jsp?id=1001" onclick="return confirm('确定要删除该员工吗？')">删除</c>
                 </div>
             </td>
@@ -423,65 +422,12 @@
     </div>
 </div>
 
-<div class="modal" id="detailModal">
-    <div class="modal-content">
-        <h3>员工信息</h3>
-        <form action="employeeDetail.jsp" method="POST">
-            <!-- 员工ID：详情时显示 -->
-            <input type="hidden" name="employeeId" id="employeeId" value="">
-
-            <!-- 员工姓名 -->
-            <label for="employeeName">姓名:</label>
-            <input type="text" name="employeeName" id="employeeName" value="" readonly>
-
-            <!-- 联系方式 -->
-            <label for="employeePhone">联系方式:</label>
-            <input type="text" name="employeePhone" id="employeePhone" value="" readonly>
-
-            <!-- 职位 -->
-            <label for="position">职位:</label>
-            <input type="text" name="position" id="position" value="" readonly>
-
-            <!-- 管理人员 -->
-            <label for="employeeList">管理人员:</label>
-            <table>
-                <thead>
-                <tr>
-                    <th>选择</th>
-                    <th>员工编号</th>
-                    <th>姓名</th>
-                    <th>联系方式</th>
-                    <th>加入时间</th>
-                    <th>职位</th>
-                </tr>
-                </thead>
-                <tbody id="employeeList">
-                <!-- 示例行，实际内容通过 JS 动态生成 -->
-                <tr>
-                    <td><input type="checkbox" name="selectedEmployee" value=""></td>
-                    <td>1001</td>
-                    <td>张三</td>
-                    <td>13800000000</td>
-                    <td>2022-01-01</td>
-                    <td>收银员</td>
-                </tr>
-                </tbody>
-            </table>
-
-            <button type="button" onclick="closeModal()">返回</button>
-        </form>
-    </div>
-</div>
 
 <div class="footer">
     <p>&copy; 2024 超市管理系统 | 版权所有</p>
 </div>
 
 <script>
-    function getURLParam(param) {
-        const urlParams = new URLSearchParams(window.location.search);
-        return urlParams.get(param);
-    }
 
     function exportCSV({sortBy = '', sortOrder = '',employeeId = '', employeeName = '', employeePhone = '', joinDate = '', position = ''})
     {
@@ -550,14 +496,6 @@
                 employeePhone.textContent = employee.phone;
                 position.textContent = employee.position;
             }
-        } else if(action === 'add') {
-            // 清空表单，为新增订单准备
-            document.getElementById('addModal').style.display = 'flex';
-            document.getElementById('employeeId').value = '';  // 新增时没有订单ID//后端应该会写分配吧
-            document.getElementById('employeeName').value = '';
-            document.getElementById('employeePhone').value = '';
-            document.getElementById('position').value = '';
-            document.getElementById('admin').value = '';
         }
     }
 
@@ -567,9 +505,177 @@
         document.getElementById('addModal').style.display = 'none';
     }
 
-    document.getElementById('selectAll').addEventListener('change', function () {
-        document.querySelectorAll('input[name="selectedEmployee"]').forEach(checkbox => checkbox.checked = this.checked);
-    });
+    // 删除员工
+    function deleteStaff(staffID) {
+        if (confirm('确定要删除此员工吗？')) {
+            // 获取员工详情
+            fetch('staff?action=getStaffDetails&staffID=' + staffID)
+                .then(response => response.json())
+                .then(data => {
+
+                    // 更新员工信息
+                    const formData = new FormData();
+                    formData.append('action', 'editStaff');
+                    formData.append('staffID', data.staffID);
+                    formData.append('staffName', data.staffName);
+                    formData.append('contactInfo', data.contactInfo);
+                    formData.append('username', data.username);
+                    formData.append('password', data.password);
+                    formData.append('joinDate', data.joinDate);
+                    formData.append('position', data.position);
+                    formData.append('adminID', data.adminID);
+                    formData.append('adminName', data.adminName);
+
+                    return fetch('staffManage', {
+                        method: 'POST',
+                        body: formData
+                    });
+                })
+                .then(response => {
+                    if (response.ok) {
+                        alert('员工已成功删除！');
+                        fetchStaff(1);
+                    } else {
+                        return response.text().then(text => {
+                            throw new Error(text);
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('错误:', error);
+                    alert('删除失败，请稍后重试！');
+                });
+        }
+    }
+
+
+    const itemsPerPage = 10; // 每页显示的数量
+    let currentPage = 1; // 当前页码
+
+    // 获取员工信息
+    function fetchStaff({
+                            page = currentPage, sortBy = '', sortOrder = '',
+                            staffID = '', staffName = '', contactInfo = '', joinDate = '', position = ''
+                        }) {
+        currentPage = page;
+        const offset = (page - 1) * itemsPerPage;
+        const URLParams = {
+            page: page,
+            sortBy: sortBy,
+            sortOrder: sortOrder,
+            staffID: staffID,
+            staffName: staffName,
+            contactInfo: contactInfo,
+            joinDate: joinDate,
+            position: position
+        };
+        updateUrlParams(URLParams);
+
+        fetch('StaffManage?action=getStaffs&offset=' + offset + '&limit=' + itemsPerPage
+            + '&sortBy=' + sortBy + '&sortOrder=' + sortOrder
+            + '&staffID=' + staffID + '&staffName=' + staffName + '&contactInfo=' + contactInfo + '&joinDate=' + joinDate + '&position=' + position)
+            .then(response => response.json())
+            .then(data => {
+                const staffTableBody = document.getElementById('staffTableBody');
+                staffTableBody.innerHTML = ''; // 清空表格
+
+                if (data.staff && data.staff.length > 0) {
+                    data.staff.forEach(staff => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = '<td>' + staff.staffID + '</td>'
+                            + '<td>' + staff.staffName + '</td>'
+                            + '<td>' + staff.contactInfo + '</td>'
+                            + '<td>' + staff.joinDate + '</td>'
+                            + '<td>' + staff.position + '</td>'
+                            + '<td>' +
+                            '<div class="action-btns">' +
+                            '<c href="javascript:void(0)" onclick="deleteStaff(' + staff.staffID + ')">删除</>' +'</div>' +
+                            '</td>';
+                        staffTableBody.appendChild(row);
+                    });
+                } else {
+                    const row = document.createElement('tr');
+                    row.innerHTML = '<td colspan="8">没有找到员工信息</td>';
+                    staffTableBody.appendChild(row);
+                }
+
+                updatePagination(data.totalPages);
+            })
+            .catch(error => console.error('Error fetching sales:', error));
+    }
+
+    // 更新分页按钮
+    function updatePagination(totalPages) {
+        const pagination = document.getElementById('pagination');
+        pagination.innerHTML = '';  // 清空现有的分页按钮
+        const URLParams = getUrlParams(); // 获取当前 URL 参数
+        const currentPage = parseInt(URLParams.page);
+
+        for (let i = 1; i <= totalPages; i++) {
+            const pageBtn = document.createElement('a');
+            pageBtn.href = 'javascript:void(0)';
+            pageBtn.textContent = i;
+            if (i === currentPage) {
+                pageBtn.classList.add('active');
+            }
+            pageBtn.onclick = () => fetchStaff({
+                page: i,
+                sortBy: URLParams.sortBy || '',
+                sortOrder: URLParams.sortOrder || '',
+                staffID: URLParams.staffID || '',
+                staffName: URLParams.staffName || '',
+                contactInfo: URLParams.contactInfo || '',
+                joinDate: URLParams.joinDate || '',
+                position: URLParams.position || ''
+            });
+            pagination.appendChild(pageBtn);
+        }
+    }
+    // 获取URL中的查询参数
+    function getURLParam(param) {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(param);
+    }
+
+
+    // 获取URL参数
+    function getUrlParams() {
+        const URLParams = {};
+        const queryString = window.location.search.substring(1);
+        const regex = /([^&=]+)=([^&]*)/g;
+        let m;
+        while (m = regex.exec(queryString)) {
+            URLParams[decodeURIComponent(m[1])] = decodeURIComponent(m[2]);
+        }
+        return URLParams;
+    }
+
+    // 更新URL参数
+    function updateUrlParams(URLParams) {
+        const queryString = Object.keys(URLParams)
+            .filter(key => URLParams[key] !== '' && URLParams[key] !== null && URLParams[key] !== undefined)
+            .map(key => encodeURIComponent(key) + '=' + encodeURIComponent(URLParams[key]))
+            .join('&');
+        history.pushState(null, '', '?' + queryString);
+    }
+
+
+    // 页面加载时：获取URL参数；获取销售信息并显示分页按钮
+    window.onload = function () {
+        const URLParams = getUrlParams();
+        fetchSales({
+            page: URLParams.page || 1,
+            sortBy: URLParams.sortBy || '',
+            sortOrder: URLParams.sortOrder || '',
+            staffID: URLParams.staffID || '',
+            staffName: URLParams.staffName || '',
+            contactInfo: URLParams.contactInfo || '',
+            joinDate: URLParams.joinDate || '',
+            position: URLParams.position || ''
+        });
+    };
+
+
 </script>
 
 </body>

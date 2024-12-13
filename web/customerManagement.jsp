@@ -65,7 +65,7 @@
 
         .container {
             margin-left: 270px;
-            padding: 30px;
+            padding: 30px 30px 80px;
             transition: margin-left 0.3s ease;
         }
 
@@ -301,7 +301,29 @@
             gap: 10px;  /* 按钮之间的间距 */
             align-items: center;
         }
-
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .pagination a {
+            padding: 10px 15px;
+            margin: 0 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            text-decoration: none;
+            color: #333;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .pagination a:hover {
+            background-color: #4d94ff;
+            color: white;
+        }
+        .pagination a.active {
+            background-color: #0066cc;
+            color: white;
+            border-color: #0066cc;
+        }
     </style>
 </head>
 <body>
@@ -357,7 +379,6 @@
             <button type="submit">排序</button>
 
             <!-- 搜索框和筛选框 -->
-            <input type="number" name="searchID" placeholder="客户ID">
             <input type="text" name="searchName" placeholder="姓名">
             <input type="email" name="searchEmail" placeholder="联系方式">
             <input type="date" name="joinDate" placeholder="加入日期">
@@ -390,7 +411,6 @@
             minSpent: getURLParam('minSpent') || '',
             maxSpent: getURLParam('maxSpent') || ''
         })">导出CSV</button>
-
             <button onclick="openModal('add')">添加客户</button>
         </form>
     </div>
@@ -419,7 +439,7 @@
             <td>VIP 1</td> <!-- 示例VIP等级 -->
             <td>
                 <div class="action-btns">
-                    <e onclick="openModal('edit', 1001)">编辑</e>
+                    <e href="javascript:void(0)" onclick="openModal('edit', 1)">编辑</e>
                 </div>
             </td>
         </tr>
@@ -437,7 +457,7 @@
 <div id="customerModal" class="modal">
     <div class="modal-content">
         <h2 id="modalTitle">添加客户</h2>
-        <form id="customerForm" method="post" action="">
+        <form id="customerForm" onsubmit="return submitModal();">
             <label for="customerName">姓名:</label>
             <input type="text" id="customerName" name="customerName" required>
 
@@ -596,8 +616,7 @@
 
     // 获取客户信息
     function fetchCustomers({
-                            page = currentPage, sortBy = '', sortOrder = '',
-                            customerID = '', customerName = '', contactInfo = '', joinDate = '',
+                            page = currentPage, sortBy = '', sortOrder = '', customerName = '', contactInfo = '', joinDate = '',
                             vipLevel = '',minTotalConsumption = '',maxTotalConsumption = ''
                         }) {
         currentPage = page;
@@ -606,7 +625,6 @@
             page: page,
             sortBy: sortBy,
             sortOrder: sortOrder,
-            customerID: customerID,
             customerName: customerName,
             contactInfo: contactInfo,
             joinDate: joinDate,
@@ -618,7 +636,7 @@
 
         fetch('CustomerManage?action=getCustomers&offset=' + offset + '&limit=' + itemsPerPage
             + '&sortBy=' + sortBy + '&sortOrder=' + sortOrder
-            + '&customerID=' + customerID + '&customerName=' + customerName + '&contactInfo=' + contactInfo
+            + '&customerName=' + customerName + '&contactInfo=' + contactInfo
             + '&joinDate=' + joinDate + '&vipLevel=' + vipLevel + '&minTotalConsumption=' + minTotalConsumption + '&maxTotalConsumption=' + maxTotalConsumption)
             .then(response => response.json())
             .then(data => {
@@ -628,8 +646,7 @@
                 if (data.customers && data.customers.length > 0) {
                     data.customers.forEach(customer => {
                         const row = document.createElement('tr');
-                        row.innerHTML = '<td>' + customer.orderID + '</td>'
-                            + '<td>' + customer.customerID + '</td>'
+                        row.innerHTML = '<td>' + customer.customerID + '</td>'
                             + '<td>' + customer.customerName + '</td>'
                             + '<td>' + customer.contactInfo + '</td>'
                             + '<td>' + customer.joinDate + '</td>'
@@ -640,7 +657,7 @@
                             '<e href="javascript:void(0)" onclick="openModal(\'edit\', ' + customer.customerID + ')">编辑</e>' +
                             '</div>' +
                             '</td>';
-                        customersTableBody.appendChild(row);
+                        customerTableBody.appendChild(row);
                     });
                 } else {
                     const row = document.createElement('tr');
@@ -671,7 +688,6 @@
                 page: i,
                 sortBy: URLParams.sortBy || '',
                 sortOrder: URLParams.sortOrder || '',
-                customerID: URLParams.customerID || '',
                 customerName: URLParams.customerName || '',
                 contactInfo: URLParams.contactInfo || '',
                 joinDate: URLParams.joinDate || '',
@@ -718,7 +734,6 @@
             page: URLParams.page || 1,
             sortBy: URLParams.sortBy || '',
             sortOrder: URLParams.sortOrder || '',
-            customerID: URLParams.customerID || '',
             customerName: URLParams.customerName || '',
             contactInfo: URLParams.contactInfo || '',
             joinDate: URLParams.joinDate || '',
