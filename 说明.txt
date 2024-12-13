@@ -6,12 +6,12 @@
     导出CSV：/SalesManage?action=exportCSV&sortBy=&sortOrder=&orderID=&productName=&staffName=&salesDate=
     其余已做好，略
 3.客户管理页面：CustomerManageServlet.java
-    获取表格信息：/CustomerManage?action=getCustomers&offset=&limit=&sortBy=&sortOrder=&customerName=&contactInfo=&minTotalConsumption&maxTotalConsumption=&fromJoinDate=&toJoinDate=&vipLevel=
+    获取表格信息：/CustomerManage?action=getCustomers&offset=&limit=&sortBy=&sortOrder=&customerName=&contactInfo=&minTotalConsumption&maxTotalConsumption=&joinDate=&vipLevel=
     获取某一客户信息：/CustomerManage?action=getCustomerDetails&customerID=
     添加客户：/CustomerManage?action=addCustomer&customerName=&contactInfo=&username=&password=&joinDate=&totalConsumption=&vipLevel=
     编辑某一客户：/CustomerManage?action=editCustomer&customerID=&customerName=&contactInfo=&username=&password=&joinDate=&totalConsumption=&vipLevel=
     删除某一客户：无此功能，请删除相应前端代码
-    导出CSV：/CustomerManage?action=exportCSV&sortBy=&sortOrder=&customerName=&contactInfo=&minTotalConsumption&maxTotalConsumption=&fromJoinDate=&toJoinDate=&vipLevel=
+    导出CSV：/CustomerManage?action=exportCSV&sortBy=&sortOrder=&customerName=&contactInfo=&minTotalConsumption&maxTotalConsumption=&joinDate=&vipLevel=
 4.订单管理页面：OrderManageServlet.java
     获取表格信息：/OrderManage?action=getOrders&offset=&limit=&sortBy=&sortOrder=&customerName=&staffName=&orderDate=
     获取某一订单信息：/OrderManage?action=getOrderDetails&orderID=

@@ -327,7 +327,7 @@
             <input type="text" name="searchName" placeholder="姓名">
             <input type="text" name="searchPhone" placeholder="联系方式">
 
-            <button type="submit">搜索</button>
+
         </form>
 
         <form method="get" action="staffManagement.jsp">
@@ -339,7 +339,7 @@
                 <option value="收银员">收银员</option>
                 <option value="管理员">管理员</option>
             </select>
-            <button type="submit">筛选</button>
+            <button type="submit">搜索</button>
 
         </form>
 
