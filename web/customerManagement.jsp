@@ -406,9 +406,9 @@
             <th>操作</th>
         </tr>
         </thead>
-        <tbody id="customerList">
-        <!-- 客户数据将通过 AJAX 动态加载 -->
-        <!-- 示例数据 -->
+        <tbody id="customerTableBody">
+        <!-- 商品列表将在这里动态生成 -->
+        </tbody>
         <tr>
             <td>1001</td>
             <td>张三</td>
@@ -419,7 +419,6 @@
             <td>
                 <div class="action-btns">
                     <e onclick="openModal('edit', 1001)">编辑</e>
-                    <c onclick="deleteCustomer(1001)">删除</c>
                 </div>
             </td>
         </tr>
@@ -441,14 +440,14 @@
             <label for="customerName">姓名:</label>
             <input type="text" id="customerName" name="customerName" required>
 
-            <label for="customerContact">联系方式:</label>
-            <input type="text" id="customerContact" name="customerContact" required>
+            <label for="contactInfo">联系方式:</label>
+            <input type="text" id="contactInfo" name="contactInfo" required>
 
             <label for="joinDate">加入日期:</label>
             <input type="date" id="joinDate" name="joinDate" required>
 
-            <label for="amount">消费总金额:</label>
-            <input type="number" id="amount" name="amount" required>
+            <label for="totalConsumption">消费总金额:</label>
+            <input type="number" id="totalConsumption" name="totalConsumption" required>
 
             <label for="vipLevel">VIP等级:</label>
             <select id="vipLevel" name="vipLevel" required>
@@ -467,37 +466,86 @@
 </div>
 
 <script>
-    function getURLParam(param) {
-        const urlParams = new URLSearchParams(window.location.search);
-        return urlParams.get(param);
-    }
 
-    function openModal(action, customerId = null) {
-        const modal = document.getElementById('customerModal');
-        const modalTitle = document.getElementById('modalTitle');
-        const form = document.getElementById('customerForm');
+    function openModal(action, customerID = null) {
+        var modal = document.getElementById('customerModal');
+        var modalTitle = document.getElementById('modalTitle');
 
         if (action === 'add') {
             modalTitle.textContent = '添加客户';
-            form.action = 'addCustomer.jsp';
-            form.reset();
+            document.getElementById('action').value = 'addCustomer';
+            document.getElementById('customerID').value = '';
+            document.getElementById('customerName').value = '';
+            document.getElementById('contactInfo').value = '';
+            document.getElementById('joinDate').value = '';
+            document.getElementById('totalConsumption').value = '';
+            document.getElementById('vipLevel').value = '';
         } else if (action === 'edit') {
             modalTitle.textContent = '编辑客户';
-            form.action = 'editCustomer.jsp';
-            // 通过 AJAX 获取客户信息
+            document.getElementById('action').value = 'editCustomer';
+            document.getElementById('customerID').value = '';
+            document.getElementById('customerName').value = '';
+            document.getElementById('contactInfo').value = '';
+            document.getElementById('joinDate').value = '';
+            document.getElementById('totalConsumption').value = '';
+            document.getElementById('vipLevel').value = '';
+
+            // 通过AJAX获取客户详情来填充表单
+            fetch('customer?action=getCustomerDetails&customerID=' + customerID)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('customerName').value = data.customerName;
+                    document.getElementById('contactInfo').value = data.contactInfo;
+                    document.getElementById('joinDate').value = data.joinDate;
+                    document.getElementById('totalConsumption').value = data.totalConsumption;
+                    document.getElementById('vipLevel').value = data.vipLevel;
+                })
+                .catch(error => console.error('Error fetching customer details:', error));
         }
 
         modal.style.display = 'flex';
     }
 
-    function closeModal() {
-        const modal = document.getElementById('customerModal');
-        modal.style.display = 'none';
+    // 提交弹窗
+    function submitModal() {
+
+        // 获取表单数据
+        const form = document.getElementById('customerForm');
+        const formData = new FormData(form); // 封装表单数据
+        const action = formData.get('action'); // 获取 action，用于判断是新增还是编辑
+
+        // 发送 AJAX 请求
+        fetch('CustomerManage', {
+            method: 'POST',
+            body: formData,
+        })
+            .then(response => {
+                if (response.ok) {
+                    if (action === 'addCustomer') {
+                        alert('客户新增成功！');
+                    } else if (action === 'editCustomer') {
+                        alert('客户编辑成功！');
+                    }
+                    closeModal(); // 关闭弹窗
+                    fetchProducts(1); // 刷新商品列表
+                } else {
+                    return response.text().then(text => { throw new Error(text); });
+                }
+            })
+            .catch(error => {
+                console.error('错误:', error);
+                alert('操作失败，请检查输入或稍后重试！');
+            });
+        return false; // 阻止表单默认提交行为
     }
 
-    document.getElementById('selectAll').addEventListener('change', function () {
-        document.querySelectorAll('input[name="selectedCustomers"]').forEach(checkbox => checkbox.checked = this.checked);
-    });
+    // 关闭弹窗
+    function closeModal() {
+        var modal = document.getElementById('customerModal');
+        modal.style.display = 'none';
+        document.getElementById('customerForm').reset(); // 清空表单
+        checkStockWarning();
+    }
 
     function exportCSV({sortBy = '', sortOrder = '',CustomerID = '', CustomerName = '', Contactinfo = '',
                            Username = '',IsVIP = '', PurchaseSum = '',})
@@ -539,6 +587,144 @@
             });
     }
 
+
+
+    const itemsPerPage = 10; // 每页显示的数量
+    let currentPage = 1; // 当前页码
+
+    // 获取客户信息
+    function fetchCustomers({
+                            page = currentPage, sortBy = '', sortOrder = '',
+                            customerID = '', customerName = '', contactInfo = '', joinDate = '',
+                            vipLevel = '',minTotalConsumption = '',maxTotalConsumption = ''
+                        }) {
+        currentPage = page;
+        const offset = (page - 1) * itemsPerPage;
+        const URLParams = {
+            page: page,
+            sortBy: sortBy,
+            sortOrder: sortOrder,
+            customerID: customerID,
+            customerName: customerName,
+            contactInfo: contactInfo,
+            joinDate: joinDate,
+            vipLevel: vipLevel,
+            minTotalConsumption: minTotalConsumption,
+            maxTotalConsumption: maxTotalConsumption
+        };
+        updateUrlParams(URLParams);
+
+        fetch('CustomerManage?action=getCustomers&offset=' + offset + '&limit=' + itemsPerPage
+            + '&sortBy=' + sortBy + '&sortOrder=' + sortOrder
+            + '&customerID=' + customerID + '&customerName=' + customerName + '&contactInfo=' + contactInfo
+            + '&joinDate=' + joinDate + '&vipLevel=' + vipLevel + '&minTotalConsumption=' + minTotalConsumption + '&maxTotalConsumption=' + maxTotalConsumption)
+            .then(response => response.json())
+            .then(data => {
+                const customerTableBody = document.getElementById('customerTableBody');
+                customerTableBody.innerHTML = ''; // 清空表格
+
+                if (data.customers && data.customers.length > 0) {
+                    data.customers.forEach(customer => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = '<td>' + customer.orderID + '</td>'
+                            + '<td>' + customer.customerID + '</td>'
+                            + '<td>' + customer.customerName + '</td>'
+                            + '<td>' + customer.contactInfo + '</td>'
+                            + '<td>' + customer.joinDate + '</td>'
+                            + '<td>' + customer.totalConsumption + '</td>'
+                            + '<td>' + customer.vipLevel + '</td>'
+                            + '<td>' +
+                            '<div class="action-btns">' +
+                            '<e href="javascript:void(0)" onclick="openModal(\'edit\', ' + customer.customerID + ')">编辑</e>' +
+                            '</div>' +
+                            '</td>';
+                        customersTableBody.appendChild(row);
+                    });
+                } else {
+                    const row = document.createElement('tr');
+                    row.innerHTML = '<td colspan="8">没有找到客户信息</td>';
+                    customerTableBody.appendChild(row);
+                }
+
+                updatePagination(data.totalPages);
+            })
+            .catch(error => console.error('Error fetching customers:', error));
+    }
+
+    // 更新分页按钮
+    function updatePagination(totalPages) {
+        const pagination = document.getElementById('pagination');
+        pagination.innerHTML = '';  // 清空现有的分页按钮
+        const URLParams = getUrlParams(); // 获取当前 URL 参数
+        const currentPage = parseInt(URLParams.page);
+
+        for (let i = 1; i <= totalPages; i++) {
+            const pageBtn = document.createElement('a');
+            pageBtn.href = 'javascript:void(0)';
+            pageBtn.textContent = i;
+            if (i === currentPage) {
+                pageBtn.classList.add('active');
+            }
+            pageBtn.onclick = () => fetchCustomers({
+                page: i,
+                sortBy: URLParams.sortBy || '',
+                sortOrder: URLParams.sortOrder || '',
+                customerID: URLParams.customerID || '',
+                customerName: URLParams.customerName || '',
+                contactInfo: URLParams.contactInfo || '',
+                joinDate: URLParams.joinDate || '',
+                vipLevel: URLParams.vipLevel || '',
+                minTotalConsumption: URLParams.minTotalConsumption || '',
+                maxTotalConsumption: URLParams.maxTotalConsumption || ''
+            });
+            pagination.appendChild(pageBtn);
+        }
+    }
+    // 获取URL中的查询参数
+    function getURLParam(param) {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(param);
+    }
+
+
+    // 获取URL参数
+    function getUrlParams() {
+        const URLParams = {};
+        const queryString = window.location.search.substring(1);
+        const regex = /([^&=]+)=([^&]*)/g;
+        let m;
+        while (m = regex.exec(queryString)) {
+            URLParams[decodeURIComponent(m[1])] = decodeURIComponent(m[2]);
+        }
+        return URLParams;
+    }
+
+    // 更新URL参数
+    function updateUrlParams(URLParams) {
+        const queryString = Object.keys(URLParams)
+            .filter(key => URLParams[key] !== '' && URLParams[key] !== null && URLParams[key] !== undefined)
+            .map(key => encodeURIComponent(key) + '=' + encodeURIComponent(URLParams[key]))
+            .join('&');
+        history.pushState(null, '', '?' + queryString);
+    }
+
+
+    // 页面加载时：获取URL参数；获取客户信息并显示分页按钮
+    window.onload = function () {
+        const URLParams = getUrlParams();
+        fetchCustomers({
+            page: URLParams.page || 1,
+            sortBy: URLParams.sortBy || '',
+            sortOrder: URLParams.sortOrder || '',
+            customerID: URLParams.customerID || '',
+            customerName: URLParams.customerName || '',
+            contactInfo: URLParams.contactInfo || '',
+            joinDate: URLParams.joinDate || '',
+            vipLevel: URLParams.vipLevel || '',
+            minTotalConsumption: URLParams.minTotalConsumption || '',
+            maxTotalConsumption: URLParams.maxTotalConsumption || ''
+        });
+    };
 
 </script>
 

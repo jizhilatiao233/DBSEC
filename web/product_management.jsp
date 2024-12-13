@@ -687,7 +687,7 @@
                     });
                 } else {
                     const row = document.createElement('tr');
-                    row.innerHTML = '<td colspan="9">No products available.</td>';
+                    row.innerHTML = '<td colspan="9">没有找到商品信息</td>';
                     productTableBody.appendChild(row);
                 }
 
