@@ -458,7 +458,7 @@
     {
 
         // 向后端请求数据
-        fetch('sale?action=exportCSV' +
+        fetch('SalesManage?action=exportCSV' +
             '&sortBy=' + sortBy +
             '&sortOrder=' + sortOrder +
             '&orderID =' + orderID  +

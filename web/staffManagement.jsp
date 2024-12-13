@@ -195,7 +195,7 @@
             border: 1px solid #ccc;
             border-radius: 4px;
             margin-right: 10px;
-            width: 140px;
+            width: 110px;
             box-sizing: border-box;
         }
         .action-bar button {
@@ -323,7 +323,7 @@
             </select>
             <button type="submit">排序</button>
 
-            <input type="number" name="searchID" placeholder="员工ID">
+
             <input type="text" name="searchName" placeholder="姓名">
             <input type="text" name="searchPhone" placeholder="联系方式">
 
@@ -332,13 +332,17 @@
 
         <form method="get" action="staffManagement.jsp">
             <!-- 加入日期筛选 -->
-            <input type="date" name="joinDate" placeholder="加入日期">
+            <input type="date" name="fromjoinDate" placeholder="最早加入日期">
+            <input type="date" name="tojoinDate" placeholder="最晚加入日期">
             <!-- 职位筛选 -->
             <select name="position">
                 <option value="">选择职位</option>
                 <option value="收银员">收银员</option>
                 <option value="管理员">管理员</option>
             </select>
+<%--            <input type="number" name="searchID" placeholder="管理员ID">--%>
+<%--            <input type="text" name="managerName" placeholder="管理者姓名">--%>
+
             <button type="submit">搜索</button>
 
         </form>
@@ -347,11 +351,13 @@
             <button onclick="exportCSV({
             sortBy: getURLParam('sortBy') || '',
             sortOrder: getURLParam('sortOrder') || '',
-            employeeId: getURLParam('employeeId') || '',
-            employeeName: getURLParam('employeeName') || '',
-            employeePhone: getURLParam('employeePhone') || '',
-            joinDate: getURLParam('joinDate') || '',
-            position: getURLParam('position') || ''
+            staffName: getURLParam('staffName') || '',
+            contactInfo: getURLParam('contactInfo') || '',
+            fromJoinDate: getURLParam('fromJoinDate') || '',
+            toJoinDate: getURLParam('toJoinDate') || '',
+            position: getURLParam('position') || '',
+            adminID: getURLParam('adminID') || '',
+            adminName: getURLParam('adminName') || '',
         })">导出CSV</button>
             <!-- 添加员工按钮 -->
             <button onclick="openModal('add')">添加员工</button>
@@ -368,7 +374,9 @@
             <th>联系方式</th>
             <th>加入日期</th>
             <th>职位</th>
+
             <th>操作</th>
+
         </tr>
         </thead>
         <tbody id="employeeList">
@@ -378,6 +386,8 @@
             <td>13800000000</td>
             <td>2022-01-01</td>
             <td>收银员</td>
+<%--            <td>1</td>--%>
+<%--            <td>alice</td>--%>
             <td>
                 <div class="action-btns">
                     <e href="javascript:void(0)" onclick="openModal('detail', 1001)">详情</e>
@@ -483,19 +493,20 @@
         return urlParams.get(param);
     }
 
-    function exportCSV({sortBy = '', sortOrder = '',employeeId = '', employeeName = '', employeePhone = '', joinDate = '', position = ''})
+    function exportCSV({sortBy = '', sortOrder = '',staffName = '', contactInfo = '', fromJoinDate = '', toJoinDate = '', position = '', adminID = '', adminName = ''})
     {
 
         // 向后端请求数据
-        fetch('staff?action=exportCSV' +
+        fetch('StaffManage?action=exportCSV' +
             '&sortBy=' + sortBy +
             '&sortOrder=' + sortOrder +
-            '&employeeId =' + employeeId  +
-            '&employeeName=' + employeeName +
-            '&employeePhone=' + employeePhone +
-            '&joinDate=' + joinDate +
-            '&position=' + position
-
+            '&staffName=' + staffName +
+            '&contactInfo=' + contactInfo +
+            '&fromJoinDate=' + fromJoinDate +
+            '&toJoinDate=' + toJoinDate+
+            '&position=' + position +
+            '&adminID =' + adminID  +
+            '&adminName =' + adminName
         )
             .then(response => {
                 // 如果响应状态不正常，抛出错误

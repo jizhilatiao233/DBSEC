@@ -206,7 +206,7 @@
             border: 1px solid #ccc;
             border-radius: 4px;
             margin-right: 10px;
-            width: 120px; /* 设置宽度确保它们整齐 */
+            width: 140px; /* 设置宽度确保它们整齐 */
             box-sizing: border-box; /* 确保输入框的宽度包括内边距和边框 */
         }
 
@@ -357,7 +357,6 @@
             <button type="submit">排序</button>
 
             <!-- 搜索框和筛选框 -->
-            <input type="number" name="searchID" placeholder="客户ID">
             <input type="text" name="searchName" placeholder="姓名">
             <input type="email" name="searchEmail" placeholder="联系方式">
             <input type="date" name="joinDate" placeholder="加入日期">
@@ -377,18 +376,16 @@
             <!-- 筛选按钮 -->
 
             <button type="submit">筛选</button>
-
             <!-- 导出CSV按钮 -->
             <button onclick="exportCSV({
             sortBy: getURLParam('sortBy') || '',
             sortOrder: getURLParam('sortOrder') || '',
-            CustomerID: getURLParam('CustomerID') || '',
             CustomerName: getURLParam('CustomerName') || '',
             Contactinfo: getURLParam('Contactinfo') || '',
+            minTotalConsumption: getURLParam('minTotalConsumption') || '',
+            maxTotalConsumption: getURLParam('maxTotalConsumption') || '',
             JoinDate: getURLParam('JoinDate') || '',
-            VIPLevel: getURLParam('VIPLevel') || '',
-            minSpent: getURLParam('minSpent') || '',
-            maxSpent: getURLParam('maxSpent') || ''
+            VIPLevel: getURLParam('VIPLevel') || ''
         })">导出CSV</button>
 
             <button onclick="openModal('add')">添加客户</button>
@@ -548,20 +545,19 @@
         checkStockWarning();
     }
 
-    function exportCSV({sortBy = '', sortOrder = '',CustomerID = '', CustomerName = '', Contactinfo = '',
-                           JoinDate = '',VIPLevel = '', minSpent = '',maxSpent = ''})
+    function exportCSV({sortBy = '', sortOrder = '', CustomerName = '', Contactinfo = '',
+                           JoinDate = '',VIPLevel = '', minTotalConsumption = '',maxTotalConsumption = ''})
     {
         // 向后端请求数据
-        fetch('customer?action=exportCSV' +
+        fetch('CustomerManage?action=exportCSV' +
             '&sortBy=' + sortBy +
             '&sortOrder=' + sortOrder +
-            '&CustomerID=' + CustomerID +
             '&CustomerName=' + CustomerName+
             '&Contactinfo=' + Contactinfo +
+            '&minTotalConsumption =' + minTotalConsumption +
+            '&maxTotalConsumption =' + maxTotalConsumption +
             '&JoinDate=' + JoinDate +
-            '&VIPLevel=' + VIPLevel +
-            '&minSpent =' + minSpent +
-            '&maxSpent =' + maxSpent
+            '&VIPLevel=' + VIPLevel
         )
             .then(response => {
                 // 如果响应状态不正常，抛出错误

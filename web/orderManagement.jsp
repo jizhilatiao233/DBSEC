@@ -197,7 +197,7 @@
       border: 1px solid #ccc;
       border-radius: 4px;
       margin-right: 10px;
-      width: 140px;
+      width: 150px;
       box-sizing: border-box;
     }
     .action-bar button {
@@ -333,7 +333,6 @@
     <br>
     <!-- 筛选 -->
     <form method="get" action="orderManagement.jsp">
-      <input type="number" name="orderID" placeholder="选择订单ID" min="0">
       <input type="text" name="customerName" placeholder="选择客户">
       <input type="text" name="employeeName" placeholder="选择收银员">
       <input type="date" name="orderDate" placeholder="选择日期">
@@ -349,7 +348,6 @@
       <button onclick="exportCSV({
         sortBy: getURLParam('sortBy') || '',
         sortOrder: getURLParam('sortOrder') || '',
-        OrderID: getURLParam('OrderID') || '',
         CustomerID: getURLParam('CustomerID') || '',
         staffID: getURLParam('staffID') || '',
         OrderDate: getURLParam('OrderDate') || '',
@@ -542,14 +540,13 @@
     const urlParams = new URLSearchParams(window.location.search);
     return urlParams.get(param);
   }
-  function exportCSV({sortBy = '', sortOrder = '',OrderID = '', CustomerName = '', StaffName = '',OrderDate = ''})
+  function exportCSV({sortBy = '', sortOrder = '', CustomerName = '', StaffName = '',OrderDate = ''})
   {
 
     // 向后端请求数据
-    fetch('order?action=exportCSV' +
+    fetch('OrderManage?action=exportCSV' +
             '&sortBy=' + sortBy +
             '&sortOrder=' + sortOrder +
-            '&OrderID=' + OrderID +
             '&CustomerName=' + CustomerName +
             '&StaffName=' + StaffName +
             '&OrderDate=' + OrderDate

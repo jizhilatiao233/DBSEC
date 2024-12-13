@@ -564,23 +564,25 @@
         const urlParams = new URLSearchParams(window.location.search);
         return urlParams.get(param);
     }
-    function exportCSV({sortBy = '', sortOrder = '',PurchaseID = '', ProductName = '', minTotalCost = '', maxTotalCost = '',
-                           minPurchasePrice = '',maxPurchasePrice = '',OrderDate = '',SupplierName = '',AdminName = ''})
+    function exportCSV({sortBy = '', sortOrder = '', ProductName = '', SupplierName= '',  adminName = '',purchaseDate = '',minTotalCost = '', maxTotalCost = '',
+                           minPurchasePrice = '',maxPurchasePrice = '',fromPurchaseDate='',toPurchaseDate=''})
     {
 
         // 向后端请求数据
-        fetch('purchase?action=exportCSV' +
+        fetch('PurchaseManage?action=exportCSV' +
             '&sortBy=' + sortBy +
             '&sortOrder=' + sortOrder +
-            '&PurchaseID=' + PurchaseID +
             '&ProductName=' + ProductName +
+            '&SupplierName=' + SupplierName +
+            '&adminName=' + adminName +
+            '&purchaseDate=' + purchaseDate +
             '&minTotalCost=' + minTotalCost +
             '&maxTotalCost=' +  maxTotalCost +
             '&minPurchasePrice=' + minPurchasePrice +
             '&maxPurchasePrice=' + maxPurchasePrice +
-            '&OrderDate=' + OrderDate +
-            '&SupplierName=' + SupplierName +
-            '&AdminName=' + AdminName
+            '&fromPurchaseDate=' + fromPurchaseDate +
+            '&toPurchaseDate=' + toPurchaseDate
+
         )
             .then(response => {
                 // 如果响应状态不正常，抛出错误
