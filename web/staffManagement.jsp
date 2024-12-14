@@ -581,7 +581,7 @@
     // 页面加载时：获取URL参数；获取销售信息并显示分页按钮
     window.onload = function () {
         const URLParams = getUrlParams();
-        fetchSales({
+        fetchStaff({
             page: URLParams.page || 1,
             sortBy: URLParams.sortBy || '',
             sortOrder: URLParams.sortOrder || '',

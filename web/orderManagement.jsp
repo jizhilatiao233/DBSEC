@@ -234,14 +234,15 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
         .modal-content input, .modal-content select, .modal-content button {
-            width: 100%;
+            width: 90%;
             padding: 10px;
             margin: 10px 0;
             border-radius: 6px;
-            background-color: #4d94ff;
+            background-color: #bccded;
             border: 1px solid #ddd;
         }
         .modal-content button {
+            width: 100%;
             background-color: #4d94ff;
             color: white;
             cursor: pointer;
@@ -273,7 +274,6 @@
             color: white;
             border-color: #0066cc;
         }
-
 
     </style>
 </head>
@@ -403,9 +403,20 @@
             <input type="date" name="orderDate" id="orderDate" readonly>
 
             <label>订单商品信息:</label>
-            <div id="salesInOrder">
-                <!-- 订单所包含的商品信息将在这里动态生成 -->
-            </div>
+
+            <table>
+                <thead>
+                <tr>
+                    <th>商品名称</th>
+                    <th>数量</th>
+                    <th>实付金额</th>
+                </tr>
+                </thead>
+                <tbody id="salesTableBody">
+                <!-- 订单商品信息将在这里动态生成 -->
+                </tbody>
+            </table>
+
 
             <button type="reset" class="close-btn" onclick="closeModal()">返回</button>
         </form>
@@ -432,26 +443,43 @@
                     document.getElementById('orderDate').value = data.orderDate;
                 })
                 .catch(error => console.error('Error fetching order details:', error));
-            // 获取订单商品信息
-            // /SalesManage?action=getSales&orderID=
+
             fetch('SalesManage?action=getSales&orderID=' + orderID)
                 .then(response => response.json())
                 .then(data => {
                     const salesInOrder = document.getElementById('salesInOrder');
-                    salesInOrder.innerHTML = ''; // 清空现有的商品信息
+                    const salesTableBody = document.getElementById('salesTableBody');
+                    salesTableBody.innerHTML = ''; // 清空现有的商品信息
+
                     if (data.sales && data.sales.length > 0) {
                         data.sales.forEach(sale => {
-                            const saleInfo = document.createElement('p');
-                            saleInfo.textContent = sale.productName + ' x' + sale.quantitySold + ' : ' + sale.actualPayment;
-                            salesInOrder.appendChild(saleInfo);
+                            const row = document.createElement('tr');
+                            const productNameCell = document.createElement('td');
+                            const quantityCell = document.createElement('td');
+                            const priceCell = document.createElement('td');
+
+                            productNameCell.textContent = sale.productName;
+                            quantityCell.textContent = sale.quantitySold;
+                            priceCell.textContent = sale.actualPayment;
+
+                            row.appendChild(productNameCell);
+                            row.appendChild(quantityCell);
+                            row.appendChild(priceCell);
+
+                            salesTableBody.appendChild(row);
                         });
                     } else {
-                        const noSalesInfo = document.createElement('p');
+                        const row = document.createElement('tr');
+                        const noSalesInfo = document.createElement('td');
+                        noSalesInfo.setAttribute('colspan', '3');
                         noSalesInfo.textContent = '没有找到商品信息';
-                        salesInOrder.appendChild(noSalesInfo);
+                        noSalesInfo.style.textAlign = 'center';
+                        row.appendChild(noSalesInfo);
+                        salesTableBody.appendChild(row);
                     }
                 })
                 .catch(error => console.error('Error fetching sales:', error));
+
 
         }
         modal.style.display = 'flex';
