@@ -69,7 +69,7 @@
 
         .container {
             margin-left: 270px;
-            padding: 30px;
+            padding: 30px 30px 80px;
             transition: margin-left 0.3s ease;
         }
 
@@ -261,6 +261,29 @@
         .modal-content button:hover {
             background-color: #003366;
         }
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .pagination a {
+            padding: 10px 15px;
+            margin: 0 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            text-decoration: none;
+            color: #333;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .pagination a:hover {
+            background-color: #4d94ff;
+            color: white;
+        }
+        .pagination a.active {
+            background-color: #0066cc;
+            color: white;
+            border-color: #0066cc;
+        }
 
     </style>
 </head>
@@ -340,10 +363,10 @@
 
 
                 <!-- 供应商筛选 -->
-                <select name="supplier">
+                <select name="supplierName">
                     <option value="">选择供应商</option>
                 </select>
-                <select name="supplier">
+                <select name="adminName">
                     <option value="">选择负责人</option>
                 </select>
 
@@ -383,6 +406,9 @@
         </tr>
         </thead>
         <tbody>
+        <tbody id="purchaseTableBody">
+        <!-- 商品列表将在这里动态生成 -->
+        </tbody>
         <!-- 动态加载进货数据 -->
         <tr>
             <td>1001</td>
@@ -397,7 +423,8 @@
                 <div class="action-btns">
                     <e href="javascript:void(0)" onclick="openModal('edit', 1001)">编辑</e>
                     <c href="deleteIncomingOrder.jsp?id=1001" onclick="return confirm('确定要删除该进货订单吗？')">删除</c>
-                </div>  //这里应该要改一下1001这
+                    <!-- deletepurchase???? -->
+                </div>
             </td>
         </tr>
         <!-- 更多进货数据 -->
@@ -410,7 +437,7 @@
         <h3>添加进货订单</h3>
         <form action="addIncomingOrder.jsp" method="POST">
             <!-- 订单ID：新增时没有，编辑时有 -->
-            <input type="hidden" name="orderId" id="orderId" value="">
+            <input type="hidden" name="purchaseID" id="purchaseID" value="">
 
             <!-- 商品名称 -->
             <label for="productName">商品名称:</label>
@@ -419,8 +446,8 @@
             </select>
 
             <!-- 进货数量 -->
-            <label for="quantity">进货数量:</label>
-            <input type="number" name="quantity" id="quantity" required>
+            <label for="quantityPurchased">进货数量:</label>
+            <input type="number" name="quantityPurchased" id="quantityPurchased" required>
 
             <!-- 购买单价 -->
             <label for="purchasePrice">购买单价:</label>
@@ -435,14 +462,14 @@
             <input type="date" name="purchaseDate" id="purchaseDate" required>
 
             <!-- 供应商 -->
-            <label for="supplier">供应商:</label>
-            <select name="supplier" id="supplier" required>
+            <label for="supplierName">供应商:</label>
+            <select name="supplierName" id="supplierName" required>
                 <option value="">请选择供应商</option>
             </select>
 
             <!-- 负责人 -->
-            <label for="responsiblePerson">负责人:</label>
-            <input type="text" name="responsiblePerson" id="responsiblePerson" value="responsiblePerson" required>
+            <label for="adminName">负责人:</label>
+            <input type="text" name="adminName" id="adminName" required>
 
             <button type="submit">添加订单</button>
             <button type="button" onclick="closeModal()">取消</button>
@@ -456,7 +483,7 @@
         <h3>编辑进货订单</h3>
         <form action="updateIncomingOrder.jsp" method="POST">
             <!-- 进货订单号（隐藏字段，防止修改） -->
-            <input type="hidden" name="orderId" id="orderId" value="">
+            <input type="hidden" name="purchaseID" id="purchaseID" value="">
 
             <!-- 商品名称 -->
             <label for="productName">商品名称:</label>
@@ -465,8 +492,8 @@
             </select>
 
             <!-- 进货数量 -->
-            <label for="quantity">进货数量:</label>
-            <input type="number" name="quantity" id="quantity" required>
+            <label for="quantityPurchased">进货数量:</label>
+            <input type="number" name="quantityPurchased" id="quantityPurchased" required>
 
             <!-- 购买单价 -->
             <label for="purchasePrice">购买单价:</label>
@@ -481,22 +508,14 @@
             <input type="date" name="purchaseDate" id="purchaseDate" required>
 
             <!-- 供应商 -->
-            <label for="supplier">供应商:</label>
-            <select name="supplier" id="supplier" required>
+            <label for="supplierName">供应商:</label>
+            <select name="supplierName" id="supplierName" required>
                 <option value="">请选择供应商</option>
-                <!-- 供应商列表动态加载 -->
-<%--                <%--%>
-<%--                    // 从数据库或其他来源获取供应商列表并填充--%>
-<%--                    List<Supplier> supplierList = SupplierDAO.getAllSuppliers();--%>
-<%--                    for (Supplier supplier : supplierList) {--%>
-<%--                        out.print("<option value='" + supplier.getId() + "'>" + supplier.getName() + "</option>");--%>
-<%--                    }--%>
-<%--                %>--%>
             </select>
 
             <!-- 负责人 -->
-            <label for="responsiblePerson">负责人:</label>
-            <input type="text" name="responsiblePerson" id="responsiblePerson" value="responsiblePerson" required>
+            <label for="adminName">负责人:</label>
+            <input type="text" name="adminName" id="adminName" value="adminName" required>
 
             <button type="submit">保存修改</button>
             <button type="button" onclick="closeModal()">取消</button>
@@ -510,36 +529,135 @@
 </div>
 
 <script>
-    function openModal(action, orderId) {
+    function openModal(action, purchaseID) {
+        var modal = document.getElementById('purchaseModal');
+        var modalTitle = document.getElementById('modalTitle');
         // 根据操作类型显示不同的模态框
         if(action === 'edit') {
             document.getElementById('editModal').style.display = 'flex';
-            document.getElementById('orderId').value = orderId;
+            modalTitle.textContent = '编辑商品';
+            document.getElementById('action').value = 'editProduct';
+            document.getElementById('productID').value = productID;
+            restockRow.style.display = 'block';
+            addStockRow.style.display = 'none';
 
-            // 通过 AJAX 或其他方法加载进货订单的具体数据
-            fetch(`/getIncomingOrder?id=${orderId}`)
+            // 通过AJAX获取商品详情来填充表单
+            fetch('purchase?action=getPurchaseDetails&PurchaseID=' + PurchaseID)
                 .then(response => response.json())
-                .then(order => {
+                .then(data => {
+                    document.getElementById('purchaseID').value = order.purchaseID;
                     document.getElementById('productName').value = order.productName;
-                    document.getElementById('productName').value = order.productName;
-                    document.getElementById('quantity').value = order.quantity;
+                    document.getElementById('quantityPurchased').value = order.quantityPurchased;
                     document.getElementById('purchasePrice').value = order.purchasePrice;
                     document.getElementById('totalCost').value = order.totalCost;
                     document.getElementById('purchaseDate').value = order.purchaseDate;
-                    document.getElementById('supplier').value = order.supplierId;
-                    document.getElementById('responsiblePerson').value = order.responsiblePerson;
-                });
+                    document.getElementById('supplierNam').value = order.supplierNam;
+                    document.getElementById('adminName').value = order.adminName;
+                })
+                .catch(error => console.error('Error fetching purchase details:', error));
         } else if(action === 'add') {
             // 清空表单，为新增订单准备
+            modalTitle.textContent = '添加进货订单';
+            document.getElementById('action').value = 'addPurchase';
             document.getElementById('addModal').style.display = 'flex';
-            document.getElementById('orderId').value = '';  // 新增时没有订单ID//后端应该会写分配吧
+            document.getElementById('purchaseID').value = '';
             document.getElementById('productName').value = '';
-            document.getElementById('quantity').value = '';
+            document.getElementById('quantityPurchased').value = '';
             document.getElementById('purchasePrice').value = '';
             document.getElementById('totalCost').value = '';
             document.getElementById('purchaseDate').value = '';
-            document.getElementById('supplier').value = '';
-            document.getElementById('responsiblePerson').value = '';
+            document.getElementById('supplierName').value = '';
+            document.getElementById('adminName').value = '';
+        }
+        modal.style.display = 'flex';
+    }
+
+    // 提交弹窗
+    function submitModal() {
+
+        // 获取表单数据
+        const form = document.getElementById('purchaseForm');
+        const formData = new FormData(form); // 封装表单数据
+        const action = formData.get('action'); // 获取 action，用于判断是新增还是编辑
+
+        // 进货逻辑
+        if (action === 'editModal') {
+            if (restockAmount <= warehouseStock) {
+                formData.set('shelfStock', shelfStock + restockAmount);
+                formData.set('warehouseStock', warehouseStock - restockAmount);
+            } else {
+                alert('补货数量不能超过仓库库存！');
+                return false;
+            }
+        }
+
+        // 发送 AJAX 请求
+        fetch('PurchaseManage', {
+            method: 'POST',
+            body: formData,
+        })
+            .then(response => {
+                if (response.ok) {
+                    if (action === 'addPurchase') {
+                        alert('进货订单新增成功！');
+                    } else if (action === 'editPurchase') {
+                        alert('进货订单编辑成功！');
+                    }
+                    closeModal(); // 关闭弹窗
+                    fetchPurchase(1); // 刷新商品列表
+                } else {
+                    return response.text().then(text => { throw new Error(text); });
+                }
+            })
+            .catch(error => {
+                console.error('错误:', error);
+                alert('操作失败，请检查输入或稍后重试！');
+            });
+        return false; // 阻止表单默认提交行为
+    }
+
+    // 删除进货订单
+    function deletePurchase(purchaseID) {
+        if (confirm('确定要删除此进货订单吗？')) {
+            // 获取订单详情
+            fetch('purchase?action=getPurchaseDetails&purchaseID=' + purchaseID)
+                .then(response => response.json())
+                .then(data => {
+
+                    // 更新订单信息
+                    const formData = new FormData();
+                    formData.append('action', 'editPurchase');
+                    formData.append('purchaseID', data.purchaseID);
+                    formData.append('productID', data.productID);
+                    formData.append('productName', data.productName);
+                    formData.append('quantityPurchased', data.quantityPurchased);
+                    formData.append('purchasePrice', data.purchasePrice);
+                    formData.append('totalCost', data.totalCost);
+                    formData.append('purchaseDate', data.purchaseDate);
+                    formData.append('adminID', data.adminID);
+                    formData.append('adminName', data.adminName);
+                    formData.append('supplierID', data.supplierID);
+                    formData.append('supplierName', data.supplierName);
+
+                    return fetch('purchaserManage', {
+                        method: 'POST',
+                        body: formData
+                    });
+                })
+                .then(response => {
+                    if (response.ok) {
+                        alert('进货订单已成功删除！');
+                        fetchPurchase(1);
+                    } else {
+                        return response.text().then(text => {
+                            throw new Error(text);
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('错误:', error);
+                    alert('删除失败，请稍后重试！');
+                });
         }
     }
 
@@ -550,63 +668,180 @@
     }
 
     // 更新订单总价
-    document.getElementById('quantity').addEventListener('input', updateTotalCost);
-    document.getElementById('purchasePrice').addEventListener('input', updateTotalCost);
+    //document.getElementById('quantity').addEventListener('input', updateTotalCost);
+    //document.getElementById('purchasePrice').addEventListener('input', updateTotalCost);
 
-    function updateTotalCost() {
-        var quantity = parseInt(document.getElementById('quantity').value) || 0;
-        var price = parseFloat(document.getElementById('purchasePrice').value) || 0;
-        var totalCost = quantity * price;
-        document.getElementById('totalCost').value = totalCost.toFixed(2);
+    //function updateTotalCost() {
+    //    var quantity = parseInt(document.getElementById('quantity').value) || 0;
+    //    var price = parseFloat(document.getElementById('purchasePrice').value) || 0;
+    //    var totalCost = quantity * price;
+    //    document.getElementById('totalCost').value = totalCost.toFixed(2);
+    //}
+
+    const itemsPerPage = 10; // 每页显示的数量
+    let currentPage = 1; // 当前页码
+
+    // 获取进货信息
+    function fetchPurchase({
+                            page = currentPage, sortBy = '', sortOrder = '',
+                            purchaseID = '', productName = '', minTotalCost = '', maxTotalCost = '',
+                            minPurchasePrice = '', maxPurchasePrice = '', purchaseDate = '', supplierName = '',adminName = ''
+                        }) {
+        currentPage = page;
+        const offset = (page - 1) * itemsPerPage;
+        const URLParams = {
+            page: page,
+            sortBy: sortBy,
+            sortOrder: sortOrder,
+            purchaseID: purchaseID,
+            productName: productName,
+            minTotalCost: minTotalCost,
+            maxTotalCost: maxTotalCost,
+            minPurchasePrice: minPurchasePrice,
+            maxPurchasePrice: maxPurchasePrice,
+            purchaseDate: purchaseDate,
+            supplierName: supplierName,
+            adminName: adminName
+        };
+        updateUrlParams(URLParams);
+
+        fetch('purchaseManage?action=getPurchases&offset=' + offset + '&limit=' + itemsPerPage
+            + '&sortBy=' + sortBy + '&sortOrder=' + sortOrder
+            + '&purchaseID=' + purchaseID + '&productName=' + productName + '&minTotalCost=' +  minTotalCost + '&maxTotalCost=' + maxTotalCost
+            + '&minPurchasePrice=' +  minPurchasePrice+ '&maxPurchasePrice=' +  maxPurchasePrice+ '&purchaseDate=' +  purchaseDate
+            + '&supplierName=' + supplierName +  '&adminName=' + adminNamee)
+            .then(response => response.json())
+            .then(data => {
+                const purchaseTableBody = document.getElementById('purchaseTableBody');
+                purchaseTableBody.innerHTML = ''; // 清空表格
+
+                if (data.purchase && data.purchases.length > 0) {
+                    data.purchase.forEach(purchase => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = '<td>' + purchase.purchaserID + '</td>'
+                            + '<td>' + purchase.productName + '</td>'
+                            + '<td>' + purchase.quantityPurchased + '</td>'
+                            + '<td>' + purchase.purchasePrice + '</td>'
+                            + '<td>' + purchase.totalCost + '</td>'
+                            + '<td>' + purchase.purchaseDate + '</td>'
+                            + '<td>' + purchase.adminName + '</td>'
+                            + '<td>' + purchase.supplierName + '</td>';
+                        purchaseTableBody.appendChild(row);
+                    });
+                } else {
+                    const row = document.createElement('tr');
+                    row.innerHTML = '<td colspan="8">没有找到进货订单信息</td>';
+                    purchaseTableBody.appendChild(row);
+                }
+
+                updatePagination(data.totalPages);
+            })
+            .catch(error => console.error('Error fetching purchases:', error));
     }
 
+    // 更新分页按钮
+    function updatePagination(totalPages) {
+        const pagination = document.getElementById('pagination');
+        pagination.innerHTML = '';  // 清空现有的分页按钮
+        const URLParams = getUrlParams(); // 获取当前 URL 参数
+        const currentPage = parseInt(URLParams.page);
+
+        for (let i = 1; i <= totalPages; i++) {
+            const pageBtn = document.createElement('a');
+            pageBtn.href = 'javascript:void(0)';
+            pageBtn.textContent = i;
+            if (i === currentPage) {
+                pageBtn.classList.add('active');
+            }
+            pageBtn.onclick = () => fetchPurchase({
+                page: i,
+                sortBy: URLParams.sortBy || '',
+                sortOrder: URLParams.sortOrder || '',
+                purchaseID: URLParams.purchaseID || '',
+                productName: URLParams.productName || '',
+                minTotalCost: URLParams.minTotalCost || '',
+                maxTotalCost: URLParams.maxTotalCost || '',
+                minPurchasePrice: URLParams.minPurchasePrice || '',
+                maxPurchasePrice: URLParams.maxPurchasePrice || '',
+                purchaseDate: URLParams.purchaseDate || '',
+                supplierName: URLParams.supplierName || '',
+                adminName: URLParams.adminName || ''
+            });
+            pagination.appendChild(pageBtn);
+        }
+    }
+    // 获取URL中的查询参数
     function getURLParam(param) {
         const urlParams = new URLSearchParams(window.location.search);
         return urlParams.get(param);
     }
-    function exportCSV({sortBy = '', sortOrder = '',PurchaseID = '', ProductName = '', minTotalCost = '', maxTotalCost = '',
-                           minPurchasePrice = '',maxPurchasePrice = '',OrderDate = '',SupplierName = '',AdminName = ''})
+    function exportCSV({sortBy = '', sortOrder = '', ProductName = '', SupplierName= '',  adminName = '',purchaseDate = '',minTotalCost = '', maxTotalCost = '',
+                           minPurchasePrice = '',maxPurchasePrice = '',fromPurchaseDate='',toPurchaseDate=''})
     {
 
+    // 获取URL参数
+    function getUrlParams() {
+        const URLParams = {};
+        const queryString = window.location.search.substring(1);
+        const regex = /([^&=]+)=([^&]*)/g;
+        let m;
+        while (m = regex.exec(queryString)) {
+            URLParams[decodeURIComponent(m[1])] = decodeURIComponent(m[2]);
+        }
+        return URLParams;
+    }
+
         // 向后端请求数据
-        fetch('purchase?action=exportCSV' +
+        fetch('PurchaseManage?action=exportCSV' +
             '&sortBy=' + sortBy +
             '&sortOrder=' + sortOrder +
-            '&PurchaseID=' + PurchaseID +
             '&ProductName=' + ProductName +
+            '&SupplierName=' + SupplierName +
+            '&adminName=' + adminName +
+            '&purchaseDate=' + purchaseDate +
             '&minTotalCost=' + minTotalCost +
             '&maxTotalCost=' +  maxTotalCost +
             '&minPurchasePrice=' + minPurchasePrice +
             '&maxPurchasePrice=' + maxPurchasePrice +
-            '&OrderDate=' + OrderDate +
-            '&SupplierName=' + SupplierName +
-            '&AdminName=' + AdminName
+            '&fromPurchaseDate=' + fromPurchaseDate +
+            '&toPurchaseDate=' + toPurchaseDate
+
         )
             .then(response => {
                 // 如果响应状态不正常，抛出错误
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
                 }
-
-                // 获取二进制数据（CSV文件）
-                return response.blob();
-            })
-            .then(blob => {
-                // 创建 Blob URL 并触发下载
-                const downloadUrl = URL.createObjectURL(blob);
-                const link = document.createElement('a');
-                link.href = downloadUrl;
-                link.download = 'purchase.csv'; // 设置下载文件名
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                URL.revokeObjectURL(downloadUrl); // 释放 Blob URL
-            })
-            .catch(error => {
-                console.error('Error exporting CSV:', error);
-                alert('导出失败，请稍后再试！'); // 友好的用户提示
-            });
+    // 更新URL参数
+    function updateUrlParams(URLParams) {
+        const queryString = Object.keys(URLParams)
+            .filter(key => URLParams[key] !== '' && URLParams[key] !== null && URLParams[key] !== undefined)
+            .map(key => encodeURIComponent(key) + '=' + encodeURIComponent(URLParams[key]))
+            .join('&');
+        history.pushState(null, '', '?' + queryString);
     }
+
+
+    // 页面加载时：获取URL参数；获取销售信息并显示分页按钮
+    window.onload = function () {
+        const URLParams = getUrlParams();
+        fetchPurchase({
+            page: URLParams.page || 1,
+            sortBy: URLParams.sortBy || '',
+            sortOrder: URLParams.sortOrder || '',
+            purchaseID: URLParams.purchaseID || '',
+            productName: URLParams.productName || '',
+            minTotalCost: URLParams.minTotalCost || '',
+            maxTotalCost: URLParams.maxTotalCost || '',
+            minPurchasePrice: URLParams.minPurchasePrice || '',
+            maxPurchasePrice: URLParams.maxPurchasePrice || '',
+            purchaseDate: URLParams.purchaseDate || '',
+            supplierName: URLParams.supplierName || '',
+            adminName: URLParams.adminName || ''
+        });
+    };
+
+
 
 </script>
 

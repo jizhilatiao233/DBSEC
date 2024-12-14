@@ -279,10 +279,10 @@
     <div class="user-profile">
         <img id="userAvatar" src="https://via.placeholder.com/100" alt="用户头像">
         <div class="user-info-main">
-            <p><strong>用户名:</strong> <%= session.getAttribute("username") != null ? session.getAttribute("username") : "加载中..." %></p>
-            <p><strong>姓名:</strong> <%= session.getAttribute("staffname") != null ? session.getAttribute("staffname") : "加载中..." %></p>
-            <p><strong>联系方式:</strong> <%= session.getAttribute("contactinfo") != null ? session.getAttribute("contactinfo") : "加载中..." %></p>
-            <p><strong>职位:</strong> <%= session.getAttribute("role") != null ? session.getAttribute("role") : "加载中..." %></p>
+            <p><strong>用户名:</strong> <span id="username">加载中...</span></p>
+            <p><strong>姓名:</strong> <span id="adminName">加载中...</span></p>
+            <p><strong>联系方式:</strong> <span id="contactInfo">加载中...</span></p>
+            <p><strong>职位:</strong> <span id="role">加载中...</span></p>
         </div>
     </div>
 
@@ -342,32 +342,80 @@
 </div>
 
 <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const adminID = '<%= session.getAttribute("adminID") %>'; // 从服务器端获取 adminID
+        if (adminID) {
+            fetchUserInformation(adminID);
+            fetchStaffInformation(adminID);
+        } else {
+            console.error('Admin ID 未找到');
+        }
+    });
 
-    document.addEventListener("DOMContentLoaded", () => {
-        // 随机生成头像
-        document.getElementById('userAvatar').src = `https://randomuser.me/api/portraits/${Math.random() > 0.5 ? 'men' : 'women'}/${Math.floor(Math.random() * 100)}.jpg`;
-
-        // 模拟加载管理的人员列表
-        fetch('/api/getStaffList')
-            .then(response => response.json())
+    function fetchUserInformation(adminID) {
+        fetch('AdminInformation?action=getUserInformation&adminID=' + adminID)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
             .then(data => {
-                const tableBody = document.getElementById('staffTable');
-                tableBody.innerHTML = '';
-                data.forEach(staff => {
-                    const row = `<tr>
-                        <td>${staff.id}</td>
-                        <td>${staff.name}</td>
-                        <td>${staff.contact}</td>
-                        <td>${staff.role}</td>
-                        <td>${staff.joinDate}</td>
-                    </tr>`;
-                    tableBody.insertAdjacentHTML('beforeend', row);
-                });
+                // 更新页面上的用户信息
+                document.getElementById('username').textContent = data.username || '未知';
+                document.getElementById('adminName').textContent = data.adminName || '未知';
+                document.getElementById('contactInfo').textContent = data.contactInfo || '未知';
+                document.getElementById('role').textContent = data.position || '未知';  // 将 "role" 改为 "position"
             })
             .catch(error => {
-                console.error('加载人员列表时出错:', error);
+                console.error('Error fetching user information:', error);
+                alert('无法加载用户信息，请稍后重试。');
             });
-    });
+    }
+
+    function fetchStaffInformation(adminID) {
+        const offset = 0; // 从第0条开始
+        const limit = 10; // 每次请求10条数据
+        const sortBy = 'joinDate'; // 假设按加入日期排序
+        const sortOrder = 'desc'; // 降序
+        const staffName = ''; // 可用来筛选员工姓名
+        const contactInfo = ''; // 可用来筛选联系方式
+        const fromJoinDate = ''; // 可用来筛选加入日期
+        const toJoinDate = ''; // 可用来筛选加入日期
+        const position = ''; // 可用来筛选职位
+        const adminName = ''; // 可用来筛选管理员名称
+
+        const apiUrl = `/StaffManage?action=getStaffs&offset=${offset}&limit=${limit}&sortBy=${sortBy}&sortOrder=${sortOrder}&staffName=${staffName}&contactInfo=${contactInfo}&fromJoinDate=${fromJoinDate}&toJoinDate=${toJoinDate}&position=${position}&adminID=${adminID}&adminName=${adminName}`;
+
+        fetch(apiUrl)
+            .then(response => response.json())
+            .then(data => {
+                // 如果获取成功，填充表格
+                const staffTable = document.getElementById('staffTable');
+                if (data && data.length > 0) {
+                    staffTable.innerHTML = ''; // 清空加载中的文字
+                    data.forEach(staff => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${staff.staffID}</td>
+                            <td>${staff.name}</td>
+                            <td>${staff.contactInfo}</td>
+                            <td>${staff.position}</td>
+                            <td>${staff.joinDate}</td>
+                        `;
+                        staffTable.appendChild(row);
+                    });
+                } else {
+                    staffTable.innerHTML = '<tr><td colspan="5">没有找到员工数据。</td></tr>';
+                }
+            })
+            .catch(error => {
+                console.error('无法加载员工数据:', error);
+                const staffTable = document.getElementById('staffTable');
+                staffTable.innerHTML = '<tr><td colspan="5">加载失败，请稍后重试。</td></tr>';
+            });
+    }
+
 
 
     function showModal(modalId) {

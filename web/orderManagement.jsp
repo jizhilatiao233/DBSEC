@@ -197,7 +197,7 @@
       border: 1px solid #ccc;
       border-radius: 4px;
       margin-right: 10px;
-      width: 140px;
+      width: 150px;
       box-sizing: border-box;
     }
     .action-bar button {
@@ -242,6 +242,7 @@
       border: 1px solid #ddd;
     }
     .modal-content button {
+      background-color: #4d94ff;
       color: white;
       cursor: pointer;
     }
@@ -272,6 +273,7 @@
       color: white;
       border-color: #0066cc;
     }
+
 
   </style>
 </head>
@@ -326,21 +328,20 @@
       <select name="sortBy" id="sortBy">
         <option value="">排序方式</option>
         <option value="orderDate">按订单日期排序</option>
-        <option value="supplier">按实付金额排序</option>
+        <option value="actualPayment">按实付金额排序</option>
       </select>
       <button type="submit">排序</button>
     </form>
     <br>
     <!-- 筛选 -->
     <form method="get" action="orderManagement.jsp">
-      <input type="number" name="orderID" placeholder="选择订单ID" min="0">
       <input type="text" name="customerName" placeholder="选择客户">
-      <input type="text" name="employeeName" placeholder="选择收银员">
+      <input type="text" name="adminName" placeholder="选择收银员">
       <input type="date" name="orderDate" placeholder="选择日期">
       <button type="submit">筛选</button>
 
-      <label for="totalcost" style="margin-left: 10px;">消费总金额:</label>
-      <input type="text" name="totalcost" id="totalcost" placeholder="消费总金额" readonly>
+      <label for="totalcost" style="margin-left: 10px;">消费金额:</label>
+      <input type="text" name="totalcost" id="totalcost" placeholder="消费金额" readonly>
     </form>
 
     <div class="button-group">
@@ -349,7 +350,6 @@
       <button onclick="exportCSV({
         sortBy: getURLParam('sortBy') || '',
         sortOrder: getURLParam('sortOrder') || '',
-        OrderID: getURLParam('OrderID') || '',
         CustomerID: getURLParam('CustomerID') || '',
         staffID: getURLParam('staffID') || '',
         OrderDate: getURLParam('OrderDate') || '',
@@ -369,6 +369,9 @@
       <th>操作</th>
     </tr>
     </thead>
+    <tbody id="orderTableBody">
+    <!-- 列表将在这里动态生成 -->
+    </tbody>
     <tbody>
     <!-- 动态加载进货数据 -->
     <tr>
@@ -381,6 +384,7 @@
         <div class="action-btns">
           <e href="javascript:void(0)" onclick="openModal('detail', 1001)">详情</e>
           <c href="deleteOrder.jsp?id=101" onclick="return confirm('确定要删除该订单吗？')">删除</c>
+          <!-- deleteorder???? -->
         </div>
       </td>
     </tr>
@@ -394,7 +398,7 @@
     <h3>添加订单</h3>
     <form action="addOrder.jsp" method="POST">
       <!-- 订单ID：新增时没有 -->
-      <input type="hidden" name="orderId" id="orderId" value="">
+      <input type="hidden" name="orderID" id="orderID" value="">
 
       <!-- 商品名称 -->
       <label for="productName">商品名称:</label>
@@ -403,8 +407,8 @@
       </select>
 
       <!-- 商品数量 -->
-      <label for="quantity">商品数量:</label>
-      <input type="number" name="quantity" id="quantity" required>
+      <label for="quantitySold"">商品数量:</label>
+      <input type="number" name="quantitySold"" id="quantitySold"" required>
 
       <!-- 商品单价 -->
       <label for="sellingPrice">商品单价:</label>
@@ -433,7 +437,7 @@
   <div class="modal-content">
     <h3>订单信息</h3>
     <p><strong>客户姓名:</strong> <span id="customerName"></span></p>
-    <p><strong>收银员姓名:</strong> <span id="employeeName"></span></p>
+    <p><strong>收银员姓名:</strong> <span id="adminName"></span></p>
     <p><strong>订单日期:</strong> <span id="orderDate"></span></p>
     <p><strong>本订单商品信息:</strong>
     <table>
@@ -467,7 +471,7 @@
 </div>
 
 <script>
-  function openModal(action, orderId) {
+  function openModal(action, orderID) {
     // 根据操作类型显示不同的模态框
     if(action === 'detail') {
       document.getElementById('detailModal').style.display = 'flex';
@@ -483,73 +487,150 @@
       const discount = document.getElementById("discount");
       const ActualPayment = document.getElementById("ActualPayment");
 
-
-      // 模拟订单信息
-      const orderInfo = {
-        productName: "商品1",
-        sellingPrice: "10",
-        quantity: "3",
-        TotalAmount: "30",
-        discount: "0.8",
-        ActualPayment: "24"
-      };
-
-      /*// 点击按钮时显示模态框
-      showModalBtn.onclick = function() {
-        // 设置订单信息
-        productName.textContent = employee.name;
-        employeePhone.textContent = employee.phone;
-        position.textContent = employee.position;
-      }*/
-    } else if(action === 'add') {
-      // 清空表单，为新增订单准备
-      document.getElementById('addModal').style.display = 'flex';
-      document.getElementById('orderId').value = '';  // 新增时没有订单ID//后端应该会写分配吧
-      document.getElementById('productName').value = '';
-      document.getElementById('quantity').value = '';
-      document.getElementById('sellingPrice').value = '';
-      document.getElementById('customerName').value = '';
-      document.getElementById('discount').value = '';
-      document.getElementById('ActualPayment').value = '';
-      document.getElementById('orderDate').value = '';
     }
   }
 
   function closeModal() {
-    // 关闭模态框
-    document.getElementById('detailModal').style.display = 'none';
-    document.getElementById('addModal').style.display = 'none';
+    var modal = document.getElementById('orderModal');
+    modal.style.display = 'none';
+    document.getElementById('orderForm').reset(); // 清空表单
+    checkStockWarning();
   }
 
-  // 监听筛选按钮点击事件
-  document.querySelector("form").onsubmit = function(event) {
-    event.preventDefault(); // 防止表单默认提交
+  function deleteOrder(orderID) {
+    if (confirm('确定要删除此订单吗？')) {
+      // 获取订单详情
+      fetch('order?action=getOrderDetails&orderID=' + orderID)
+              .then(response => response.json())
+              .then(data => {
+                const shelfStock = data.shelfStock;
+                const warehouseStock = data.warehouseStock + shelfStock;
 
-    // 假设这些是从筛选条件得到的商品价格
-    let prices = [100, 200, 50];  // 这里你可以通过实际的筛选结果动态生成
+                // 更新订单信息
+                const formData = new FormData();
+                formData.append('action', 'editOrder');
+                formData.append('orderID', orderID);
+                formData.append('customerID', data.customerID);
+                formData.append('customerName', data.customerName);
+                formData.append('staffID', data.staffID);
+                formData.append('staffName', data.staffName);
+                formData.append('totalAmount', totalAmount);
+                formData.append('actualPayment', actualPayment);
+                formData.append('orderDate', orderDate);
 
-    // 计算总金额
-    let totalcost = prices.reduce((sum, price) => sum + price, 0);
+                return fetch('orderManage', {
+                  method: 'POST',
+                  body: formData
+                });
+              })
+              .then(response => {
+                if (response.ok) {
+                  alert('订单已成功删除！');
+                  fetchorders(1);
+                } else {
+                  return response.text().then(text => {
+                    throw new Error(text);
+                  });
+                }
+              })
+              .catch(error => {
+                console.error('错误:', error);
+                alert('删除失败，请稍后重试！');
+              });
+    }
+  }
 
-    // 将计算出的总金额填充到输入框中
-    document.getElementById("totalcost").value = totalcost;
+  const itemsPerPage = 10; // 每页显示的数量
+  let currentPage = 1; // 当前页码
 
-    // 提交表单
-    event.target.submit();
-  };
+  function fetchOrders({
+                         page = currentPage, sortBy = '', sortOrder = '',
+                         customerName = '', staffName = '', orderDate = ''
+                       }) {
+    currentPage = page;
+    const offset = (page - 1) * itemsPerPage;
+    const URLParams = {
+      page: page,
+      sortBy: sortBy,
+      sortOrder: sortOrder,
+      customerName: customerName,
+      staffName: staffName,
+      orderDate: orderDate
+    };
+    updateUrlParams(URLParams);
 
+    fetch('OrderManage?action=getOrders&offset=' + offset + '&limit=' + itemsPerPage
+            + '&sortBy=' + sortBy + '&sortOrder=' + sortOrder
+            + '&customerName=' + customerName + '&staffName=' + staffName + '&orderDate=' + orderDate)
+            .then(response => response.json())
+            .then(data => {
+              const orderTableBody = document.getElementById('orderTableBody');
+              orderTableBody.innerHTML = ''; // 清空表格
+
+              if (data.order && data.order.length > 0) {
+                data.order.forEach(order => {
+                  const row = document.createElement('tr');
+                  row.innerHTML = '<td>' + order.orderID + '</td>'
+                          + '<td>' + order.customerName + '</td>'
+                          + '<td>' + order.staffName + '</td>'
+                          + '<td>' + order.actualPayment + '</td>'
+                          + '<td>' + order.orderDate + '</td>'
+                          + '<td>' +
+                          '<div class="action-btns">' +
+                          '<e href="javascript:void(0)" onclick="openModal(\'detail\', ' + order.orderID + ')">详情</e>' +
+                          '<c href="javascript:void(0)" onclick="deleteOrder(' + order.orderID + ')">删除</>' +
+                          '</div>' +
+                          '</td>';
+                  orderTableBody.appendChild(row);
+                });
+              } else {
+                const row = document.createElement('tr');
+                row.innerHTML = '<td colspan="8">没有找到订单信息</td>';
+                orderTableBody.appendChild(row);
+              }
+
+              updatePagination(data.totalPages);
+            })
+            .catch(error => console.error('Error fetching orders:', error));
+  }
+
+  // 更新分页按钮
+  function updatePagination(totalPages) {
+    const pagination = document.getElementById('pagination');
+    pagination.innerHTML = '';  // 清空现有的分页按钮
+    const URLParams = getUrlParams(); // 获取当前 URL 参数
+    const currentPage = parseInt(URLParams.page);
+
+    for (let i = 1; i <= totalPages; i++) {
+      const pageBtn = document.createElement('a');
+      pageBtn.href = 'javascript:void(0)';
+      pageBtn.textContent = i;
+      if (i === currentPage) {
+        pageBtn.classList.add('active');
+      }
+      pageBtn.onclick = () => fetchOrders({
+        page: i,
+        sortBy: URLParams.sortBy || '',
+        sortOrder: URLParams.sortOrder || '',
+        customerName: URLParams.customerName || '',
+        staffName: URLParams.staffName || '',
+        orderDate: URLParams.orderDate || ''
+      });
+      pagination.appendChild(pageBtn);
+    }
+  }
+  // 获取URL中的查询参数
   function getURLParam(param) {
     const urlParams = new URLSearchParams(window.location.search);
     return urlParams.get(param);
   }
-  function exportCSV({sortBy = '', sortOrder = '',OrderID = '', CustomerName = '', StaffName = '',OrderDate = ''})
+  function exportCSV({sortBy = '', sortOrder = '', CustomerName = '', StaffName = '',OrderDate = ''})
   {
 
     // 向后端请求数据
-    fetch('order?action=exportCSV' +
+    fetch('OrderManage?action=exportCSV' +
             '&sortBy=' + sortBy +
             '&sortOrder=' + sortOrder +
-            '&OrderID=' + OrderID +
             '&CustomerName=' + CustomerName +
             '&StaffName=' + StaffName +
             '&OrderDate=' + OrderDate
@@ -579,6 +660,51 @@
               alert('导出失败，请稍后再试！'); // 友好的用户提示
             });
   }
+
+  // 获取URL参数
+  function getUrlParams() {
+    const URLParams = {};
+    const queryString = window.location.search.substring(1);
+    const regex = /([^&=]+)=([^&]*)/g;
+    let m;
+    while (m = regex.exec(queryString)) {
+      URLParams[decodeURIComponent(m[1])] = decodeURIComponent(m[2]);
+    }
+    return URLParams;
+  }
+
+  // 更新URL参数
+  function updateUrlParams(URLParams) {
+    const queryString = Object.keys(URLParams)
+            .filter(key => URLParams[key] !== '' && URLParams[key] !== null && URLParams[key] !== undefined)
+            .map(key => encodeURIComponent(key) + '=' + encodeURIComponent(URLParams[key]))
+            .join('&');
+    history.pushState(null, '', '?' + queryString);
+  }
+
+  // 页面加载时：获取URL参数；获取销售信息并显示分页按钮
+  window.onload = function () {
+    const URLParams = getUrlParams();
+    fetchOrders({
+      page: URLParams.page || 1,
+      sortBy: URLParams.sortBy || '',
+      sortOrder: URLParams.sortOrder || '',
+      customerName: URLParams.customerName || '',
+      staffName: URLParams.staffName || '',
+      orderDate: URLParams.orderDate || ''
+    });
+  };
+
+  function getTotalAmount({customerName = '', staffName = '', orderDate = ''}) {
+    fetch('OrderManage?action=getOrderVolume&customerName=' + customerName + '&staffName=' + staffName + '&orderDate=' + orderDate)
+            .then(response => response.json())
+            .then(data => {
+              const totalAmountInput = document.getElementById('totalAmount');
+              totalAmountInput.value = data;
+            })
+            .catch(error => console.error('Error fetching total amount:', error));
+  }
+
 
 </script>
 

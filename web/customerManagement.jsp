@@ -206,7 +206,7 @@
             border: 1px solid #ccc;
             border-radius: 4px;
             margin-right: 10px;
-            width: 120px; /* 设置宽度确保它们整齐 */
+            width: 140px; /* 设置宽度确保它们整齐 */
             box-sizing: border-box; /* 确保输入框的宽度包括内边距和边框 */
         }
 
@@ -289,6 +289,18 @@
             background-color: #003366;
         }
 
+        select[name="vipLevel"] {
+            margin-right: 0;
+        }
+
+
+
+        /* 按钮组之间的间距 */
+        .button-group {
+            display: flex;
+            gap: 10px;  /* 按钮之间的间距 */
+            align-items: center;
+        }
         .pagination {
             display: flex;
             justify-content: center;
@@ -312,20 +324,6 @@
             color: white;
             border-color: #0066cc;
         }
-
-        select[name="vipLevel"] {
-            margin-right: 0;
-        }
-
-
-
-        /* 按钮组之间的间距 */
-        .button-group {
-            display: flex;
-            gap: 10px;  /* 按钮之间的间距 */
-            align-items: center;
-        }
-
     </style>
 </head>
 <body>
@@ -381,9 +379,8 @@
             <button type="submit">排序</button>
 
             <!-- 搜索框和筛选框 -->
-            <input type="number" name="searchID" placeholder="客户ID">
-            <input type="text" name="searchName" placeholder="姓名">
-            <input type="email" name="searchEmail" placeholder="联系方式">
+            <input type="text" name="customerName" placeholder="姓名">
+            <input type="email" name="contactInfo" placeholder="联系方式">
             <input type="date" name="joinDate" placeholder="加入日期">
 
             <!-- VIP等级筛选 -->
@@ -396,25 +393,22 @@
                 <option value="5">VIP5</option>
             </select>
 
-            <input type="number" name="minSpent" placeholder="最低消费总金额" step="0.01" min="0">
-            <input type="number" name="maxSpent" placeholder="最高消费总金额" step="0.01" min="0">
+            <input type="number" name="minTotalConsumption" placeholder="最低消费总金额" step="0.01" min="0">
+            <input type="number" name="maxTotalConsumption" placeholder="最高消费总金额" step="0.01" min="0">
             <!-- 筛选按钮 -->
 
             <button type="submit">筛选</button>
-
             <!-- 导出CSV按钮 -->
             <button onclick="exportCSV({
             sortBy: getURLParam('sortBy') || '',
             sortOrder: getURLParam('sortOrder') || '',
-            CustomerID: getURLParam('CustomerID') || '',
             CustomerName: getURLParam('CustomerName') || '',
             Contactinfo: getURLParam('Contactinfo') || '',
+            minTotalConsumption: getURLParam('minTotalConsumption') || '',
+            maxTotalConsumption: getURLParam('maxTotalConsumption') || '',
             JoinDate: getURLParam('JoinDate') || '',
-            VIPLevel: getURLParam('VIPLevel') || '',
-            minSpent: getURLParam('minSpent') || '',
-            maxSpent: getURLParam('maxSpent') || ''
+            VIPLevel: getURLParam('VIPLevel') || ''
         })">导出CSV</button>
-
             <button onclick="openModal('add')">添加客户</button>
         </form>
     </div>
@@ -447,10 +441,7 @@
 <div id="customerModal" class="modal">
     <div class="modal-content">
         <h2 id="modalTitle">添加客户</h2>
-        <form id="customerForm" method="post" action="">
-            <input type="hidden" id="action" name="action">
-            <input type="hidden" id="customerID" name="customerID">
-
+        <form id="customerForm" onsubmit="return submitModal();">
             <label for="customerName">姓名:</label>
             <input type="text" id="customerName" name="customerName" required>
 
@@ -505,7 +496,7 @@
             document.getElementById('vipLevel').value = '';
 
             // 通过AJAX获取客户详情来填充表单
-            fetch('CustomerManage?action=getCustomerDetails&customerID=' + customerID)
+            fetch('customer?action=getCustomerDetails&customerID=' + customerID)
                 .then(response => response.json())
                 .then(data => {
                     document.getElementById('customerName').value = data.customerName;
@@ -560,20 +551,19 @@
         document.getElementById('customerForm').reset(); // 清空表单
     }
 
-    function exportCSV({sortBy = '', sortOrder = '',CustomerID = '', CustomerName = '', Contactinfo = '',
-                           JoinDate = '',VIPLevel = '', minSpent = '',maxSpent = ''})
+    function exportCSV({sortBy = '', sortOrder = '', CustomerName = '', Contactinfo = '',
+                           JoinDate = '',VIPLevel = '', minTotalConsumption = '',maxTotalConsumption = ''})
     {
         // 向后端请求数据
-        fetch('customer?action=exportCSV' +
+        fetch('CustomerManage?action=exportCSV' +
             '&sortBy=' + sortBy +
             '&sortOrder=' + sortOrder +
-            '&CustomerID=' + CustomerID +
             '&CustomerName=' + CustomerName+
             '&Contactinfo=' + Contactinfo +
+            '&minTotalConsumption =' + minTotalConsumption +
+            '&maxTotalConsumption =' + maxTotalConsumption +
             '&JoinDate=' + JoinDate +
-            '&VIPLevel=' + VIPLevel +
-            '&minSpent =' + minSpent +
-            '&maxSpent =' + maxSpent
+            '&VIPLevel=' + VIPLevel
         )
             .then(response => {
                 // 如果响应状态不正常，抛出错误
@@ -608,8 +598,7 @@
 
     // 获取客户信息
     function fetchCustomers({
-                            page = currentPage, sortBy = '', sortOrder = '',
-                            customerID = '', customerName = '', contactInfo = '', joinDate = '',
+                            page = currentPage, sortBy = '', sortOrder = '', customerName = '', contactInfo = '', joinDate = '',
                             vipLevel = '',minTotalConsumption = '',maxTotalConsumption = ''
                         }) {
         currentPage = page;
@@ -618,7 +607,6 @@
             page: page,
             sortBy: sortBy,
             sortOrder: sortOrder,
-            customerID: customerID,
             customerName: customerName,
             contactInfo: contactInfo,
             joinDate: joinDate,
@@ -630,7 +618,7 @@
 
         fetch('CustomerManage?action=getCustomers&offset=' + offset + '&limit=' + itemsPerPage
             + '&sortBy=' + sortBy + '&sortOrder=' + sortOrder
-            + '&customerID=' + customerID + '&customerName=' + customerName + '&contactInfo=' + contactInfo
+            + '&customerName=' + customerName + '&contactInfo=' + contactInfo
             + '&joinDate=' + joinDate + '&vipLevel=' + vipLevel + '&minTotalConsumption=' + minTotalConsumption + '&maxTotalConsumption=' + maxTotalConsumption)
             .then(response => response.json())
             .then(data => {
@@ -682,7 +670,6 @@
                 page: i,
                 sortBy: URLParams.sortBy || '',
                 sortOrder: URLParams.sortOrder || '',
-                customerID: URLParams.customerID || '',
                 customerName: URLParams.customerName || '',
                 contactInfo: URLParams.contactInfo || '',
                 joinDate: URLParams.joinDate || '',
@@ -729,7 +716,6 @@
             page: URLParams.page || 1,
             sortBy: URLParams.sortBy || '',
             sortOrder: URLParams.sortOrder || '',
-            customerID: URLParams.customerID || '',
             customerName: URLParams.customerName || '',
             contactInfo: URLParams.contactInfo || '',
             joinDate: URLParams.joinDate || '',

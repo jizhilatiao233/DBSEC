@@ -56,11 +56,10 @@ public class StaffLoginServlet extends HttpServlet {
                         session.setAttribute("role", role);
 
                         if ("admin".equals(role)) {
-                            session.setAttribute("adminID", rs.getInt("AdminID"));
+                            session.setAttribute(  "adminID",rs.getInt(  "AdminID"));
                             response.sendRedirect("admin_dashboard.jsp");
                         } else {
-                            session.setAttribute("staffID", rs.getInt("StaffID"));
-                            // TODO: Redirect to staff dashboard
+                            session.setAttribute(  "staffID",rs.getInt(  "StaffID"));
                             response.sendRedirect("Index.jsp");
                         }
                     } else {

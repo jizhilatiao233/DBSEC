@@ -318,16 +318,9 @@
             <input type="date" name="salesDate" id="salesDate" placeholder="销售日期">
             <button type="submit">筛选</button>
 
-            <label for="totalAmount" style="margin-left: 10px;">总销售额:</label>
-            <!-- 总销售额将在这里动态生成 -->
-            <input type="text" name="totalAmount" id="totalAmount" placeholder="总销售额" readonly>
+            <label for="getTotalAmount" style="margin-left: 10px;">总销售额:</label>
+            <input type="text" name="getTotalAmount" id="getTotalAmount" placeholder="总销售额" readonly>
         </form>
-
-<%--        <div class="button-group">--%>
-<%--            <!-- 批量删除表单 -->--%>
-<%--            <form method="post" action="batchDeleteSales.jsp">--%>
-<%--                <button type="submit">批量删除</button>--%>
-<%--            </form>--%>
 
             <!-- 导出 CSV 表单 -->
         <button onclick="exportCSV({
@@ -457,8 +450,9 @@
 
     function exportCSV({sortBy = '', sortOrder = '',orderID = '', productName = '', staffName = '', salesDate = ''})
     {
+
         // 向后端请求数据
-        fetch('sale?action=exportCSV' +
+        fetch('SalesManage?action=exportCSV' +
             '&sortBy=' + sortBy +
             '&sortOrder=' + sortOrder +
             '&orderID =' + orderID  +
@@ -516,7 +510,7 @@
     }
 
 
-    // 页面加载时：获取URL参数；获取销售信息并显示分页按钮；获取总销售额
+    // 页面加载时：获取URL参数；获取销售信息并显示分页按钮
     window.onload = function () {
         const URLParams = getUrlParams();
         fetchSales({
@@ -528,14 +522,7 @@
             staffName: URLParams.staffName || '',
             salesDate: URLParams.salesDate || ''
         });
-        getTotalAmount({
-            orderID: URLParams.orderID || '',
-            productName: URLParams.productName || '',
-            staffName: URLParams.staffName || '',
-            salesDate: URLParams.salesDate || ''
-        });
     };
-
     function getTotalAmount({orderID = '', productName = '', staffName = '', salesDate = ''}) {
         fetch('SalesManage?action=getSalesVolume&orderID=' + orderID + '&productName=' + productName + '&staffName=' + staffName + '&salesDate=' + salesDate)
             .then(response => response.json())
