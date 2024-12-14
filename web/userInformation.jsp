@@ -315,83 +315,100 @@
 <div id="changePasswordModal" class="modal">
     <div class="modal-content">
         <h3>修改密码</h3>
-        <form id="changePasswordForm">
+        <form id="changePasswordForm" method="POST">
             <label for="newPassword">新密码:</label>
             <input type="password" id="newPassword" name="newPassword" required>
             <label for="confirmPassword">确认密码:</label>
             <input type="password" id="confirmPassword" name="confirmPassword" required>
-            <button onclick="openModal('changepassword')">修改密码</button>
+            <button type="button" class="btn" onclick="submitPasswordModal()">修改密码</button>
             <button type="button" class="btn" onclick="closeModal('changePasswordModal')">取消</button>
         </form>
     </div>
 </div>
 
+
+
 <div id="changeInfoModal" class="modal">
     <div class="modal-content">
         <h3>修改个人信息</h3>
-        <form id="changeInfoForm">
+        <form id="changeInfoForm" method="POST">
             <label for="newUsername">新用户名:</label>
             <input type="text" id="newUsername" name="newUsername" required>
             <label for="newContactInfo">联系方式:</label>
             <input type="text" id="newContactInfo" name="newContactInfo" required>
-            <button onclick="openModal('changeinformation')">修改密码</button>
+            <button type="button" class="btn" onclick="submitInformatinModal()">修改信息</button>
             <button type="button" class="btn" onclick="closeModal('changeInfoModal')">取消</button>
         </form>
     </div>
 </div>
 
 <script>
-    // 提交弹窗
-    // function submitModal(action) {
-    //     if (action==='changepassword')
-    //         const form = document.getElementById('changePasswordForm');
-    //         const formData = new FormData(form); // 封装表单数据
-    //         fetch('AdminInformation?action=editPassword&adminID'+adminID +'&newPassword=' + newpassword , {
-    //             method: 'POST',
-    //             body: formData,
-    //         })
-    //             .then(response => {
-    //                 if (response.ok) {
-    //                     if (action === 'addProduct') {
-    //                         alert('商品新增成功！');
-    //                     } else if (action === 'editProduct') {
-    //                         alert('商品编辑成功！');
-    //                     }
-    //                     closeModal(); // 关闭弹窗
-    //                     fetchProducts(1); // 刷新商品列表
-    //                 } else {
-    //                     return response.text().then(text => { throw new Error(text); });
-    //                 }
-    //             })
-    //             .catch(error => {
-    //                 console.error('错误:', error);
-    //                 alert('操作失败，请检查输入或稍后重试！');
-    //             });
-    //
-    //     else
-    //         const form = document.getElementById('changeInfoForm');
-    //         const formData = new FormData(form); // 封装表单数据
-    //
-    //
-    //     // 补货逻辑
-    //     if (action === 'editProduct') {
-    //         const restockAmount = parseInt(formData.get('restockAmount'));
-    //         const shelfStock = parseInt(formData.get('shelfStock'));
-    //         const warehouseStock = parseInt(formData.get('warehouseStock'));
-    //
-    //         if (restockAmount <= warehouseStock) {
-    //             formData.set('shelfStock', shelfStock + restockAmount);
-    //             formData.set('warehouseStock', warehouseStock - restockAmount);
-    //         } else {
-    //             alert('补货数量不能超过仓库库存！');
-    //             return false;
-    //         }
-    //     }
-    //
-    //     // 发送 AJAX 请求
-    //
-    // }
+    function submitPasswordModal() {
+        // 获取表单数据
+        const form = document.getElementById('changePasswordForm');
+        const formData = new FormData(form); // 获取表单数据
 
+        const newPassword = formData.get('newPassword');
+        const confirmPassword = formData.get('confirmPassword');
+
+        // 验证密码是否一致
+        if (newPassword !== confirmPassword) {
+            alert('新密码和确认密码不一致！');
+            return false; // 阻止提交
+        }
+
+        // 获取 adminID（可以通过 session 或其他方式获取）
+        const adminID = '<%= session.getAttribute("adminID") %>'; // 从服务器端获取 adminID
+
+
+
+
+        // 发送 AJAX 请求
+        fetch('AdminInformation?action=editPassword&adminID='+adminID+'&newPassword=' + newPassword)
+            .then(response => {
+                if (response.ok) {
+                    alert('密码修改成功！');
+                    closeModal('changePasswordModal'); // 关闭弹窗
+                } else {
+                    return response.text().then(text => { throw new Error(text); });
+                }
+            })
+            .catch(error => {
+                console.error('错误:', error);
+                alert('操作失败，请稍后重试！');
+            });
+
+        return false; // 阻止表单默认提交行为
+    }
+
+    function submitInformatinModal() {
+        // 获取表单数据
+        const form = document.getElementById('changeInfoForm');
+        const formData = new FormData(form); // 获取表单数据
+
+        const newUsername = formData.get('newUsername');
+        const newContactInfo = formData.get('newContactInfo');
+
+        // 获取 adminID
+        const adminID = '<%= session.getAttribute("adminID") %>'; // 从服务器端获取 adminID
+
+        // 发送 AJAX 请求
+        fetch('AdminInformation?action=editInformation&adminID=' + adminID + '&username=' + newUsername + '&contactInfo=' + newContactInfo)
+            .then(response => {
+                if (response.ok) {
+                    alert('个人信息修改成功！');
+                    closeModal('changeInfoModal'); // 关闭弹窗
+                } else {
+                    return response.text().then(text => { throw new Error(text); });
+                }
+            })
+            .catch(error => {
+                console.error('错误:', error);
+                alert('操作失败，请稍后重试！');
+            });
+
+        return false; // 阻止表单默认提交行为
+    }
 
     document.addEventListener('DOMContentLoaded', () => {
         const adminID = '<%= session.getAttribute("adminID") %>'; // 从服务器端获取 adminID
