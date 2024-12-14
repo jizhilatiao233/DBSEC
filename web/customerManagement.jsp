@@ -370,20 +370,22 @@
     <h2>客户列表</h2>
     <div class="action-bar">
         <form method="get" action="customerManagement.jsp">
-            <!-- 排序下拉框 -->
-            <select name="sortBy">
-                <option value="">排序方式</option>
-                <option value="name">按姓名排序</option>
-                <option value="joinDate">按加入日期排序</option>
-            </select>
-            <button type="submit">排序</button>
+            <form method="get" action="salesManagement.jsp">
+                <label for="sortBy">排序方式：</label>
+                <!-- 排序下拉框 -->
+                <select name="sortBy" id="sortBy">
+                    <option value="">排序方式</option>
+                    <option value="customerName">按姓名排序</option>
+                    <option value="joinDate">按加入日期排序</option>
+                </select>
+                <button type="submit">排序</button>
+            </form>
 
-            <!-- 搜索框和筛选框 -->
-            <input type="text" name="searchName" placeholder="姓名">
-            <input type="email" name="searchEmail" placeholder="联系方式">
+            <!-- 筛选框 -->
+            <form method="get" action="customerManagement.jsp">
+            <input type="text" name="customerName" placeholder="姓名">
+            <input type="text" name="contactInfo" placeholder="联系方式">
             <input type="date" name="joinDate" placeholder="加入日期">
-
-            <!-- VIP等级筛选 -->
             <select name="vipLevel">
                 <option value="">选择VIP等级</option>
                 <option value="1">VIP1</option>
@@ -392,12 +394,11 @@
                 <option value="4">VIP4</option>
                 <option value="5">VIP5</option>
             </select>
-
-            <input type="number" name="minSpent" placeholder="最低消费总金额" step="0.01" min="0">
-            <input type="number" name="maxSpent" placeholder="最高消费总金额" step="0.01" min="0">
-            <!-- 筛选按钮 -->
-
+            <input type="number" name="minTotalConsumption" placeholder="最低消费总金额" step="0.01" min="0">
+            <input type="number" name="maxTotalConsumption" placeholder="最高消费总金额" step="0.01" min="0">
             <button type="submit">筛选</button>
+            </form>
+
             <!-- 导出CSV按钮 -->
             <button onclick="exportCSV({
             sortBy: getURLParam('sortBy') || '',
@@ -428,23 +429,7 @@
         <tbody id="customerTableBody">
         <!-- 商品列表将在这里动态生成 -->
         </tbody>
-        <tr>
-            <td>1001</td>
-            <td>张三</td>
-            <td>13800000000</td>
-            <td>2022-01-01</td>
-            <td>￥5000</td> <!-- 示例消费总金额 -->
-            <td>VIP 1</td> <!-- 示例VIP等级 -->
-            <td>
-                <div class="action-btns">
-                    <e href="javascript:void(0)" onclick="openModal('edit', 1)">编辑</e>
-                </div>
-            </td>
-        </tr>
-        <!-- 更多客户数据 -->
-        </tbody>
     </table>
-
     <div class="pagination" id="pagination"></div>
 </div>
 
@@ -456,6 +441,9 @@
     <div class="modal-content">
         <h2 id="modalTitle">添加客户</h2>
         <form id="customerForm" onsubmit="return submitModal();">
+            <input type="hidden" name="customerID" id="customerID">
+            <input type="hidden" name="action" id="action">
+
             <label for="customerName">姓名:</label>
             <input type="text" id="customerName" name="customerName" required>
 
@@ -478,8 +466,8 @@
                 <option value="5">VIP5</option>
             </select>
 
-            <button type="submit">确认</button>
-            <button type="button" onclick="closeModal()">取消</button>
+            <button type="submit" class="submit-btn">确认</button>
+            <button type="reset" class="close-btn" onclick="closeModal()">取消</button>
         </form>
     </div>
 </div>
@@ -502,12 +490,7 @@
         } else if (action === 'edit') {
             modalTitle.textContent = '编辑客户';
             document.getElementById('action').value = 'editCustomer';
-            document.getElementById('customerID').value = '';
-            document.getElementById('customerName').value = '';
-            document.getElementById('contactInfo').value = '';
-            document.getElementById('joinDate').value = '';
-            document.getElementById('totalConsumption').value = '';
-            document.getElementById('vipLevel').value = '';
+            document.getElementById('customerID').value = customerID;
 
             // 通过AJAX获取客户详情来填充表单
             fetch('customer?action=getCustomerDetails&customerID=' + customerID)
@@ -546,7 +529,7 @@
                         alert('客户编辑成功！');
                     }
                     closeModal(); // 关闭弹窗
-                    fetchProducts(1); // 刷新商品列表
+                    fetchProducts(1); // 刷新客户列表
                 } else {
                     return response.text().then(text => { throw new Error(text); });
                 }

@@ -336,12 +336,12 @@
     <!-- 筛选 -->
     <form method="get" action="orderManagement.jsp">
       <input type="text" name="customerName" placeholder="选择客户">
-      <input type="text" name="adminName" placeholder="选择收银员">
+      <input type="text" name="staffName" placeholder="选择收银员">
       <input type="date" name="orderDate" placeholder="选择日期">
       <button type="submit">筛选</button>
 
-      <label for="totalcost" style="margin-left: 10px;">消费金额:</label>
-      <input type="text" name="totalcost" id="totalcost" placeholder="消费金额" readonly>
+      <label for="totalAmount" style="margin-left: 10px;">消费金额:</label>
+      <input type="text" name="totalAmount" id="totalAmount" placeholder="消费金额" readonly>
     </form>
 
     <div class="button-group">
@@ -372,122 +372,63 @@
     <tbody id="orderTableBody">
     <!-- 列表将在这里动态生成 -->
     </tbody>
-    <tbody>
-    <!-- 动态加载进货数据 -->
-    <tr>
-      <td>101</td>
-      <td>张三</td>
-      <td>收银员A</td>
-      <td>80</td>
-      <td>2024-12-05</td>
-      <td>
-        <div class="action-btns">
-          <e href="javascript:void(0)" onclick="openModal('detail', 1001)">详情</e>
-          <c href="deleteOrder.jsp?id=101" onclick="return confirm('确定要删除该订单吗？')">删除</c>
-          <!-- deleteorder???? -->
-        </div>
-      </td>
-    </tr>
-    <!-- 更多订单数据 -->
-    </tbody>
   </table>
-</div>
-<!-- 添加订单的模态框 -->
-<div class="modal" id="addModal">
-  <div class="modal-content">
-    <h3>添加订单</h3>
-    <form action="addOrder.jsp" method="POST">
-      <!-- 订单ID：新增时没有 -->
-      <input type="hidden" name="orderID" id="orderID" value="">
-
-      <!-- 商品名称 -->
-      <label for="productName">商品名称:</label>
-      <select name="productName" id="productName" required>
-        <option value="">请选择商品</option>
-      </select>
-
-      <!-- 商品数量 -->
-      <label for="quantitySold"">商品数量:</label>
-      <input type="number" name="quantitySold"" id="quantitySold"" required>
-
-      <!-- 商品单价 -->
-      <label for="sellingPrice">商品单价:</label>
-      <input type="number" name="sellingPrice" id="sellingPrice" step="0.01" required>
-
-      <!-- 客户名称 -->
-      <label for="customerName">客户名称:</label>
-      <input type="text" name="customerName" id="customerName" readonly>
-
-      <!-- 实付金额 -->
-      <label for="ActualPayment">实付金额:</label>
-      <input type="number" name="ActualPayment" id="ActualPayment" required>
-
-      <!-- 订单日期 -->
-      <label for="orderDate">订单日期:</label>
-      <input type="date" name="orderDate" id="orderDate" required>
-
-      <button type="submit">添加订单</button>
-      <button type="button" onclick="closeModal()">取消</button>
-    </form>
+  <div class="pagination" id="pagination">
+    <!-- 分页按钮将在这里动态生成 -->
   </div>
 </div>
-
-<!-- 订单详情的模态框 -->
-<div class="modal" id="detailModal">
-  <div class="modal-content">
-    <h3>订单信息</h3>
-    <p><strong>客户姓名:</strong> <span id="customerName"></span></p>
-    <p><strong>收银员姓名:</strong> <span id="adminName"></span></p>
-    <p><strong>订单日期:</strong> <span id="orderDate"></span></p>
-    <p><strong>本订单商品信息:</strong>
-    <table>
-      <thead>
-      <tr>
-        <th>商品名称</th>
-        <th>商品单价</th>
-        <th>商品数目</th>
-        <th>实付金额</th>
-      </tr>
-      </thead>
-      <tbody>
-      <!-- 动态加载订单数据 -->
-      <tr>
-        <td>商品1</td>
-        <td>10</td>
-        <td>3</td>
-        <td>30</td>
-      </tr>
-      <!-- 更多订单数据 -->
-      </tbody>
-    </table>
-    </p>
-    <button type="button" onclick="closeModal()">返回</button>
-  </div>
-</div>
-
 
 <div class="footer">
   <p>&copy; 2024 超市管理系统 | 版权所有</p>
 </div>
 
-<script>
-  function openModal(action, orderID) {
-    // 根据操作类型显示不同的模态框
-    if(action === 'detail') {
-      document.getElementById('detailModal').style.display = 'flex';
-      const modal = document.getElementById("myModal");
-      const showModalBtn = document.getElementById("showModalBtn");
-      const closeModalBtn = document.getElementById("closeModalBtn");
+<!-- 详情模态框 -->
+<div id="orderModal" class="modal">
+  <div class="modal-content">
+    <h2 id="modalTitle">订单信息</h2>
+    <form id="orderForm">
+      <input type="hidden" name="orderID" id="orderID">
+      <input type="hidden" name="action" id="action">
 
-      // 获取订单信息的显示区域
-      const productName = document.getElementById("productName");
-      const SellingPrice = document.getElementById("sellingPrice");
-      const quantity = document.getElementById("quantity");
-      const TotalAmount = document.getElementById("TotalAmount");
-      const discount = document.getElementById("discount");
-      const ActualPayment = document.getElementById("ActualPayment");
+      <label for="customerName">客户姓名:</label>
+      <input type="text" name="customerName" id="customerName" required>
+
+      <label for="staffName">收银员姓名:</label>
+      <input type="text" name="staffName" id="staffName" required>
+
+      <label for="orderDate">订单日期:</label>
+      <input type="date" name="orderDate" id="orderDate" required>
+
+      <label for="orderDate">订单商品信息:</label>
+
+      <button type="reset" class="close-btn" onclick="closeModal()">返回</button>
+    </form>
+  </div>
+</div>
+
+
+<script>
+  function openModal(action, orderID = null) {
+    var modal = document.getElementById('orderModal');
+    var modalTitle = document.getElementById('modalTitle');
+
+    if(action === 'detail') {
+      modalTitle.textContent = '订单详情';
+      document.getElementById('action').value = 'detailOrder';
+      document.getElementById('OrderID').value = OrderID;
+
+      // 通过AJAX获取商品详情来填充表单
+      fetch('order?action=getOrderDetails&orderID=' + orderID)
+              .then(response => response.json())
+              .then(data => {
+                document.getElementById('customerName').value = data.customerName;
+                document.getElementById('staffName').value = data.staffName;
+                document.getElementById('orderDate').value = data.orderDate;
+              })
+              .catch(error => console.error('Error fetching order details:', error));
 
     }
+    modal.style.display = 'flex';
   }
 
   function closeModal() {
@@ -503,20 +444,17 @@
       fetch('order?action=getOrderDetails&orderID=' + orderID)
               .then(response => response.json())
               .then(data => {
-                const shelfStock = data.shelfStock;
-                const warehouseStock = data.warehouseStock + shelfStock;
-
                 // 更新订单信息
                 const formData = new FormData();
                 formData.append('action', 'editOrder');
-                formData.append('orderID', orderID);
+                formData.append('orderID', data.orderID);
                 formData.append('customerID', data.customerID);
                 formData.append('customerName', data.customerName);
                 formData.append('staffID', data.staffID);
                 formData.append('staffName', data.staffName);
-                formData.append('totalAmount', totalAmount);
-                formData.append('actualPayment', actualPayment);
-                formData.append('orderDate', orderDate);
+                formData.append('totalAmount', data.totalAmount);
+                formData.append('actualPayment', data.actualPayment);
+                formData.append('orderDate', data.orderDate);
 
                 return fetch('orderManage', {
                   method: 'POST',
@@ -526,7 +464,7 @@
               .then(response => {
                 if (response.ok) {
                   alert('订单已成功删除！');
-                  fetchorders(1);
+                  fetchOrders(1);
                 } else {
                   return response.text().then(text => {
                     throw new Error(text);
@@ -567,8 +505,8 @@
               const orderTableBody = document.getElementById('orderTableBody');
               orderTableBody.innerHTML = ''; // 清空表格
 
-              if (data.order && data.order.length > 0) {
-                data.order.forEach(order => {
+              if (data.orders && data.orders.length > 0) {
+                data.orders.forEach(order => {
                   const row = document.createElement('tr');
                   row.innerHTML = '<td>' + order.orderID + '</td>'
                           + '<td>' + order.customerName + '</td>'

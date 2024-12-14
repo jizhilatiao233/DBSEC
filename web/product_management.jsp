@@ -370,16 +370,11 @@
         </form>
 
         <form method="get" action="product_management.jsp">
-            <label for="categoryFilter">类别:</label>
             <select name="category" id="categoryFilter">
                 <!-- 商品类别将在这里动态生成 -->
             </select>
-
-            <label for="minPrice">最低售价:</label>
             <input type="number" name="minPrice" id="minPrice" placeholder="最低售价" min="0" step="0.01">
-            <label for="maxPrice">最高售价:</label>
             <input type="number" name="maxPrice" id="maxPrice" placeholder="最高售价" min="0" step="0.01">
-
             <button type="submit">筛选</button>
         </form>
         <div class="button-group">
@@ -457,8 +452,8 @@
                 <input type="number" name="warehouseStock" id="warehouseStock" min="0" value="0">
             </div>
 
-            <button type="submit" class="submit-btn">提交</button>
-            <button type="reset" class="close-btn" onclick="closeModal()">关闭</button>
+            <button type="submit" class="submit-btn">确认</button>
+            <button type="reset" class="close-btn" onclick="closeModal()">取消</button>
         </form>
     </div>
 </div>
@@ -679,7 +674,7 @@
                             '<td>' +
                             '<div class="action-btns">' +
                             '<e href="javascript:void(0)" onclick="openModal(\'edit\', ' + product.productID + ')">编辑</e>' +
-                            '<c href="javascript:void(0)" onclick="offShelf(' + product.productID + ')">下架</>' +
+                            '<c href="javascript:void(0)" onclick="offShelf(' + product.productID + ')">下架</c>' +
                             '</div>' +
                             '</td>';
 
@@ -703,7 +698,7 @@
             .then(response => response.json())
             .then(data => {
                 const categoryFilter = document.getElementById('categoryFilter');
-                categoryFilter.innerHTML = '<option value="">所有</option>'; // 添加“所有”选项
+                categoryFilter.innerHTML = '<option value="">类别</option>';
                 data.forEach(category => {
                     const option = document.createElement('option');
                     option.value = category;

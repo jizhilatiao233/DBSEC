@@ -326,54 +326,42 @@
     </span>
     <a href='Logout?redirect=index.jsp' class="logout-btn"><i class="fas fa-sign-out-alt"></i> 退出</a>
 </div>
-    <div class="container">
-        <h2>进货订单管理</h2>
 
-        <!-- 查询功能表单 -->
-        <div class="action-bar">
-            <!-- 排序和搜索表单 -->
-            <form method="get" action="incomingInformation.jsp">
-                <!-- 排序方式 -->
-                <select name="sortBy">
-                    <option value="">排序方式</option>
-                    <option value="purchaseDate">按进货日期排序</option>
-                    <option value="supplier">按供应商排序</option>
-                    <option value="totalCost">按订单总价排序</option>
-                </select>
-                <button type="submit">排序</button>
-                <!-- 添加进货订单按钮 -->
-                <button onclick="openModal('add')">添加进货订单</button>
+<div class="container">
+    <h2>进货订单管理</h2>
+    <div class="action-bar">
+        <!-- 排序 -->
+        <form method="get" action="incomingInformation.jsp">
+            <label for="sortBy">排序方式:</label>
+            <select name="sortBy" id="sortBy">
+                <option value="">排序方式</option>
+                <option value="purchaseDate">按进货日期排序</option>
+                <option value="supplierName">按供应商排序</option>
+                <option value="totalCost">按订单总价排序</option>
+            </select>
+            <button type="submit">排序</button>
+        </form>
+        <br>
+        <!-- 筛选 -->
+        <form method="get" action="incomingInformation.jsp">
+            <input type="number" name="purchaseID" placeholder="进货订单号" step="1" min="0">
+            <input type="text" name="productName" id="productName" placeholder="商品名称">
 
-            </form>
-            <br>
-            <!-- 进货金额筛选 -->
-            <form method="get" action="incomingInformation.jsp">
-                <input type="number" name="ID" placeholder="进货订单号" step="1" min="0">
-                <select name="product">
-                    <option value="">商品名称</option>
-                </select>
-                <input type="number" name="minTotalCost" placeholder="最低订单总价" step="0.01" min="0">
-                <input type="number" name="maxTotalCost" placeholder="最高订单总价" step="0.01" min="0">
+            <input type="number" name="minTotalCost" placeholder="最低订单总价" step="0.01" min="0">
+            <input type="number" name="maxTotalCost" placeholder="最高订单总价" step="0.01" min="0">
 
-                <input type="number" name="minPurchasePrice" placeholder="最低商品单价" step="0.01" min="0">
-                <input type="number" name="maxPurchasePrice" placeholder="最低订单单价" step="0.01" min="0">
+            <input type="number" name="minPurchasePrice" placeholder="最低商品单价" step="0.01" min="0">
+            <input type="number" name="maxPurchasePrice" placeholder="最低订单单价" step="0.01" min="0">
 
-                <!-- 进货日期筛选 -->
-                <input type="date" name="Date" placeholder="进货日期">
+            <input type="date" name="purchaseDate" placeholder="进货日期">
+            <input type="text" name="supplierName" placeholder="选择供应商">
+            <input type="text" name="adminName" placeholder="选择负责人">
 
-
-                <!-- 供应商筛选 -->
-                <select name="supplierName">
-                    <option value="">选择供应商</option>
-                </select>
-                <select name="adminName">
-                    <option value="">选择负责人</option>
-                </select>
-
-                <button type="submit">筛选</button>
-                <!-- 导出 CSV 表单 -->
-                <!-- 导出 CSV 表单 -->
-                <button onclick="exportCSV({
+            <button type="submit">筛选</button>
+        <!-- 添加进货订单按钮 -->
+        <button onclick="openModal('add')">添加进货订单</button>
+        <!-- 导出 CSV 表单 -->
+        <button onclick="exportCSV({
                 sortBy: getURLParam('sortBy') || '',
                 sortOrder: getURLParam('sortOrder') || '',
                 PurchaseID: getURLParam('PurchaseID') || '',
@@ -386,10 +374,8 @@
                 SupplierName: getURLParam('SupplierName') || '',
                 AdminName: getURLParam('AdminName') || ''
                 })">导出CSV</button>
-
-            </form>
-
-        </div>
+        </form>
+    </div>
 
     <table>
         <thead>
@@ -405,161 +391,81 @@
             <th>操作</th>
         </tr>
         </thead>
-        <tbody>
         <tbody id="purchaseTableBody">
-        <!-- 商品列表将在这里动态生成 -->
-        </tbody>
-        <!-- 动态加载进货数据 -->
-        <tr>
-            <td>1001</td>
-            <td>商品A</td>
-            <td>20</td>
-            <td>￥100.00</td>
-            <td>￥2000</td>
-            <td>2024-12-05</td>
-            <td>供应商X</td>
-            <td>管理员A</td>
-            <td>
-                <div class="action-btns">
-                    <e href="javascript:void(0)" onclick="openModal('edit', 1001)">编辑</e>
-                    <c href="deleteIncomingOrder.jsp?id=1001" onclick="return confirm('确定要删除该进货订单吗？')">删除</c>
-                    <!-- deletepurchase???? -->
-                </div>
-            </td>
-        </tr>
-        <!-- 更多进货数据 -->
+        <!-- 列表将在这里动态生成 -->
         </tbody>
     </table>
-</div>
-<!-- 添加进货订单的模态框 -->
-<div class="modal" id="addModal">
-    <div class="modal-content">
-        <h3>添加进货订单</h3>
-        <form action="addIncomingOrder.jsp" method="POST">
-            <!-- 订单ID：新增时没有，编辑时有 -->
-            <input type="hidden" name="purchaseID" id="purchaseID" value="">
-
-            <!-- 商品名称 -->
-            <label for="productName">商品名称:</label>
-            <select name="productName" id="productName" required>
-                <option value="">请选择商品</option>
-            </select>
-
-            <!-- 进货数量 -->
-            <label for="quantityPurchased">进货数量:</label>
-            <input type="number" name="quantityPurchased" id="quantityPurchased" required>
-
-            <!-- 购买单价 -->
-            <label for="purchasePrice">购买单价:</label>
-            <input type="number" name="purchasePrice" id="purchasePrice" step="0.01" required>
-
-            <!-- 订单总价 -->
-            <label for="totalCost">订单总价:</label>
-            <input type="text" name="totalCost" id="totalCost" readonly>
-
-            <!-- 进货日期 -->
-            <label for="purchaseDate">进货日期:</label>
-            <input type="date" name="purchaseDate" id="purchaseDate" required>
-
-            <!-- 供应商 -->
-            <label for="supplierName">供应商:</label>
-            <select name="supplierName" id="supplierName" required>
-                <option value="">请选择供应商</option>
-            </select>
-
-            <!-- 负责人 -->
-            <label for="adminName">负责人:</label>
-            <input type="text" name="adminName" id="adminName" required>
-
-            <button type="submit">添加订单</button>
-            <button type="button" onclick="closeModal()">取消</button>
-        </form>
+    <div class="pagination" id="pagination">
+        <!-- 分页按钮将在这里动态生成 -->
     </div>
 </div>
-
-<!-- 编辑进货订单的模态框 -->
-<div class="modal" id="editModal">
-    <div class="modal-content">
-        <h3>编辑进货订单</h3>
-        <form action="updateIncomingOrder.jsp" method="POST">
-            <!-- 进货订单号（隐藏字段，防止修改） -->
-            <input type="hidden" name="purchaseID" id="purchaseID" value="">
-
-            <!-- 商品名称 -->
-            <label for="productName">商品名称:</label>
-            <select name="productName" id="productName" required>
-                <option value="">请选择商品</option>
-            </select>
-
-            <!-- 进货数量 -->
-            <label for="quantityPurchased">进货数量:</label>
-            <input type="number" name="quantityPurchased" id="quantityPurchased" required>
-
-            <!-- 购买单价 -->
-            <label for="purchasePrice">购买单价:</label>
-            <input type="number" name="purchasePrice" id="purchasePrice" step="0.01" required>
-
-            <!-- 订单总价 -->
-            <label for="totalCost">订单总价:</label>
-            <input type="text" name="totalCost" id="totalCost" readonly>
-
-            <!-- 进货日期 -->
-            <label for="purchaseDate">进货日期:</label>
-            <input type="date" name="purchaseDate" id="purchaseDate" required>
-
-            <!-- 供应商 -->
-            <label for="supplierName">供应商:</label>
-            <select name="supplierName" id="supplierName" required>
-                <option value="">请选择供应商</option>
-            </select>
-
-            <!-- 负责人 -->
-            <label for="adminName">负责人:</label>
-            <input type="text" name="adminName" id="adminName" value="adminName" required>
-
-            <button type="submit">保存修改</button>
-            <button type="button" onclick="closeModal()">取消</button>
-        </form>
-    </div>
-</div>
-
 
 <div class="footer">
     <p>&copy; 2024 超市管理系统 | 版权所有</p>
 </div>
 
+<!-- 进货订单模态框 -->
+<div id="purchaseModal" class="modal">
+    <div class="modal-content">
+        <h2 id="modalTitle"></h2>
+        <form id="purchaseForm" onsubmit="return submitModal();">
+            <input type="hidden" name="purchaseID" id="purchaseID">
+            <input type="hidden" name="action" id="action">
+
+            <label for="productName">商品名称:</label>
+            <input type="text" name="productName" required>
+
+            <label for="quantityPurchased">进货数量:</label>
+            <input type="number" name="quantityPurchased" id="quantityPurchased" required>
+
+            <label for="purchasePrice">购买单价:</label>
+            <input type="number" name="purchasePrice" id="purchasePrice" step="0.01" required>
+
+            <label for="totalCost">订单总价:</label>
+            <input type="number" name="totalCost" id="totalCost" readonly>
+
+            <label for="purchaseDate">进货日期:</label>
+            <input type="date" name="purchaseDate" id="purchaseDate" required>
+
+            <label for="supplierName">供应商:</label>
+            <input type="text" name="supplierName" id="supplierName" required>
+
+            <label for="adminName">负责人:</label>
+            <input type="text" name="adminName" id="adminName" required>
+
+            <button type="submit" class="submit-btn">确认</button>
+            <button type="reset" class="close-btn" onclick="closeModal()">取消</button>
+        </form>
+    </div>
+</div>
+
 <script>
-    function openModal(action, purchaseID) {
+    function openModal(action, purchaseID = null) {
         var modal = document.getElementById('purchaseModal');
         var modalTitle = document.getElementById('modalTitle');
-        // 根据操作类型显示不同的模态框
+
         if(action === 'edit') {
-            document.getElementById('editModal').style.display = 'flex';
-            modalTitle.textContent = '编辑商品';
-            document.getElementById('action').value = 'editProduct';
-            document.getElementById('productID').value = productID;
-            restockRow.style.display = 'block';
-            addStockRow.style.display = 'none';
+            modalTitle.textContent = '编辑进货订单';
+            document.getElementById('action').value = 'editPurchase';
+            document.getElementById('purchaseID').value = purchaseID;
 
             // 通过AJAX获取商品详情来填充表单
-            fetch('purchase?action=getPurchaseDetails&PurchaseID=' + PurchaseID)
+            fetch('purchase?action=getPurchaseDetails&purchaseID=' + purchaseID)
                 .then(response => response.json())
                 .then(data => {
-                    document.getElementById('purchaseID').value = order.purchaseID;
-                    document.getElementById('productName').value = order.productName;
-                    document.getElementById('quantityPurchased').value = order.quantityPurchased;
-                    document.getElementById('purchasePrice').value = order.purchasePrice;
-                    document.getElementById('totalCost').value = order.totalCost;
-                    document.getElementById('purchaseDate').value = order.purchaseDate;
-                    document.getElementById('supplierNam').value = order.supplierNam;
-                    document.getElementById('adminName').value = order.adminName;
+                    document.getElementById('productName').value = data.productName;
+                    document.getElementById('quantityPurchased').value = data.quantityPurchased;
+                    document.getElementById('purchasePrice').value = data.purchasePrice;
+                    document.getElementById('totalCost').value = data.totalCost;
+                    document.getElementById('purchaseDate').value = data.purchaseDate;
+                    document.getElementById('supplierName').value = data.supplierName;
+                    document.getElementById('adminName').value = data.adminName;
                 })
                 .catch(error => console.error('Error fetching purchase details:', error));
         } else if(action === 'add') {
             // 清空表单，为新增订单准备
             modalTitle.textContent = '添加进货订单';
             document.getElementById('action').value = 'addPurchase';
-            document.getElementById('addModal').style.display = 'flex';
             document.getElementById('purchaseID').value = '';
             document.getElementById('productName').value = '';
             document.getElementById('quantityPurchased').value = '';
@@ -581,15 +487,7 @@
         const action = formData.get('action'); // 获取 action，用于判断是新增还是编辑
 
         // 进货逻辑
-        if (action === 'editModal') {
-            if (restockAmount <= warehouseStock) {
-                formData.set('shelfStock', shelfStock + restockAmount);
-                formData.set('warehouseStock', warehouseStock - restockAmount);
-            } else {
-                alert('补货数量不能超过仓库库存！');
-                return false;
-            }
-        }
+
 
         // 发送 AJAX 请求
         fetch('PurchaseManage', {
@@ -604,7 +502,7 @@
                         alert('进货订单编辑成功！');
                     }
                     closeModal(); // 关闭弹窗
-                    fetchPurchase(1); // 刷新商品列表
+                    fetchPurchase(1); // 刷新列表
                 } else {
                     return response.text().then(text => { throw new Error(text); });
                 }
@@ -662,21 +560,12 @@
     }
 
     function closeModal() {
-        // 关闭模态框
-        document.getElementById('editModal').style.display = 'none';
-        document.getElementById('addModal').style.display = 'none';
+        var modal = document.getElementById('purchaseModal');
+        modal.style.display = 'none';
+        document.getElementById('purchaseForm').reset(); // 清空表单
+        checkStockWarning();
     }
 
-    // 更新订单总价
-    //document.getElementById('quantity').addEventListener('input', updateTotalCost);
-    //document.getElementById('purchasePrice').addEventListener('input', updateTotalCost);
-
-    //function updateTotalCost() {
-    //    var quantity = parseInt(document.getElementById('quantity').value) || 0;
-    //    var price = parseFloat(document.getElementById('purchasePrice').value) || 0;
-    //    var totalCost = quantity * price;
-    //    document.getElementById('totalCost').value = totalCost.toFixed(2);
-    //}
 
     const itemsPerPage = 10; // 每页显示的数量
     let currentPage = 1; // 当前页码
@@ -705,27 +594,33 @@
         };
         updateUrlParams(URLParams);
 
-        fetch('purchaseManage?action=getPurchases&offset=' + offset + '&limit=' + itemsPerPage
+        fetch('PurchaseManage?action=getPurchases&offset=' + offset + '&limit=' + itemsPerPage
             + '&sortBy=' + sortBy + '&sortOrder=' + sortOrder
             + '&purchaseID=' + purchaseID + '&productName=' + productName + '&minTotalCost=' +  minTotalCost + '&maxTotalCost=' + maxTotalCost
             + '&minPurchasePrice=' +  minPurchasePrice+ '&maxPurchasePrice=' +  maxPurchasePrice+ '&purchaseDate=' +  purchaseDate
-            + '&supplierName=' + supplierName +  '&adminName=' + adminNamee)
+            + '&supplierName=' + supplierName +  '&adminName=' + adminName)
             .then(response => response.json())
             .then(data => {
                 const purchaseTableBody = document.getElementById('purchaseTableBody');
                 purchaseTableBody.innerHTML = ''; // 清空表格
 
-                if (data.purchase && data.purchases.length > 0) {
-                    data.purchase.forEach(purchase => {
+                if (data.purchases && data.purchases.length > 0) {
+                    data.purchases.forEach(purchase => {
                         const row = document.createElement('tr');
-                        row.innerHTML = '<td>' + purchase.purchaserID + '</td>'
+                        row.innerHTML = '<td>' + purchase.purchaseID + '</td>'
                             + '<td>' + purchase.productName + '</td>'
                             + '<td>' + purchase.quantityPurchased + '</td>'
                             + '<td>' + purchase.purchasePrice + '</td>'
                             + '<td>' + purchase.totalCost + '</td>'
                             + '<td>' + purchase.purchaseDate + '</td>'
                             + '<td>' + purchase.adminName + '</td>'
-                            + '<td>' + purchase.supplierName + '</td>';
+                            + '<td>' + purchase.supplierName + '</td>' +
+                            '<td>' +
+                            '<div class="action-btns">' +
+                            '<e href="javascript:void(0)" onclick="openModal(\'edit\', ' + purchase.purchaseID + ')">编辑</e>' +
+                            '<c href="javascript:void(0)" onclick="deletePurchase(' + purchase.purchaseID + ')">删除</c>' +
+                            '</div>' +
+                            '</td>';
                         purchaseTableBody.appendChild(row);
                     });
                 } else {
@@ -775,21 +670,11 @@
         const urlParams = new URLSearchParams(window.location.search);
         return urlParams.get(param);
     }
+
+
     function exportCSV({sortBy = '', sortOrder = '', ProductName = '', SupplierName= '',  adminName = '',purchaseDate = '',minTotalCost = '', maxTotalCost = '',
                            minPurchasePrice = '',maxPurchasePrice = '',fromPurchaseDate='',toPurchaseDate=''})
     {
-
-    // 获取URL参数
-    function getUrlParams() {
-        const URLParams = {};
-        const queryString = window.location.search.substring(1);
-        const regex = /([^&=]+)=([^&]*)/g;
-        let m;
-        while (m = regex.exec(queryString)) {
-            URLParams[decodeURIComponent(m[1])] = decodeURIComponent(m[2]);
-        }
-        return URLParams;
-    }
 
         // 向后端请求数据
         fetch('PurchaseManage?action=exportCSV' +
@@ -812,6 +697,21 @@
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
                 }
+
+            })
+    };
+
+    // 获取URL参数
+    function getUrlParams() {
+        const URLParams = {};
+        const queryString = window.location.search.substring(1);
+        const regex = /([^&=]+)=([^&]*)/g;
+        let m;
+        while (m = regex.exec(queryString)) {
+            URLParams[decodeURIComponent(m[1])] = decodeURIComponent(m[2]);
+        }
+        return URLParams;
+    }
     // 更新URL参数
     function updateUrlParams(URLParams) {
         const queryString = Object.keys(URLParams)
@@ -840,9 +740,6 @@
             adminName: URLParams.adminName || ''
         });
     };
-
-
-
 </script>
 
 </body>
