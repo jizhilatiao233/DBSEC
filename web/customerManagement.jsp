@@ -370,20 +370,26 @@
     <h2>客户列表</h2>
     <div class="action-bar">
         <form method="get" action="customerManagement.jsp">
-            <!-- 排序下拉框 -->
-            <select name="sortBy">
-                <option value="">排序方式</option>
-                <option value="name">按姓名排序</option>
-                <option value="joinDate">按加入日期排序</option>
-            </select>
-            <button type="submit">排序</button>
+            <form method="get" action="salesManagement.jsp">
+                <label for="sortBy">排序方式：</label>
+                <!-- 排序下拉框 -->
+                <select name="sortBy" id="sortBy">
+                    <option value="">排序方式</option>
+                    <option value="customerID">客户ID</option>
+                    <option value="customerName">姓名</option>
+                    <option value="contactInfo">联系方式</option>
+                    <option value="joinDate">加入日期</option>
+                    <option value="totalConsumption">消费总金额</option>
+                    <option value="vipLevel">VIP等级</option>
+                </select>
+                <button type="submit">排序</button>
+            </form>
 
-            <!-- 搜索框和筛选框 -->
+            <!-- 筛选框 -->
+            <form method="get" action="customerManagement.jsp">
             <input type="text" name="customerName" placeholder="姓名">
-            <input type="email" name="contactInfo" placeholder="联系方式">
+            <input type="text" name="contactInfo" placeholder="联系方式">
             <input type="date" name="joinDate" placeholder="加入日期">
-
-            <!-- VIP等级筛选 -->
             <select name="vipLevel">
                 <option value="">选择VIP等级</option>
                 <option value="1">VIP1</option>
@@ -392,22 +398,21 @@
                 <option value="4">VIP4</option>
                 <option value="5">VIP5</option>
             </select>
-
             <input type="number" name="minTotalConsumption" placeholder="最低消费总金额" step="0.01" min="0">
             <input type="number" name="maxTotalConsumption" placeholder="最高消费总金额" step="0.01" min="0">
-            <!-- 筛选按钮 -->
-
             <button type="submit">筛选</button>
+            </form>
+
             <!-- 导出CSV按钮 -->
             <button onclick="exportCSV({
             sortBy: getURLParam('sortBy') || '',
             sortOrder: getURLParam('sortOrder') || '',
-            CustomerName: getURLParam('CustomerName') || '',
-            Contactinfo: getURLParam('Contactinfo') || '',
+            customerName: getURLParam('customerName') || '',
+            contactInfo: getURLParam('contactInfo') || '',
             minTotalConsumption: getURLParam('minTotalConsumption') || '',
             maxTotalConsumption: getURLParam('maxTotalConsumption') || '',
-            JoinDate: getURLParam('JoinDate') || '',
-            VIPLevel: getURLParam('VIPLevel') || ''
+            joinDate: getURLParam('joinDate') || '',
+            vipLevel: getURLParam('vipLevel') || ''
         })">导出CSV</button>
             <button onclick="openModal('add')">添加客户</button>
         </form>
@@ -426,12 +431,10 @@
         </tr>
         </thead>
         <tbody id="customerTableBody">
-        <!-- 客户列表将在这里动态生成 -->
+        <!-- 商品列表将在这里动态生成 -->
         </tbody>
     </table>
-
     <div class="pagination" id="pagination"></div>
-        <!-- 分页按钮将在这里动态生成 -->
 </div>
 
 <div class="footer">
@@ -442,6 +445,9 @@
     <div class="modal-content">
         <h2 id="modalTitle">添加客户</h2>
         <form id="customerForm" onsubmit="return submitModal();">
+            <input type="hidden" name="customerID" id="customerID">
+            <input type="hidden" name="action" id="action">
+
             <label for="customerName">姓名:</label>
             <input type="text" id="customerName" name="customerName" required>
 
@@ -452,11 +458,12 @@
             <input type="date" id="joinDate" name="joinDate" required>
 
             <label for="totalConsumption">消费总金额:</label>
-            <input type="number" id="totalConsumption" name="totalConsumption" required>
+            <input type="number" id="totalConsumption" name="totalConsumption" step="0.01" required>
 
             <label for="vipLevel">VIP等级:</label>
             <select id="vipLevel" name="vipLevel" required>
                 <option value="">请选择</option>
+                <option value="0">VIP0</option>
                 <option value="1">VIP1</option>
                 <option value="2">VIP2</option>
                 <option value="3">VIP3</option>
@@ -464,8 +471,8 @@
                 <option value="5">VIP5</option>
             </select>
 
-            <button type="submit">确认</button>
-            <button type="button" onclick="closeModal()">取消</button>
+            <button type="submit" class="submit-btn">确认</button>
+            <button type="reset" class="close-btn" onclick="closeModal()">取消</button>
         </form>
     </div>
 </div>
@@ -488,15 +495,10 @@
         } else if (action === 'edit') {
             modalTitle.textContent = '编辑客户';
             document.getElementById('action').value = 'editCustomer';
-            document.getElementById('customerID').value = '';
-            document.getElementById('customerName').value = '';
-            document.getElementById('contactInfo').value = '';
-            document.getElementById('joinDate').value = '';
-            document.getElementById('totalConsumption').value = '';
-            document.getElementById('vipLevel').value = '';
+            document.getElementById('customerID').value = customerID;
 
             // 通过AJAX获取客户详情来填充表单
-            fetch('customer?action=getCustomerDetails&customerID=' + customerID)
+            fetch('CustomerManage?action=getCustomerDetails&customerID=' + customerID)
                 .then(response => response.json())
                 .then(data => {
                     document.getElementById('customerName').value = data.customerName;
@@ -513,35 +515,29 @@
 
     // 提交弹窗
     function submitModal() {
-
         // 获取表单数据
         const form = document.getElementById('customerForm');
+
+        //Debugging
+        for (var pair of new FormData(form).entries()) {
+            console.log(pair[0]+ ', '+ pair[1]);
+        }
+
         const formData = new FormData(form); // 封装表单数据
-        const action = formData.get('action'); // 获取 action，用于判断是新增还是编辑
 
         // 发送 AJAX 请求
-        fetch('CustomerManage', {
-            method: 'POST',
-            body: formData,
-        })
-            .then(response => {
-                if (response.ok) {
-                    if (action === 'addCustomer') {
-                        alert('客户新增成功！');
-                    } else if (action === 'editCustomer') {
-                        alert('客户编辑成功！');
-                    }
-                    closeModal(); // 关闭弹窗
-                    fetchProducts(1); // 刷新商品列表
-                } else {
-                    return response.text().then(text => { throw new Error(text); });
-                }
-            })
-            .catch(error => {
-                console.error('错误:', error);
-                alert('操作失败，请检查输入或稍后重试！');
-            });
-        return false; // 阻止表单默认提交行为
+        fetch('CustomerManage?action=' + formData.get('action') +
+            '&customerID=' + formData.get('customerID') +
+            '&customerName=' + formData.get('customerName') +
+            '&contactInfo=' + formData.get('contactInfo') +
+            '&joinDate=' + formData.get('joinDate') +
+            '&totalConsumption=' + formData.get('totalConsumption') +
+            '&vipLevel=' + formData.get('vipLevel')
+        )
+            .then(response => response.json())
+            .catch(error => console.error('Error submitting form:', error));
+        closeModal(); // 关闭弹窗
+        clearUrlParams(); // 清除URL参数
     }
 
     // 关闭弹窗
@@ -551,19 +547,19 @@
         document.getElementById('customerForm').reset(); // 清空表单
     }
 
-    function exportCSV({sortBy = '', sortOrder = '', CustomerName = '', Contactinfo = '',
-                           JoinDate = '',VIPLevel = '', minTotalConsumption = '',maxTotalConsumption = ''})
+    function exportCSV({sortBy = '', sortOrder = '', customerName = '', contactInfo = '',
+                           joinDate = '',vipLevel = '', minTotalConsumption = '',maxTotalConsumption = ''})
     {
         // 向后端请求数据
         fetch('CustomerManage?action=exportCSV' +
             '&sortBy=' + sortBy +
             '&sortOrder=' + sortOrder +
-            '&CustomerName=' + CustomerName+
-            '&Contactinfo=' + Contactinfo +
+            '&customerName=' + customerName+
+            '&contactInfo=' + contactInfo +
             '&minTotalConsumption =' + minTotalConsumption +
             '&maxTotalConsumption =' + maxTotalConsumption +
-            '&JoinDate=' + JoinDate +
-            '&VIPLevel=' + VIPLevel
+            '&joinDate=' + joinDate +
+            '&vipLevel=' + vipLevel
         )
             .then(response => {
                 // 如果响应状态不正常，抛出错误
@@ -706,6 +702,11 @@
             .map(key => encodeURIComponent(key) + '=' + encodeURIComponent(URLParams[key]))
             .join('&');
         history.pushState(null, '', '?' + queryString);
+    }
+
+    // 清除URL参数
+    function clearUrlParams() {
+        history.pushState(null, '', window.location.pathname);
     }
 
 

@@ -108,6 +108,7 @@ public class PurchaseManageServlet extends HttpServlet {
         }
 
         // filter parameters
+        String purchaseID = request.getParameter("purchaseID");
         String productName = request.getParameter("productName");
         String supplierName = request.getParameter("supplierName");
         String adminName = request.getParameter("adminName");
@@ -132,6 +133,10 @@ public class PurchaseManageServlet extends HttpServlet {
                 "JOIN Admin a ON p.AdminID = a.AdminID " +
                 "JOIN Supplier s ON p.SupplierID = s.SupplierID " +
                 "WHERE 1=1 ");
+        if (purchaseID != null && !purchaseID.isEmpty()) {
+            queryBuilder.append("AND p.PurchaseID = ? ");
+            countQueryBuilder.append("AND p.PurchaseID = ? ");
+        }
         if (productName != null && !productName.isEmpty()) {
             queryBuilder.append("AND pr.ProductName LIKE ? ");
             countQueryBuilder.append("AND pr.ProductName LIKE ? ");
@@ -180,6 +185,11 @@ public class PurchaseManageServlet extends HttpServlet {
         try (PreparedStatement stmt = conn.prepareStatement(query);
              PreparedStatement countStmt = conn.prepareStatement(countQuery)) {
             int paramIndex = 1;
+            if (purchaseID != null && !purchaseID.isEmpty()) {
+                stmt.setInt(paramIndex, Integer.parseInt(purchaseID));
+                countStmt.setInt(paramIndex, Integer.parseInt(purchaseID));
+                paramIndex++;
+            }
             if (productName != null && !productName.isEmpty()) {
                 stmt.setString(paramIndex, "%" + productName + "%");
                 countStmt.setString(paramIndex, "%" + productName + "%");
@@ -356,6 +366,7 @@ public class PurchaseManageServlet extends HttpServlet {
 
     private void exportCSV(HttpServletRequest request, HttpServletResponse response, Connection conn) throws IOException {
         // filter parameters
+        String purchaseID = request.getParameter("purchaseID");
         String productName = request.getParameter("productName");
         String supplierName = request.getParameter("supplierName");
         String adminName = request.getParameter("adminName");
@@ -384,6 +395,9 @@ public class PurchaseManageServlet extends HttpServlet {
                 "JOIN Admin a ON p.AdminID = a.AdminID " +
                 "JOIN Supplier s ON p.SupplierID = s.SupplierID " +
                 "WHERE 1=1 ");
+        if (purchaseID != null && !purchaseID.isEmpty()) {
+            queryBuilder.append("AND p.PurchaseID = ? ");
+        }
         if (productName != null && !productName.isEmpty()) {
             queryBuilder.append("AND pr.ProductName LIKE ? ");
         }
@@ -419,6 +433,10 @@ public class PurchaseManageServlet extends HttpServlet {
 
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
             int paramIndex = 1;
+            if (purchaseID != null && !purchaseID.isEmpty()) {
+                stmt.setInt(paramIndex, Integer.parseInt(purchaseID));
+                paramIndex++;
+            }
             if (productName != null && !productName.isEmpty()) {
                 stmt.setString(paramIndex, "%" + productName + "%");
                 paramIndex++;

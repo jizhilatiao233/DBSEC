@@ -299,6 +299,7 @@
         <form method="get" action="salesManagement.jsp">
             <label for="sortBy">排序方式：</label>
             <select name="sortBy" id="sortBy">
+                <option value="">排序方式</option>
                 <option value="orderID">订单号</option>
                 <option value="productName">商品名称</option>
                 <option value="staffName">收银员姓名</option>
@@ -318,8 +319,8 @@
             <input type="date" name="salesDate" id="salesDate" placeholder="销售日期">
             <button type="submit">筛选</button>
 
-            <label for="getTotalAmount" style="margin-left: 10px;">总销售额:</label>
-            <input type="text" name="getTotalAmount" id="getTotalAmount" placeholder="总销售额" readonly>
+            <label for="totalAmount" style="margin-left: 10px;">总销售额:</label>
+            <input type="text" name="totalAmount" id="totalAmount" placeholder="总销售额" readonly>
         </form>
 
             <!-- 导出 CSV 表单 -->
@@ -333,8 +334,6 @@
 
         })">导出CSV</button>
     </div>
-
-
 
     <table>
         <thead>
@@ -510,7 +509,7 @@
     }
 
 
-    // 页面加载时：获取URL参数；获取销售信息并显示分页按钮
+    // 页面加载时：获取URL参数；获取销售信息并显示分页按钮；获取总销售额
     window.onload = function () {
         const URLParams = getUrlParams();
         fetchSales({
@@ -522,7 +521,14 @@
             staffName: URLParams.staffName || '',
             salesDate: URLParams.salesDate || ''
         });
+        getTotalAmount({
+            orderID: URLParams.orderID || '',
+            productName: URLParams.productName || '',
+            staffName: URLParams.staffName || '',
+            salesDate: URLParams.salesDate || ''
+        });
     };
+
     function getTotalAmount({orderID = '', productName = '', staffName = '', salesDate = ''}) {
         fetch('SalesManage?action=getSalesVolume&orderID=' + orderID + '&productName=' + productName + '&staffName=' + staffName + '&salesDate=' + salesDate)
             .then(response => response.json())

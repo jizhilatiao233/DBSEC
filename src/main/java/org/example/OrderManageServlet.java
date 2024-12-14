@@ -352,6 +352,7 @@ public class OrderManageServlet extends HttpServlet {
         try (PreparedStatement stmt = conn.prepareStatement(deleteOrderQuery)) {
             stmt.setInt(1, orderID);
             stmt.executeUpdate();
+            response.sendRedirect("orderManagement.jsp");
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

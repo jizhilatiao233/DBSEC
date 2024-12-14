@@ -88,8 +88,8 @@ public class CustomerManageServlet extends HttpServlet {
         // filter parameters
         String customerName = request.getParameter("customerName");
         String contactInfo = request.getParameter("contactInfo");
-        String minTotalConsumption = request.getParameter("maxTotalConsumption");
-        String maxTotalConsumption = request.getParameter("minTotalConsumption");
+        String minTotalConsumption = request.getParameter("minTotalConsumption");
+        String maxTotalConsumption = request.getParameter("maxTotalConsumption");
         String joinDate = request.getParameter("joinDate");
 //        String fromJoinDate = request.getParameter("fromJoinDate");
 //        String toJoinDate = request.getParameter("toJoinDate");
@@ -284,7 +284,7 @@ public class CustomerManageServlet extends HttpServlet {
             stmt.setDouble(6, totalConsumption);
             stmt.setInt(7, vipLevel);
             stmt.executeUpdate();
-            response.setStatus(HttpServletResponse.SC_CREATED);
+            response.sendRedirect("customerManage.jsp");
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -340,8 +340,8 @@ public class CustomerManageServlet extends HttpServlet {
         // filter parameters
         String customerName = request.getParameter("customerName");
         String contactInfo = request.getParameter("contactInfo");
-        String minTotalConsumption = request.getParameter("maxTotalConsumption");
-        String maxTotalConsumption = request.getParameter("minTotalConsumption");
+        String minTotalConsumption = request.getParameter("minTotalConsumption");
+        String maxTotalConsumption = request.getParameter("maxTotalConsumption");
         String joinDate = request.getParameter("joinDate");
 //        String fromJoinDate = request.getParameter("fromJoinDate");
 //        String toJoinDate = request.getParameter("toJoinDate");

@@ -316,21 +316,18 @@
     <h2>员工列表</h2>
     <div class="action-bar">
         <form method="get" action="staffManagement.jsp">
-            <select name="sortBy">
+            <select name="sortBy" id="sortBy">
                 <option value="">排序方式</option>
-                <option value="name">按姓名排序</option>
+                <option value="staffName">按姓名排序</option>
                 <option value="joinDate">按加入日期排序</option>
             </select>
             <button type="submit">排序</button>
-
-
-            <input type="text" name="searchName" placeholder="姓名">
-            <input type="text" name="searchPhone" placeholder="联系方式">
-
-
         </form>
-
+        <br>
+        <!-- 筛选 -->
         <form method="get" action="staffManagement.jsp">
+            <input type="text" name="staffName" placeholder="姓名">
+            <input type="text" name="contactInfo" placeholder="联系方式">
             <!-- 加入日期筛选 -->
             <input type="date" name="fromjoinDate" placeholder="最早加入日期">
             <input type="date" name="tojoinDate" placeholder="最晚加入日期">
@@ -340,11 +337,9 @@
                 <option value="收银员">收银员</option>
                 <option value="管理员">管理员</option>
             </select>
-            <button type="submit">搜索</button>
-
+            <button type="submit">筛选</button>
         </form>
 
-        <div class="button-group">
             <button onclick="exportCSV({
             sortBy: getURLParam('sortBy') || '',
             sortOrder: getURLParam('sortOrder') || '',
@@ -361,9 +356,7 @@
             adminID: getURLParam('adminID') || '',
             adminName: getURLParam('adminName') || '',
         })">导出CSV</button>
-        </div>
     </div>
-
 
     <table>
         <thead>
@@ -379,105 +372,8 @@
         <tbody id="staffTableBody">
         <!-- 列表将在这里动态生成 -->
         </tbody>
-        <tr>
-            <td>1001</td>
-            <td>张三</td>
-            <td>13800000000</td>
-            <td>2022-01-01</td>
-            <td>收银员</td>
-            <td>
-                <div class="action-btns">
-                    <e href="javascript:void(0)" onclick="openModal('detail', 1001)">详情</e>
-                    <c href="deleteStaff.jsp?id=1001" onclick="return confirm('确定要删除该员工吗？')">删除</c>
-                </div>
-            </td>
-        </tr>
-        </tbody>
     </table>
-
     <div class="pagination" id="pagination"></div>
-</div>
-
-<!-- 添加员工的模态框 -->
-<div class="modal" id="addModal">
-    <div class="modal-content">
-        <h3>添加员工</h3>
-        <form action="addEmployee.jsp" method="POST">
-            <!-- 员工ID：新增时没有 -->
-            <input type="hidden" name="employeeId" id="employeeId" value="">
-
-            <!-- 员工姓名 -->
-            <label for="employeeName">员工姓名:</label>
-            <input type="text" name="employeeName" id="employeeName" required>
-
-            <!-- 联系方式 -->
-            <label for="employeePhone">联系方式:</label>
-            <input type="text" name="employeePhone" id="employeePhone" required>
-
-            <!-- 职位 -->
-            <label for="position">职位:</label>
-            <select name="position" id="position" required>
-                <option value="">请选择职位</option>
-            </select>
-
-            <!-- 管理员 -->
-            <label for="admin">管理人员姓名:</label>
-            <input type="text" name="admin" id="admin" value="" required>
-
-            <button type="submit">添加员工</button>
-            <button type="button" onclick="closeModal()">取消</button>
-        </form>
-    </div>
-</div>
-
-<div class="modal" id="detailModal">
-    <div class="modal-content">
-        <h3>员工信息</h3>
-        <form action="employeeDetail.jsp" method="POST">
-            <!-- 员工ID：详情时显示 -->
-            <input type="hidden" name="employeeId" id="employeeId" value="">
-
-            <!-- 员工姓名 -->
-            <label for="employeeName">姓名:</label>
-            <input type="text" name="employeeName" id="employeeName" value="" readonly>
-
-            <!-- 联系方式 -->
-            <label for="employeePhone">联系方式:</label>
-            <input type="text" name="employeePhone" id="employeePhone" value="" readonly>
-
-            <!-- 职位 -->
-            <label for="position">职位:</label>
-            <input type="text" name="position" id="position" value="" readonly>
-
-            <!-- 管理人员 -->
-            <label for="employeeList">管理人员:</label>
-            <table>
-                <thead>
-                <tr>
-                    <th>选择</th>
-                    <th>员工编号</th>
-                    <th>姓名</th>
-                    <th>联系方式</th>
-                    <th>加入时间</th>
-                    <th>职位</th>
-                </tr>
-                </thead>
-                <tbody id="employeeList">
-                <!-- 示例行，实际内容通过 JS 动态生成 -->
-                <tr>
-                    <td><input type="checkbox" name="selectedEmployee" value=""></td>
-                    <td>1001</td>
-                    <td>张三</td>
-                    <td>13800000000</td>
-                    <td>2022-01-01</td>
-                    <td>收银员</td>
-                </tr>
-                </tbody>
-            </table>
-
-            <button type="button" onclick="closeModal()">返回</button>
-        </form>
-    </div>
 </div>
 
 <div class="footer">
@@ -527,42 +423,6 @@
             });
     }
 
-    function openModal(action, employeeId) {
-        // 根据操作类型显示不同的模态框
-        if(action === 'detail') {
-            document.getElementById('detailModal').style.display = 'flex';
-            const modal = document.getElementById("myModal");
-            const showModalBtn = document.getElementById("showModalBtn");
-            const closeModalBtn = document.getElementById("closeModalBtn");
-
-            // 获取员工信息的显示区域
-            const employeeName = document.getElementById("employeeName");
-            const employeePhone = document.getElementById("employeePhone");
-            const position = document.getElementById("position");
-
-            // 模拟员工信息
-            const employeeInfo = {
-                name: "张三",
-                phone: "1234567890",
-                position: "收银员"
-            };
-
-            // 点击按钮时显示模态框
-            showModalBtn.onclick = function() {
-                // 设置员工信息
-                employeeName.textContent = employee.name;
-                employeePhone.textContent = employee.phone;
-                position.textContent = employee.position;
-            }
-        }
-    }
-
-    function closeModal() {
-        // 关闭模态框
-        document.getElementById('detailModal').style.display = 'none';
-        document.getElementById('addModal').style.display = 'none';
-    }
-
     // 删除员工
     function deleteStaff(staffID) {
         if (confirm('确定要删除此员工吗？')) {
@@ -584,7 +444,7 @@
                     formData.append('adminID', data.adminID);
                     formData.append('adminName', data.adminName);
 
-                    return fetch('staffManage', {
+                    return fetch('StaffManage', {
                         method: 'POST',
                         body: formData
                     });
@@ -637,8 +497,8 @@
                 const staffTableBody = document.getElementById('staffTableBody');
                 staffTableBody.innerHTML = ''; // 清空表格
 
-                if (data.staff && data.staff.length > 0) {
-                    data.staff.forEach(staff => {
+                if (data.staffs && data.staffs.length > 0) {
+                    data.staffs.forEach(staff => {
                         const row = document.createElement('tr');
                         row.innerHTML = '<td>' + staff.staffID + '</td>'
                             + '<td>' + staff.staffName + '</td>'
@@ -659,7 +519,7 @@
 
                 updatePagination(data.totalPages);
             })
-            .catch(error => console.error('Error fetching sales:', error));
+            .catch(error => console.error('Error fetching staffs:', error));
     }
 
     // 更新分页按钮
@@ -732,7 +592,6 @@
             position: URLParams.position || ''
         });
     };
-
 
 </script>
 
