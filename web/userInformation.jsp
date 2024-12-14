@@ -557,7 +557,24 @@
     }
 
     function deleteAccount() {
-        alert("账户销号成功！");
+        // 获取 adminID
+        const adminID = '<%= session.getAttribute("adminID") %>'; // 从服务器端获取 adminID
+
+        // 发送 AJAX 请求
+        fetch('AdminInformation?action=deleteAdmin&adminID=' + adminID)
+            .then(response => {
+                if (response.ok) {
+                    alert("账户销号成功！");
+                } else {
+                    return response.text().then(text => { throw new Error(text); });
+                }
+            })
+            .catch(error => {
+                console.error('错误:', error);
+                alert('操作失败，请稍后重试！');
+            });
+
+        return false; // 阻止表单默认提交行为
     }
     // 更新分页按钮
     function updatePagination(totalPages) {
@@ -588,31 +605,7 @@
             pagination.appendChild(pageBtn);
         }
     }
-    function submitModal() {
 
-        // 获取表单数据
-        const form = document.getElementById('staffTableBody');
-        const formData = new FormData(form); // 封装表单数据
-
-        // 发送 AJAX 请求
-        fetch('AdminInformation?action=editPassword&adminID=' + adminID + '&newPassword=' + newPassword, {
-            method: 'POST',
-            body: formData,
-        })
-            .then(response => {
-                if (response.ok) {
-                        alert('密码修改成功！');
-                    closeModal(); // 关闭弹窗
-                } else {
-                    return response.text().then(text => { throw new Error(text); });
-                }
-            })
-            .catch(error => {
-                console.error('错误:', error);
-                alert('操作失败，请检查输入或稍后重试！');
-            });
-        return false; // 阻止表单默认提交行为
-    }
 
 </script>
 
