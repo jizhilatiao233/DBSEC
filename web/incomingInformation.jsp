@@ -395,7 +395,7 @@
 <!-- 进货订单模态框 -->
 <div id="purchaseModal" class="modal">
     <div class="modal-content">
-        <h2 id="modalTitle"></h2>
+        <h2 id="modalTitle">添加进货订单</h2>
         <form id="purchaseForm" onsubmit="return submitModal();">
             <input type="hidden" name="purchaseID" id="purchaseID">
             <input type="hidden" name="action" id="action">
@@ -432,25 +432,7 @@
         var modal = document.getElementById('purchaseModal');
         var modalTitle = document.getElementById('modalTitle');
 
-        if(action === 'edit') {
-            modalTitle.textContent = '编辑进货订单';
-            document.getElementById('action').value = 'editPurchase';
-            document.getElementById('purchaseID').value = purchaseID;
-
-            // 通过AJAX获取商品详情来填充表单
-            fetch('purchase?action=getPurchaseDetails&purchaseID=' + purchaseID)
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById('productName').value = data.productName;
-                    document.getElementById('quantityPurchased').value = data.quantityPurchased;
-                    document.getElementById('purchasePrice').value = data.purchasePrice;
-                    document.getElementById('totalCost').value = data.totalCost;
-                    document.getElementById('purchaseDate').value = data.purchaseDate;
-                    document.getElementById('supplierName').value = data.supplierName;
-                    document.getElementById('adminName').value = data.adminName;
-                })
-                .catch(error => console.error('Error fetching purchase details:', error));
-        } else if(action === 'add') {
+        if(action === 'add') {
             // 清空表单，为新增订单准备
             modalTitle.textContent = '添加进货订单';
             document.getElementById('action').value = 'addPurchase';
@@ -462,96 +444,81 @@
             document.getElementById('purchaseDate').value = '';
             document.getElementById('supplierName').value = '';
             document.getElementById('adminName').value = '';
+
+        } else if(action === 'edit') {
+            modalTitle.textContent = '编辑进货订单';
+            document.getElementById('action').value = 'editPurchase';
+            document.getElementById('purchaseID').value = purchaseID;
+
+            // 通过AJAX获取商品详情来填充表单
+            fetch('PurchaseManage?action=getPurchaseDetails&purchaseID=' + purchaseID)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('productName').value = data.productName;
+                    document.getElementById('quantityPurchased').value = data.quantityPurchased;
+                    document.getElementById('purchasePrice').value = data.purchasePrice;
+                    document.getElementById('totalCost').value = data.totalCost;
+                    document.getElementById('purchaseDate').value = data.purchaseDate;
+                    document.getElementById('supplierName').value = data.supplierName;
+                    document.getElementById('adminName').value = data.adminName;
+                })
+                .catch(error => console.error('Error fetching purchase details:', error));
         }
         modal.style.display = 'flex';
     }
 
-    // 提交弹窗
     function submitModal() {
-
         // 获取表单数据
         const form = document.getElementById('purchaseForm');
+
+        //Debugging
+        for (var pair of new FormData(form).entries()) {
+            console.log(pair[0]+ ', '+ pair[1]);
+        }
+
         const formData = new FormData(form); // 封装表单数据
-        const action = formData.get('action'); // 获取 action，用于判断是新增还是编辑
-
-        // 进货逻辑
-
 
         // 发送 AJAX 请求
-        fetch('PurchaseManage', {
-            method: 'POST',
-            body: formData,
-        })
-            .then(response => {
-                if (response.ok) {
-                    if (action === 'addPurchase') {
-                        alert('进货订单新增成功！');
-                    } else if (action === 'editPurchase') {
-                        alert('进货订单编辑成功！');
-                    }
-                    closeModal(); // 关闭弹窗
-                    fetchPurchase(1); // 刷新列表
-                } else {
-                    return response.text().then(text => { throw new Error(text); });
-                }
-            })
-            .catch(error => {
-                console.error('错误:', error);
-                alert('操作失败，请检查输入或稍后重试！');
-            });
-        return false; // 阻止表单默认提交行为
+        fetch('PurchaseManage?action=' + formData.get('action') +
+            '&purchaseID=' + formData.get('purchaseID') +
+            '&productName=' + formData.get('productName') +
+            '&quantityPurchased=' + formData.get('quantityPurchased') +
+            '&purchasePrice=' + formData.get('purchasePrice') +
+            '&totalCost=' + formData.get('totalCost') +
+            '&purchaseDate=' + formData.get('purchaseDate') +
+            '&supplierName=' + formData.get('supplierName') +
+            '&adminName=' + formData.get('adminName')
+        )
+            .then(response => response.json())
+            .catch(error => console.error('Error submitting form:', error));
+        closeModal(); // 关闭弹窗
+        clearUrlParams(); // 清除URL参数
     }
 
     // 删除进货订单
     function deletePurchase(purchaseID) {
         if (confirm('确定要删除此进货订单吗？')) {
             // 获取订单详情
-            fetch('purchase?action=getPurchaseDetails&purchaseID=' + purchaseID)
+            fetch('PurchaseManage?action=deletePurchase&purchaseID=' + purchaseID)
                 .then(response => response.json())
                 .then(data => {
-
-                    // 更新订单信息
-                    const formData = new FormData();
-                    formData.append('action', 'editPurchase');
-                    formData.append('purchaseID', data.purchaseID);
-                    formData.append('productID', data.productID);
-                    formData.append('productName', data.productName);
-                    formData.append('quantityPurchased', data.quantityPurchased);
-                    formData.append('purchasePrice', data.purchasePrice);
-                    formData.append('totalCost', data.totalCost);
-                    formData.append('purchaseDate', data.purchaseDate);
-                    formData.append('adminID', data.adminID);
-                    formData.append('adminName', data.adminName);
-                    formData.append('supplierID', data.supplierID);
-                    formData.append('supplierName', data.supplierName);
-
-                    return fetch('purchaserManage', {
-                        method: 'POST',
-                        body: formData
-                    });
-                })
-                .then(response => {
-                    if (response.ok) {
-                        alert('进货订单已成功删除！');
-                        fetchPurchase(1);
+                    if (data.success) {
+                        alert('进货订单删除成功！');
+                        fetchPurchase(getUrlParams());
                     } else {
-                        return response.text().then(text => {
-                            throw new Error(text);
-                        });
+                        alert('进货订单删除失败！');
                     }
                 })
-                .catch(error => {
-                    console.error('错误:', error);
-                    alert('删除失败，请稍后重试！');
-                });
+                .catch(error => console.error('Error deleting purchase:', error));
         }
+        // 刷新页面
+        location.reload();
     }
 
     function closeModal() {
         var modal = document.getElementById('purchaseModal');
         modal.style.display = 'none';
         document.getElementById('purchaseForm').reset(); // 清空表单
-        checkStockWarning();
     }
 
 
