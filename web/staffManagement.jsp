@@ -329,8 +329,8 @@
             <input type="text" name="staffName" placeholder="姓名">
             <input type="text" name="contactInfo" placeholder="联系方式">
             <!-- 加入日期筛选 -->
-            <input type="date" name="fromjoinDate" placeholder="最早加入日期">
-            <input type="date" name="tojoinDate" placeholder="最晚加入日期">
+            <input type="date" name="fromJoinDate" placeholder="最早加入日期">
+            <input type="date" name="toJoinDate" placeholder="最晚加入日期">
             <!-- 职位筛选 -->
             <select name="position">
                 <option value="">选择职位</option>
@@ -343,18 +343,11 @@
             <button onclick="exportCSV({
             sortBy: getURLParam('sortBy') || '',
             sortOrder: getURLParam('sortOrder') || '',
-            employeeId: getURLParam('staffID') || '',
-            employeeName: getURLParam('staffName') || '',
-            employeePhone: getURLParam('contactInfo') || '',
-            joinDate: getURLParam('joinDate') || '',
-            position: getURLParam('position') || ''
             staffName: getURLParam('staffName') || '',
             contactInfo: getURLParam('contactInfo') || '',
             fromJoinDate: getURLParam('fromJoinDate') || '',
             toJoinDate: getURLParam('toJoinDate') || '',
-            position: getURLParam('position') || '',
-            adminID: getURLParam('adminID') || '',
-            adminName: getURLParam('adminName') || '',
+            position: getURLParam('position') || ''
         })">导出CSV</button>
     </div>
 
@@ -384,7 +377,6 @@
 
     function exportCSV({sortBy = '', sortOrder = '',staffName = '', contactInfo = '', fromJoinDate = '', toJoinDate = '', position = '', adminID = '', adminName = ''})
     {
-
         // 向后端请求数据
         fetch('StaffManage?action=exportCSV' +
             '&sortBy=' + sortBy +
@@ -425,44 +417,18 @@
 
     // 删除员工
     function deleteStaff(staffID) {
-        if (confirm('确定要删除此员工吗？')) {
-            // 获取员工详情
-            fetch('staff?action=getStaffDetails&staffID=' + staffID)
+        if (confirm('确定要删除此员工吗？')){
+            fetch('StaffManage?action=deleteStaff&staffID=' + staffID)
                 .then(response => response.json())
                 .then(data => {
-
-                    // 更新员工信息
-                    const formData = new FormData();
-                    formData.append('action', 'editStaff');
-                    formData.append('staffID', data.staffID);
-                    formData.append('staffName', data.staffName);
-                    formData.append('contactInfo', data.contactInfo);
-                    formData.append('username', data.username);
-                    formData.append('password', data.password);
-                    formData.append('joinDate', data.joinDate);
-                    formData.append('position', data.position);
-                    formData.append('adminID', data.adminID);
-                    formData.append('adminName', data.adminName);
-
-                    return fetch('StaffManage', {
-                        method: 'POST',
-                        body: formData
-                    });
-                })
-                .then(response => {
-                    if (response.ok) {
-                        alert('员工已成功删除！');
-                        fetchStaff(1);
+                    if (data.success) {
+                        alert('员工删除成功！');
+                        fetchStaff(getUrlParams());
                     } else {
-                        return response.text().then(text => {
-                            throw new Error(text);
-                        });
+                        alert('员工删除失败！');
                     }
                 })
-                .catch(error => {
-                    console.error('错误:', error);
-                    alert('删除失败，请稍后重试！');
-                });
+                .catch(error => console.error('Error deleting staff:', error));
         }
     }
 
@@ -473,7 +439,7 @@
     // 获取员工信息
     function fetchStaff({
                             page = currentPage, sortBy = '', sortOrder = '',
-                            staffID = '', staffName = '', contactInfo = '', joinDate = '', position = ''
+                            staffID = '', staffName = '', contactInfo = '', fromJoinDate = '', toJoinDate = '', position = ''
                         }) {
         currentPage = page;
         const offset = (page - 1) * itemsPerPage;
@@ -484,14 +450,15 @@
             staffID: staffID,
             staffName: staffName,
             contactInfo: contactInfo,
-            joinDate: joinDate,
+            fromJoinDate: fromJoinDate,
+            toJoinDate: toJoinDate,
             position: position
         };
         updateUrlParams(URLParams);
 
         fetch('StaffManage?action=getStaffs&offset=' + offset + '&limit=' + itemsPerPage
             + '&sortBy=' + sortBy + '&sortOrder=' + sortOrder
-            + '&staffID=' + staffID + '&staffName=' + staffName + '&contactInfo=' + contactInfo + '&joinDate=' + joinDate + '&position=' + position)
+            + '&staffID=' + staffID + '&staffName=' + staffName + '&contactInfo=' + contactInfo + '&fromJoinDate=' + fromJoinDate + '&toJoinDate=' + toJoinDate + '&position=' + position)
             .then(response => response.json())
             .then(data => {
                 const staffTableBody = document.getElementById('staffTableBody');
@@ -543,7 +510,8 @@
                 staffID: URLParams.staffID || '',
                 staffName: URLParams.staffName || '',
                 contactInfo: URLParams.contactInfo || '',
-                joinDate: URLParams.joinDate || '',
+                fromJoinDate: URLParams.fromJoinDate || '',
+                toJoinDate: URLParams.toJoinDate || '',
                 position: URLParams.position || ''
             });
             pagination.appendChild(pageBtn);
@@ -581,14 +549,15 @@
     // 页面加载时：获取URL参数；获取销售信息并显示分页按钮
     window.onload = function () {
         const URLParams = getUrlParams();
-        fetchSales({
+        fetchStaff({
             page: URLParams.page || 1,
             sortBy: URLParams.sortBy || '',
             sortOrder: URLParams.sortOrder || '',
             staffID: URLParams.staffID || '',
             staffName: URLParams.staffName || '',
             contactInfo: URLParams.contactInfo || '',
-            joinDate: URLParams.joinDate || '',
+            fromJoinDate: URLParams.fromJoinDate || '',
+            toJoinDate: URLParams.toJoinDate || '',
             position: URLParams.position || ''
         });
     };

@@ -345,7 +345,7 @@
         <!-- 筛选 -->
         <form method="get" action="incomingInformation.jsp">
             <input type="number" name="purchaseID" placeholder="进货订单号" step="1" min="0">
-            <input type="text" name="productName" id="productName" placeholder="商品名称">
+            <input type="text" name="productName" placeholder="商品名称">
 
             <input type="number" name="minTotalCost" placeholder="最低订单总价" step="0.01" min="0">
             <input type="number" name="maxTotalCost" placeholder="最高订单总价" step="0.01" min="0">
@@ -358,11 +358,12 @@
             <input type="text" name="adminName" placeholder="选择负责人">
 
             <button type="submit">筛选</button>
+        </form>
         <!-- 添加进货订单按钮 -->
         <button onclick="openModal('add')">添加进货订单</button>
         <!-- 导出 CSV 表单 -->
         <button onclick="exportCSV(getUrlParams())">导出CSV</button>
-        </form>
+
     </div>
 
     <table>
@@ -401,7 +402,7 @@
             <input type="hidden" name="action" id="action">
 
             <label for="productName">商品名称:</label>
-            <input type="text" name="productName" required>
+            <input type="text" name="productName" id="productName" required>
 
             <label for="quantityPurchased">进货数量:</label>
             <input type="number" name="quantityPurchased" id="quantityPurchased" required>
@@ -438,7 +439,7 @@
             document.getElementById('purchaseID').value = purchaseID;
 
             // 通过AJAX获取商品详情来填充表单
-            fetch('purchase?action=getPurchaseDetails&purchaseID=' + purchaseID)
+            fetch('PurchaseManage?action=getPurchaseDetails&purchaseID=' + purchaseID)
                 .then(response => response.json())
                 .then(data => {
                     document.getElementById('productName').value = data.productName;
@@ -468,72 +469,38 @@
 
     // 提交弹窗
     function submitModal() {
-
         // 获取表单数据
         const form = document.getElementById('purchaseForm');
         const formData = new FormData(form); // 封装表单数据
-        const action = formData.get('action'); // 获取 action，用于判断是新增还是编辑
-
-        // 进货逻辑
-
-
         // 发送 AJAX 请求
-        fetch('PurchaseManage', {
-            method: 'POST',
-            body: formData,
-        })
-            .then(response => {
-                if (response.ok) {
-                    if (action === 'addPurchase') {
-                        alert('进货订单新增成功！');
-                    } else if (action === 'editPurchase') {
-                        alert('进货订单编辑成功！');
-                    }
-                    closeModal(); // 关闭弹窗
-                    fetchPurchase(1); // 刷新列表
-                } else {
-                    return response.text().then(text => { throw new Error(text); });
-                }
-            })
+        fetch('PurchaseManage?action=' + formData.get('action')
+            + '&purchaseID=' + formData.get('purchaseID')
+            + '&productName=' + formData.get('productName')
+            + '&quantityPurchased=' + formData.get('quantityPurchased')
+            + '&purchasePrice=' + formData.get('purchasePrice')
+            + '&totalCost=' + formData.get('totalCost')
+            + '&purchaseDate=' + formData.get('purchaseDate')
+            + '&supplierName=' + formData.get('supplierName')
+            + '&adminName=' + formData.get('adminName')
+        )
+            .then(response => response.json())
             .catch(error => {
                 console.error('错误:', error);
-                alert('操作失败，请检查输入或稍后重试！');
+                alert('保存失败，请稍后重试！');
             });
-        return false; // 阻止表单默认提交行为
+        closeModal();
+        fetchPurchase({});
     }
 
     // 删除进货订单
     function deletePurchase(purchaseID) {
         if (confirm('确定要删除此进货订单吗？')) {
             // 获取订单详情
-            fetch('purchase?action=getPurchaseDetails&purchaseID=' + purchaseID)
-                .then(response => response.json())
-                .then(data => {
-
-                    // 更新订单信息
-                    const formData = new FormData();
-                    formData.append('action', 'editPurchase');
-                    formData.append('purchaseID', data.purchaseID);
-                    formData.append('productID', data.productID);
-                    formData.append('productName', data.productName);
-                    formData.append('quantityPurchased', data.quantityPurchased);
-                    formData.append('purchasePrice', data.purchasePrice);
-                    formData.append('totalCost', data.totalCost);
-                    formData.append('purchaseDate', data.purchaseDate);
-                    formData.append('adminID', data.adminID);
-                    formData.append('adminName', data.adminName);
-                    formData.append('supplierID', data.supplierID);
-                    formData.append('supplierName', data.supplierName);
-
-                    return fetch('purchaserManage', {
-                        method: 'POST',
-                        body: formData
-                    });
-                })
+            fetch('PurchaseManage?action=deletePurchase&purchaseID=' + purchaseID)
                 .then(response => {
                     if (response.ok) {
-                        alert('进货订单已成功删除！');
-                        fetchPurchase(1);
+                        alert('删除成功！');
+                        fetchPurchase({});
                     } else {
                         return response.text().then(text => {
                             throw new Error(text);
@@ -551,7 +518,6 @@
         var modal = document.getElementById('purchaseModal');
         modal.style.display = 'none';
         document.getElementById('purchaseForm').reset(); // 清空表单
-        checkStockWarning();
     }
 
 
@@ -601,8 +567,8 @@
                             + '<td>' + purchase.purchasePrice + '</td>'
                             + '<td>' + purchase.totalCost + '</td>'
                             + '<td>' + purchase.purchaseDate + '</td>'
-                            + '<td>' + purchase.adminName + '</td>'
-                            + '<td>' + purchase.supplierName + '</td>' +
+                            + '<td>' + purchase.supplierName + '</td>'
+                            + '<td>' + purchase.adminName + '</td>' +
                             '<td>' +
                             '<div class="action-btns">' +
                             '<e href="javascript:void(0)" onclick="openModal(\'edit\', ' + purchase.purchaseID + ')">编辑</e>' +

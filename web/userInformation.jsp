@@ -277,7 +277,7 @@
     <h2>账户信息</h2>
 
     <div class="user-profile">
-        <img id="userAvatar" src="https://via.placeholder.com/100" alt="用户头像">
+        <img id="userAvatar" src="./img/img.png" alt="用户头像" width="100" height="100">
         <div class="user-info-main">
             <p><strong>用户名:</strong> <span id="username">加载中...</span></p>
             <p><strong>姓名:</strong> <span id="adminName">加载中...</span></p>
@@ -285,7 +285,13 @@
             <p><strong>职位:</strong> <span id="role">加载中...</span></p>
         </div>
     </div>
-
+    <div class="action-bar">
+        <button class="btn" onclick="showModal('changePasswordModal')">修改密码</button>
+        <button class="btn" onclick="showModal('changeInfoModal')">修改信息</button>
+        <button class="btn btn-danger" onclick="logout()">登出</button>
+        <button class="btn btn-danger" onclick="deleteAccount()">销号</button>
+    </div>
+    <br>
     <h3>管理的人员</h3>
     <table>
         <thead>
@@ -298,34 +304,29 @@
         </tr>
         </thead>
         <tbody id="staffTable">
-        <tr>
-            <td colspan="5">加载中...</td>
-        </tr>
+
         </tbody>
     </table>
 
 
-    <div class="action-bar">
-        <button class="btn" onclick="showModal('changePasswordModal')">修改密码</button>
-        <button class="btn" onclick="showModal('changeInfoModal')">修改信息</button>
-        <button class="btn btn-danger" onclick="logout()">登出</button>
-        <button class="btn btn-danger" onclick="deleteAccount()">销号</button>
-    </div>
+
 </div>
 
 <div id="changePasswordModal" class="modal">
     <div class="modal-content">
         <h3>修改密码</h3>
-        <form id="changePasswordForm">
+        <form id="changePasswordForm" method="POST">
             <label for="newPassword">新密码:</label>
             <input type="password" id="newPassword" name="newPassword" required>
             <label for="confirmPassword">确认密码:</label>
             <input type="password" id="confirmPassword" name="confirmPassword" required>
-            <button type="submit" class="btn">提交</button>
+            <button type="button" class="btn" onclick="submitPasswordModal()">修改密码</button>
             <button type="button" class="btn" onclick="closeModal('changePasswordModal')">取消</button>
         </form>
     </div>
 </div>
+
+
 
 <div id="changeInfoModal" class="modal">
     <div class="modal-content">
@@ -335,13 +336,82 @@
             <input type="text" id="newUsername" name="newUsername" required>
             <label for="newContactInfo">联系方式:</label>
             <input type="text" id="newContactInfo" name="newContactInfo" required>
-            <button type="submit" class="btn">提交</button>
+            <button type="button" class="btn" onclick="submitInformatinModal()">修改信息</button>
             <button type="button" class="btn" onclick="closeModal('changeInfoModal')">取消</button>
         </form>
     </div>
 </div>
 
 <script>
+    function submitPasswordModal() {
+        // 获取表单数据
+        const form = document.getElementById('changePasswordForm');
+        const formData = new FormData(form); // 获取表单数据
+
+        const newPassword = formData.get('newPassword');
+        const confirmPassword = formData.get('confirmPassword');
+
+        // 验证密码是否一致
+        if (newPassword !== confirmPassword) {
+            alert('新密码和确认密码不一致！');
+            return false; // 阻止提交
+        }
+
+        // 获取 adminID（可以通过 session 或其他方式获取）
+        const adminID = '<%= session.getAttribute("adminID") %>'; // 从服务器端获取 adminID
+
+
+
+
+        // 发送 AJAX 请求
+        fetch('AdminInformation?action=editPassword&adminID='+adminID+'&newPassword=' + newPassword)
+            .then(response => {
+                if (response.ok) {
+                    alert('密码修改成功！');
+                    closeModal('changePasswordModal'); // 关闭弹窗
+                } else {
+                    return response.text().then(text => { throw new Error(text); });
+                }
+            })
+            .catch(error => {
+                console.error('错误:', error);
+                alert('操作失败，请稍后重试！');
+            });
+
+        return false; // 阻止表单默认提交行为
+    }
+
+    function submitInformatinModal() {
+        // 获取表单数据
+        const form = document.getElementById('changeInfoForm');
+        const formData = new FormData(form); // 获取表单数据
+
+        const newUsername = formData.get('newUsername');
+        const newContactInfo = formData.get('newContactInfo');
+
+        // 获取 adminID
+        const adminID = '<%= session.getAttribute("adminID") %>'; // 从服务器端获取 adminID
+        document.getElementById('username').textContent = String(newUsername);
+
+        // 发送 AJAX 请求
+        fetch('AdminInformation?action=editInformation&adminID=' + adminID + '&username=' + newUsername + '&contactInfo=' + newContactInfo)
+            .then(response => {
+                if (response.ok) {
+                    alert('个人信息修改成功！');
+                    fetchUserInformation(adminID); // 重新加载用户信息
+                    closeModal('changeInfoModal'); // 关闭弹窗
+                } else {
+                    alert('操作失败，请稍后重试！');
+                    return response.text().then(text => { throw new Error(text); });
+                }
+            })
+            .catch(error => {
+                console.error('错误:', error);
+            });
+
+        return false; // 阻止表单默认提交行为
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
         const adminID = '<%= session.getAttribute("adminID") %>'; // 从服务器端获取 adminID
         if (adminID) {
@@ -373,66 +443,167 @@
             });
     }
 
-    function fetchStaffInformation(adminID) {
-        const offset = 0; // 从第0条开始
-        const limit = 10; // 每次请求10条数据
-        const sortBy = 'joinDate'; // 假设按加入日期排序
-        const sortOrder = 'desc'; // 降序
-        const staffName = ''; // 可用来筛选员工姓名
-        const contactInfo = ''; // 可用来筛选联系方式
-        const fromJoinDate = ''; // 可用来筛选加入日期
-        const toJoinDate = ''; // 可用来筛选加入日期
-        const position = ''; // 可用来筛选职位
-        const adminName = ''; // 可用来筛选管理员名称
+    const itemsPerPage = 10; // 每页显示的数量
+    let currentPage = 1; // 当前页码
+    // 获取员工信息
+    function fetchstaffs({page = currentPage, sortBy = '', sortOrder = '', staffID = '',staffName = '', contactInfo = '', joinDate = '',position = '',adminID = '',adminName = ''
+        }) {
+        currentPage = page;
+        const offset = (page - 1) * itemsPerPage;
+        adminID = '<%= session.getAttribute("adminID") %>';
+        const URLParams = {
+            page: page,
+            sortBy: sortBy,
+            sortOrder: sortOrder,
+            staffID:staffID,
+            staffName: staffName,
+            contactInfo: contactInfo,
+            joinDate:joinDate,
+            position: position,
+            adminID: adminID,
+            adminName: adminName
+        };
+        updateUrlParams(URLParams);
 
-        const apiUrl = `/StaffManage?action=getStaffs&offset=${offset}&limit=${limit}&sortBy=${sortBy}&sortOrder=${sortOrder}&staffName=${staffName}&contactInfo=${contactInfo}&fromJoinDate=${fromJoinDate}&toJoinDate=${toJoinDate}&position=${position}&adminID=${adminID}&adminName=${adminName}`;
-
-        fetch(apiUrl)
+        fetch('StaffManage?action=getStaffs&offset=' + offset + '&limit=' + itemsPerPage
+            + '&sortBy=' + sortBy + '&sortOrder=' + sortOrder + '&staffID=' +staffID +
+            + '&staffName=' + staffName + '&contactInfo=' + contactInfo
+            + '&joinDate=' + joinDate + '&position=' + position
+            + '&adminID=' + adminID+ '&adminName=' + adminName)
             .then(response => response.json())
             .then(data => {
-                // 如果获取成功，填充表格
                 const staffTable = document.getElementById('staffTable');
-                if (data && data.length > 0) {
-                    staffTable.innerHTML = ''; // 清空加载中的文字
-                    data.forEach(staff => {
+                staffTable.innerHTML = ''; // 清空表格
+
+                if (data.staffs && data.staffs.length > 0) {
+                    data.staffs.forEach(staff => {
                         const row = document.createElement('tr');
-                        row.innerHTML = `
-                            <td>${staff.staffID}</td>
-                            <td>${staff.name}</td>
-                            <td>${staff.contactInfo}</td>
-                            <td>${staff.position}</td>
-                            <td>${staff.joinDate}</td>
-                        `;
+                        row.innerHTML =  '<td>' + staff.staffID + '</td>'
+                            + '<td>' + staff.staffName + '</td>'
+                            + '<td>' + staff.contactInfo + '</td>'
+                            + '<td>' + staff.position + '</td>'
+                            + '<td>' + staff.joinDate + '</td>';
                         staffTable.appendChild(row);
                     });
                 } else {
-                    staffTable.innerHTML = '<tr><td colspan="5">没有找到员工数据。</td></tr>';
+                    const row = document.createElement('tr');
+                    row.innerHTML = '<td colspan="8">没有找到管理员工信息</td>';
+                    staffTable.appendChild(row);
                 }
+
+                updatePagination(data.totalPages);
             })
-            .catch(error => {
-                console.error('无法加载员工数据:', error);
-                const staffTable = document.getElementById('staffTable');
-                staffTable.innerHTML = '<tr><td colspan="5">加载失败，请稍后重试。</td></tr>';
-            });
+            .catch(error => console.error('Error fetching staffs:', error));
     }
 
+    // 页面加载时：获取URL参数；获取客户信息并显示分页按钮
+    window.onload = function () {
+        const URLParams = getUrlParams();
+        fetchstaffs({
+            page: URLParams.page || 1,
+            sortBy: URLParams.sortBy || '',
+            sortOrder: URLParams.sortOrder || '',
+            staffID:URLParams.staffID || '',
+            staffName: URLParams.staffName || '',
+            contactInfo: URLParams.contactInfo || '',
+            joinDate: URLParams.joinDate || '',
+            position: URLParams.position || '',
+            adminID: URLParams.adminID || '',
+            adminName: URLParams.adminName|| '',
+        });
+    };
 
+    // 获取URL参数
+    function getUrlParams() {
+        const URLParams = {};
+        const queryString = window.location.search.substring(1);
+        const regex = /([^&=]+)=([^&]*)/g;
+        let m;
+        while (m = regex.exec(queryString)) {
+            URLParams[decodeURIComponent(m[1])] = decodeURIComponent(m[2]);
+        }
+        return URLParams;
+    }
+
+    // 更新URL参数
+    function updateUrlParams(URLParams) {
+        const queryString = Object.keys(URLParams)
+            .filter(key => URLParams[key] !== '' && URLParams[key] !== null && URLParams[key] !== undefined)
+            .map(key => encodeURIComponent(key) + '=' + encodeURIComponent(URLParams[key]))
+            .join('&');
+        history.pushState(null, '', '?' + queryString);
+    }
+
+    // 清除URL参数
+    function clearUrlParams() {
+        history.pushState(null, '', window.location.pathname);
+    }
 
     function showModal(modalId) {
         document.getElementById(modalId).style.display = 'flex';
     }
 
     function closeModal(modalId) {
-        document.getElementById(modalId).style.display = 'none';
+        var modal = document.getElementById(modalId);
+        modal.style.display = 'none';
     }
+
 
     function logout() {
         window.location.href = "Logout?redirect=index.jsp";
     }
 
     function deleteAccount() {
-        alert("账户销号成功！");
+        // 获取 adminID
+        const adminID = '<%= session.getAttribute("adminID") %>'; // 从服务器端获取 adminID
+
+        // 发送 AJAX 请求
+        fetch('AdminInformation?action=deleteAdmin&adminID=' + adminID)
+            .then(response => {
+                if (response.ok) {
+                    alert("账户销号成功！");
+                } else {
+                    return response.text().then(text => { throw new Error(text); });
+                }
+            })
+            .catch(error => {
+                console.error('错误:', error);
+                alert('操作失败，请稍后重试！');
+            });
+
+        return false; // 阻止表单默认提交行为
     }
+    // 更新分页按钮
+    function updatePagination(totalPages) {
+        const pagination = document.getElementById('pagination');
+        pagination.innerHTML = '';  // 清空现有的分页按钮
+        const URLParams = getUrlParams(); // 获取当前 URL 参数
+        const currentPage = parseInt(URLParams.page);
+
+        for (let i = 1; i <= totalPages; i++) {
+            const pageBtn = document.createElement('a');
+            pageBtn.href = 'javascript:void(0)';
+            pageBtn.textContent = i;
+            if (i === currentPage) {
+                pageBtn.classList.add('active');
+            }
+            pageBtn.onclick = () => fetchstaffs({
+                page: URLParams.page || 1,
+                sortBy: URLParams.sortBy || '',
+                sortOrder: URLParams.sortOrder || '',
+                staffID:URLParams.staffID || '',
+                staffName: URLParams.staffName || '',
+                contactInfo: URLParams.contactInfo || '',
+                joinDate: URLParams.joinDate || '',
+                position: URLParams.position || '',
+                adminID: URLParams.adminID || '',
+                adminName: URLParams.adminName|| '',
+            });
+            pagination.appendChild(pageBtn);
+        }
+    }
+
+
 </script>
 
 </body>

@@ -539,7 +539,7 @@
                         alert('商品编辑成功！');
                     }
                     closeModal(); // 关闭弹窗
-                    fetchProducts(1); // 刷新商品列表
+                    fetchProducts({}); // 刷新商品列表
                 } else {
                     return response.text().then(text => { throw new Error(text); });
                 }
