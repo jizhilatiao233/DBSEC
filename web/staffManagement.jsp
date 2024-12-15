@@ -341,13 +341,6 @@
         </form>
 
             <button onclick="exportCSV({
-            sortBy: getURLParam('sortBy') || '',
-            sortOrder: getURLParam('sortOrder') || '',
-            employeeId: getURLParam('staffID') || '',
-            employeeName: getURLParam('staffName') || '',
-            employeePhone: getURLParam('contactInfo') || '',
-            joinDate: getURLParam('joinDate') || '',
-            position: getURLParam('position') || ''
             staffName: getURLParam('staffName') || '',
             contactInfo: getURLParam('contactInfo') || '',
             fromJoinDate: getURLParam('fromJoinDate') || '',
@@ -425,38 +418,20 @@
 
     // 删除员工
     function deleteStaff(staffID) {
+        if (!staffID) {
+            alert('员工 ID 无效，无法删除！');
+            return;
+        }
+
         if (confirm('确定要删除此员工吗？')) {
-            // 获取员工详情
-            fetch('staff?action=getStaffDetails&staffID=' + staffID)
-                .then(response => response.json())
-                .then(data => {
-
-                    // 更新员工信息
-                    const formData = new FormData();
-                    formData.append('action', 'editStaff');
-                    formData.append('staffID', data.staffID);
-                    formData.append('staffName', data.staffName);
-                    formData.append('contactInfo', data.contactInfo);
-                    formData.append('username', data.username);
-                    formData.append('password', data.password);
-                    formData.append('joinDate', data.joinDate);
-                    formData.append('position', data.position);
-                    formData.append('adminID', data.adminID);
-                    formData.append('adminName', data.adminName);
-
-                    return fetch('StaffManage', {
-                        method: 'POST',
-                        body: formData
-                    });
-                })
-                .then(response => {
-                    if (response.ok) {
+            fetch('StaffManage?action=deleteStaff&staffID=' + staffID)
+                .then(response => response.text()) // 获取 HTML 格式的响应
+                .then(text => {
+                    if (text.includes('删除成功')) { // 检查返回内容
                         alert('员工已成功删除！');
-                        fetchStaff(1);
+                        fetchStaff(getUrlParams());
                     } else {
-                        return response.text().then(text => {
-                            throw new Error(text);
-                        });
+                        alert('员工删除失败：' + text); // 显示返回的 HTML 内容
                     }
                 })
                 .catch(error => {
@@ -465,6 +440,8 @@
                 });
         }
     }
+
+
 
 
     const itemsPerPage = 10; // 每页显示的数量
